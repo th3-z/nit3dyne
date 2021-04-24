@@ -1,0 +1,9 @@
+# build
+CMakeFiles/
+cmake-build-debug/
+build/
+
+# editors
+*.kate-swp
+*.swp
+.idea/
