@@ -2,12 +2,14 @@
 #include <glad/glad.h>
 #include <SDL2/SDL.h>
 #include "shader.h"
+#include "texture.h"
 
 float vertices[] = {
-        0.5f,  0.5f, 0.0f,  // 0 - top right
-        0.5f, -0.5f, 0.0f,  // 1 - bottom right
-        -0.5f, -0.5f, 0.0f, // 2 - bottom left
-        -0.5f,  0.5f, 0.0f  // 3 - top left
+        // Verts              // Colors           // Tex cords
+        0.5f,  0.5f,  0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,  // 0 - top right
+        0.5f,  -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // 1 - bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,  // 2 - bottom left
+        -0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 0.0f,   0.0f, 1.0f   // 3 - top left
 };
 unsigned int indices[] = {  // note that we start from 0!
         0, 1, 3,   // first triangle
@@ -49,8 +51,6 @@ int main() {
     // SHADERS
 
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
-
-    shader.setFloat("someFloat", 1.0f);
     shader.use();
 
 
@@ -72,8 +72,14 @@ int main() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Set vertex attributes pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // Unbind everything
     glBindVertexArray(0);
@@ -82,6 +88,9 @@ int main() {
 
     SDL_Event event = { 0 };
     bool should_quit = false;
+
+    std::string textureFilePath("res/textures/0.png");
+    Texture texture(textureFilePath);
 
     while (!should_quit) {
         // Events
@@ -106,11 +115,16 @@ int main() {
             }
         }
 
+        float hue = sin(SDL_GetTicks()/13) / 2.0f + 0.5f;
+
+        shader.setFloat("colorHue", hue);
+
         // Clear
         glClearColor(1.f, 1.f, 1.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         // Render...
+        glBindTexture(GL_TEXTURE_2D, texture.id);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -126,11 +140,3 @@ int main() {
 
     return 0;
 }
-
-/*
- * Requirements:
- *   libsdl2-dev
- *   g++
- *   cmake
- *
- */

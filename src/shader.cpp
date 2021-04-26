@@ -32,8 +32,6 @@ Shader::Shader(const char *vPath, const char *fPath) {
     char infoLog[512];
 
     vId = glCreateShader(GL_VERTEX_SHADER);
-
-
     const char *vSrcC = vSrc.c_str();
     glShaderSource(vId, 1, &vSrcC, NULL);
     glCompileShader(vId);
@@ -43,8 +41,6 @@ Shader::Shader(const char *vPath, const char *fPath) {
         glGetShaderInfoLog(vId, 512, NULL, infoLog);
         std::cout << "Error: Failed to compile vertex shader\n" << infoLog << std::endl;
     }
-
-
 
     fId = glCreateShader(GL_FRAGMENT_SHADER);
     const char *fSrcC = fSrc.c_str();
