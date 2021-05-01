@@ -1,6 +1,10 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <SDL2/SDL.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "shader.h"
 #include "texture.h"
 
@@ -18,6 +22,12 @@ unsigned int indices[] = {  // note that we start from 0!
 
 
 int main() {
+    glm::mat4 trans = glm::mat4(1.0f);  // New identity matrix
+    trans = glm::rotate(  //  Rotate matrix
+        trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0)
+    );
+    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));  // Scale matrix
+
     // INIT
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -29,7 +39,7 @@ int main() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     SDL_Window *window = SDL_CreateWindow(
-        "SDL2",
+        "Pain",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         640,
@@ -89,8 +99,11 @@ int main() {
     SDL_Event event = { 0 };
     bool should_quit = false;
 
-    std::string textureFilePath("res/textures/0.png");
-    Texture texture(textureFilePath);
+    std::string texture0FilePath("res/textures/0.png");
+    Texture texture0(texture0FilePath);
+
+    std::string texture1FilePath("res/textures/1.png");
+    Texture texture1(texture1FilePath);
 
     while (!should_quit) {
         // Events
@@ -115,16 +128,27 @@ int main() {
             }
         }
 
-        float hue = sin(SDL_GetTicks()/13) / 2.0f + 0.5f;
+        float hue = sin((SDL_GetTicks()%75)) / 2.0f + 0.5f;
+        trans = glm::mat4(1.0f);
+        trans = glm::rotate(trans, (float) (SDL_GetTicks()%75)/1300, glm::vec3(1.0f, 1.0f, 0.2f));
+        trans = glm::translate(trans, glm::vec3((float) (SDL_GetTicks()%75)/1300,(float) (SDL_GetTicks()%75)/1300, (float) (SDL_GetTicks()%75)/1300));
 
         shader.setFloat("colorHue", hue);
+        shader.setMat4("transformation", trans);
 
         // Clear
         glClearColor(1.f, 1.f, 1.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         // Render...
-        glBindTexture(GL_TEXTURE_2D, texture.id);
+        glActiveTexture(GL_TEXTURE0);  // Active texture unit
+        glBindTexture(GL_TEXTURE_2D, texture0.id);  // Bind texture
+        shader.setInt("tex0", 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture1.id);
+        shader.setInt("tex1", 1);
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

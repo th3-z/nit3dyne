@@ -4,9 +4,9 @@ in vec3 color;
 in vec2 texCoord;
 
 uniform float colorHue;
-uniform sampler2D texSampler;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
 
 void main() {
-    FragColor = texture(texSampler, texCoord);
-    //FragColor = vec4(color / colorHue, 1.f);
+    FragColor = mix(texture(tex0, texCoord), texture(tex1, texCoord) * colorHue, 0.5);
 }

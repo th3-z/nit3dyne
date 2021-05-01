@@ -4,7 +4,10 @@
 
 #include "texture.h"
 
-Texture::Texture(std::string &filePath) {
+unsigned int Texture::cId = 0;
+
+Texture::Texture(std::string &filePath):
+id(cId++) {
     SDL_Surface *image = loadImage(filePath);
 
 

@@ -15,6 +15,8 @@ public:
     unsigned int id;
 
     Texture(std::string &filePath);
+private:
+    static unsigned int cId;
 };
 
 
