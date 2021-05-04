@@ -7,27 +7,11 @@
 
 #include "shader.h"
 #include "texture.h"
-
-float vertices[] = {
-        // Verts              // Colors           // Tex cords
-        0.5f,  0.5f,  0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,  // 0 - top right
-        0.5f,  -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,  // 1 - bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,  // 2 - bottom left
-        -0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 0.0f,   0.0f, 1.0f   // 3 - top left
-};
-unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,   // first triangle
-        1, 2, 3    // second triangle
-};
+#include "camera.h"
+#include "cube.h"
 
 
 int main() {
-    glm::mat4 trans = glm::mat4(1.0f);  // New identity matrix
-    trans = glm::rotate(  //  Rotate matrix
-        trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0)
-    );
-    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));  // Scale matrix
-
     // INIT
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -37,6 +21,8 @@ int main() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    //SDL_CaptureMouse(SDL_TRUE);
 
     SDL_Window *window = SDL_CreateWindow(
         "Pain",
@@ -57,47 +43,40 @@ int main() {
     glViewport(0, 0, 640, 480);
     glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
     SDL_GL_SetSwapInterval(1);  // Wait for vblank on swap
+    glEnable(GL_DEPTH_TEST);  // Enable depth test
 
     // SHADERS
-
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
     shader.use();
-
 
     // Create new VAO
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
-    // Bind VAO, VAO will remember state set in step 2/3, and which VBO to use
+    // Bind VAO, VAO will remember state, and which VBO to use
     glBindVertexArray(VAO);
     // Copy vertices array into a new VBO
     unsigned int VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Copy vertex indicies into a new EBO
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCube), verticesCube, GL_STATIC_DRAW);
 
     // Set vertex attributes pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(
+        0,  // Location
+        3,  // Size
+        GL_FLOAT,  // Type
+        GL_FALSE,  // Normalized
+        5 * sizeof(float),  // Stride
+        (void*)0  // Start
+    );
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
 
     // Unbind everything
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    SDL_Event event = { 0 };
-    bool should_quit = false;
 
     std::string texture0FilePath("res/textures/0.png");
     Texture texture0(texture0FilePath);
@@ -105,12 +84,32 @@ int main() {
     std::string texture1FilePath("res/textures/1.png");
     Texture texture1(texture1FilePath);
 
+    Camera camera = Camera();
+
+    SDL_Event event = { 0 };
+    bool should_quit = false;
+
     while (!should_quit) {
         // Events
+        int keys = 0;
+        int mX = 0;
+        int mY = 0;
+
+        //continuous-response keys
+        const Uint8* keystate = SDL_GetKeyboardState(NULL);
+        if(keystate[SDL_SCANCODE_W]) keys |= key::UP;
+        if(keystate[SDL_SCANCODE_A]) keys |= key::LEFT;
+        if(keystate[SDL_SCANCODE_S]) keys |= key::DOWN;
+        if(keystate[SDL_SCANCODE_D]) keys |= key::RIGHT;
+
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
                     should_quit = true;
+                    break;
+                case SDL_MOUSEMOTION:
+                    mX = event.motion.xrel;
+                    mY = event.motion.yrel;
                     break;
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
@@ -128,17 +127,11 @@ int main() {
             }
         }
 
-        float hue = sin((SDL_GetTicks()%75)) / 2.0f + 0.5f;
-        trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, (float) (SDL_GetTicks()%75)/1300, glm::vec3(1.0f, 1.0f, 0.2f));
-        trans = glm::translate(trans, glm::vec3((float) (SDL_GetTicks()%75)/1300,(float) (SDL_GetTicks()%75)/1300, (float) (SDL_GetTicks()%75)/1300));
-
-        shader.setFloat("colorHue", hue);
-        shader.setMat4("transformation", trans);
+        camera.move(keys, mX, mY);
 
         // Clear
-        glClearColor(1.f, 1.f, 1.f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClearColor(0.9f, 0.5f, 0.3f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render...
         glActiveTexture(GL_TEXTURE0);  // Active texture unit
@@ -149,14 +142,25 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, texture1.id);
         shader.setInt("tex1", 1);
 
+        glm::mat4 model = glm::mat4(1.0f);
+
+        shader.setMat4("model", model);
+        shader.setMat4("view", camera.view);
+        shader.setMat4("projection", camera.projection);
+
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
+        float degsRot = (SDL_GetTicks()%3600)/10;
+        model = glm::rotate(model, glm::radians(degsRot), glm::vec3(0.5f, 1.f, 0.1f));
+
+        shader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // Flip buffer
         SDL_GL_SwapWindow(window);
     }
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
