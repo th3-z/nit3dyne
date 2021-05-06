@@ -8,11 +8,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-enum key {
-    UP = 0x001,
-    LEFT = 0x002,
-    DOWN = 0x004,
-    RIGHT = 0x08
+enum direction {
+    UP = 1,
+    LEFT = 2,
+    DOWN = 4,
+    RIGHT = 8,
+    FORWARD = 16,
+    BACKWARD = 32
 };
 
 class Camera {
@@ -21,7 +23,7 @@ public:
     glm::mat4 projection;
 
     Camera();
-    void move(int k, int mX, int mY);
+    void move(int direction, int mX, int mY);
 
 private:
     glm::vec3 position;

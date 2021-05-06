@@ -3,7 +3,6 @@
 //
 
 
-#include <iostream>
 #include "camera.h"
 
 Camera::Camera():
@@ -15,19 +14,19 @@ projection(glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f))
 
 }
 
-void Camera::move(int k, int mX, int mY) {
-    if (k & key::UP) {
+void Camera::move(int direction, int mX, int mY) {
+    if (direction & direction::FORWARD)
         this->position += this->speed * this->front;
-    }
-    if (k & key::LEFT) {
+    if (direction & direction::LEFT)
         this->position -= glm::normalize(glm::cross(this->front, this->up)) * this->speed;
-    }
-    if (k & key::DOWN) {
+    if (direction & direction::BACKWARD)
         this->position -= this->speed * this->front;
-    }
-    if (k & key::RIGHT) {
+    if (direction & direction::RIGHT)
         this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed;
-    }
+    if (direction & direction::UP)
+        this->position += this->speed * this->wUp;
+    if (direction & direction::DOWN)
+        this->position -= this->speed * this->wUp;
 
     this->yaw += mX * this->sensitivity;
     this->pitch -= mY * this->sensitivity;

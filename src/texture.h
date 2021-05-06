@@ -12,11 +12,13 @@
 
 class Texture {
 public:
-    unsigned int id;
+    unsigned int handle;
+    std::string type;
 
-    Texture(std::string &filePath);
+    Texture(std::string &type, std::string &filePath);
+    ~Texture();
 private:
-    static unsigned int cId;
+    static unsigned int cHandle;
 };
 
 

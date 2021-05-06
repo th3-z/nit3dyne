@@ -53,15 +53,15 @@ Shader::Shader(const char *vPath, const char *fPath) {
         std::cout << "Error: Failed to compile fragment shader\n" << infoLog << std::endl;
     }
 
-    this->id = glCreateProgram();
-    glAttachShader(this->id, vId);
-    glAttachShader(this->id, fId);
-    glLinkProgram(this->id);
+    this->handle = glCreateProgram();
+    glAttachShader(this->handle, vId);
+    glAttachShader(this->handle, fId);
+    glLinkProgram(this->handle);
 
-    glGetProgramiv(this->id, GL_LINK_STATUS, &success);
+    glGetProgramiv(this->handle, GL_LINK_STATUS, &success);
     if (!success)
     {
-        glGetProgramInfoLog(this->id, 512, NULL, infoLog);
+        glGetProgramInfoLog(this->handle, 512, NULL, infoLog);
         std::cout << "Error: Failed to link shader program\n" << infoLog << std::endl;
     }
 
@@ -70,35 +70,47 @@ Shader::Shader(const char *vPath, const char *fPath) {
 }
 
 void Shader::use() {
-    glUseProgram(this->id);
+    glUseProgram(this->handle);
 }
 
 void Shader::setBool(const std::string &name, bool value) const {
     glUniform1i(
-        glGetUniformLocation(this->id, name.c_str()),
+        glGetUniformLocation(this->handle, name.c_str()),
         (int)value
     );
 }
 
 void Shader::setFloat(const std::string &name, float value) const {
     glUniform1f(
-        glGetUniformLocation(this->id, name.c_str()),
+        glGetUniformLocation(this->handle, name.c_str()),
         value
     );
 }
 
 void Shader::setInt(const std::string &name, int value) const {
     glUniform1i(
-        glGetUniformLocation(this->id, name.c_str()),
+        glGetUniformLocation(this->handle, name.c_str()),
         value
     );
 }
 
 void Shader::setMat4(const std::string &name, glm::mat4 &mat) const {
     glUniformMatrix4fv(
-            glGetUniformLocation(this->id, name.c_str()),
+            glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one
             GL_FALSE,  // Don't transpose (swap rows/cols)
             glm::value_ptr(mat)
     );
+}
+
+void Shader::setVec3(const std::string &name, glm::vec3 &vec) const {
+    glUniform3fv(
+            glGetUniformLocation(this->handle, name.c_str()),
+            1,  // Send one
+            glm::value_ptr(vec)
+    );
+}
+
+Shader::~Shader() {
+    glDeleteProgram(this->handle);
 }
