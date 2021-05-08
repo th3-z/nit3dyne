@@ -8,13 +8,18 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-enum direction {
+enum Direction {
     UP = 1,
     LEFT = 2,
     DOWN = 4,
     RIGHT = 8,
     FORWARD = 16,
     BACKWARD = 32
+};
+
+enum Mode {
+    FIXED,
+    FREECAM
 };
 
 class Camera {
@@ -24,6 +29,7 @@ public:
 
     Camera();
     void move(int direction, int mX, int mY);
+    void setMode(Mode mode);
 
 private:
     glm::vec3 position;
@@ -32,11 +38,18 @@ private:
     glm::vec3 right;
     glm::vec3 wUp;
 
+    Mode mode = FIXED;
+
     float yaw = -90.f;
-    float pitch = 0.f;
+    float pitch = -45.f;
 
     const float speed = 0.001f;
     const float sensitivity = 1.5f;
+
+    // Fixed cam
+    const float fixedHeight = 10.f;
+    const float fixedYaw = -90.f;
+    const float fixedPitch = -45.f;
 };
 
 

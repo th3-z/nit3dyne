@@ -161,12 +161,12 @@ int main() {
 
         //continuous-response directions
         const Uint8* keystate = SDL_GetKeyboardState(NULL);
-        if(keystate[SDL_SCANCODE_W]) directions |= direction::FORWARD;
-        if(keystate[SDL_SCANCODE_A]) directions |= direction::LEFT;
-        if(keystate[SDL_SCANCODE_S]) directions |= direction::BACKWARD;
-        if(keystate[SDL_SCANCODE_D]) directions |= direction::RIGHT;
-        if(keystate[SDL_SCANCODE_SPACE]) directions |= direction::UP;
-        if(keystate[SDL_SCANCODE_LSHIFT]) directions |= direction::DOWN;
+        if(keystate[SDL_SCANCODE_W]) directions |= Direction::FORWARD;
+        if(keystate[SDL_SCANCODE_A]) directions |= Direction::LEFT;
+        if(keystate[SDL_SCANCODE_S]) directions |= Direction::BACKWARD;
+        if(keystate[SDL_SCANCODE_D]) directions |= Direction::RIGHT;
+        if(keystate[SDL_SCANCODE_SPACE]) directions |= Direction::UP;
+        if(keystate[SDL_SCANCODE_LSHIFT]) directions |= Direction::DOWN;
 
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
