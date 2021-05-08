@@ -26,11 +26,11 @@ public:
 
     virtual void handleDirection(int d) = 0;
     virtual void handleMouse(int x, int y) = 0;
-
     glm::mat4 getView();
 
-protected:
     glm::vec3 position;
+
+protected:
     glm::vec3 front;
     glm::vec3 up;
     glm::vec3 right;

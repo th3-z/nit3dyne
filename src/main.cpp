@@ -76,8 +76,8 @@ int main() {
     Model cube = Model("res/cube.glb");
     Model suzanne = Model("res/suzanne.glb");
 
-    glm::vec3 sunPosition = glm::vec3(3.0, 10.0, -5.0);
-    glm::vec3 sunColor = glm::vec3(1.0);
+    glm::vec3 sunPosition = glm::vec3(0.0, 10.0, -10.0);
+    glm::vec3 sunColor = glm::vec3(1.0, 0.7, 0.5);
 
     SDL_Event event = {0};
     bool should_quit = false;
@@ -142,6 +142,7 @@ int main() {
         // Sun
         shader.setVec3("sunPosition", sunPosition);
         shader.setVec3("sunColor", sunColor);
+        shader.setVec3("viewPosition", camera->position);
 
         // Cube
         glActiveTexture(GL_TEXTURE0);  // Active texture unit
