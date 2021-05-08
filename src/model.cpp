@@ -4,38 +4,6 @@
 
 #include "model.h"
 
-void dbgModel(tinygltf::Model &model) {
-    for (auto &mesh : model.meshes) {
-        std::cout << "mesh : " << mesh.name << std::endl;
-        for (auto &primitive : mesh.primitives) {
-            const tinygltf::Accessor &indexAccessor =
-                    model.accessors[primitive.indices];
-
-            std::cout << "indexaccessor: count " << indexAccessor.count << ", type "
-                      << indexAccessor.componentType << std::endl;
-
-            /*tinygltf::Material &mat = model.materials[primitive.material];
-            for (auto &mats : mat.values) {
-                //std::cout << "mat : " << mats.first.c_str() << std::endl;
-            }*/
-
-            for (auto &image : model.images) {
-                std::cout << "image name : " << image.uri << std::endl;
-                std::cout << "  size : " << image.image.size() << std::endl;
-                std::cout << "  w/h : " << image.width << "/" << image.height
-                          << std::endl;
-            }
-
-            std::cout << "indices : " << primitive.indices << std::endl;
-            std::cout << "mode     : "
-                      << "(" << primitive.mode << ")" << std::endl;
-
-            for (auto &attrib : primitive.attributes) {
-                std::cout << "attribute : " << attrib.first.c_str() << std::endl;
-            }
-        }
-    }
-}
 
 Model::Model(const char* filename) {
     tinygltf::TinyGLTF loader;
@@ -48,8 +16,6 @@ Model::Model(const char* filename) {
         std::cout << "ERR: " << err << std::endl;
     if (!res)
         std::cout << "Failed to load glTF: " << filename << std::endl;
-
-    dbgModel(this->model);
 
     this->bindModel();
 }
@@ -85,8 +51,6 @@ void Model::drawMesh(tinygltf::Mesh &mesh) {
         tinygltf::Primitive primitive = mesh.primitives[i];
         tinygltf::Accessor indexAccessor = this->model.accessors[primitive.indices];
 
-        //std::cout << indexAccessor.count << std::endl;
-
         glDrawElements(
             primitive.mode,
             indexAccessor.count,
@@ -94,7 +58,6 @@ void Model::drawMesh(tinygltf::Mesh &mesh) {
             (char *)NULL + (indexAccessor.byteOffset)
         );
     }
-    //std::cout<<std::endl;
 }
 
 void Model::bindModel() {
@@ -107,7 +70,6 @@ void Model::bindModel() {
         this->bindModelNodes(model.nodes[scene.nodes[i]]);
     }
 
-    std::cout << this->VBOs.size() << "VBOS" << std::endl;
     glBindVertexArray(0);
     for (int i = 0; i < this->VBOs.size(); ++i) {
         glDeleteBuffers(1, &this->VBOs[i]);
@@ -120,7 +82,6 @@ void Model::bindModelNodes(tinygltf::Node &node) {
     }
 
     for (int i = 0; i < node.children.size(); i++) {
-        std::cout << "BIND MODEL NODES" << std::endl;
         assert((node.children[i] >= 0) && (node.children[i] < this->model.nodes.size()));
         bindModelNodes(this->model.nodes[node.children[i]]);
     }
@@ -130,21 +91,11 @@ void Model::bindMesh(tinygltf::Mesh &mesh) {
     for (int i = 0; i < this->model.bufferViews.size(); ++i) {
         const tinygltf::BufferView &bufferView = this->model.bufferViews[i];
         const tinygltf::Buffer &buffer = this->model.buffers[bufferView.buffer];
-        std::cout << "bufferview.target " << bufferView.target << std::endl;
-
-        std::cout << buffer.data.size() << std::endl;
-        std::cout << bufferView.byteLength << std::endl;
-        std::cout << bufferView.target << std::endl;
-        std::cout << std::endl;
 
         unsigned int VBO;
         glGenBuffers(1, &VBO);
         this->VBOs[i] = VBO;
         glBindBuffer(bufferView.target, VBO);
-
-        std::cout << "buffer.data.size = " << buffer.data.size()
-                  << ", bufferview.byteOffset = " << bufferView.byteOffset
-                  << std::endl;
 
         glBufferData(
             bufferView.target,
@@ -154,13 +105,10 @@ void Model::bindMesh(tinygltf::Mesh &mesh) {
         );
     }
 
-    std::cout << "prims " << mesh.primitives.size() << std::endl;
-
     for (size_t i = 0; i < mesh.primitives.size(); ++i) {
         tinygltf::Primitive primitive = mesh.primitives[i];
         tinygltf::Accessor indexAccessor = this->model.accessors[primitive.indices];
 
-        std::cout << "attrs " << primitive.attributes.size() << std::endl;
         for (auto &attrib : primitive.attributes) {
             tinygltf::Accessor accessor = this->model.accessors[attrib.second];
             int byteStride = accessor.ByteStride(this->model.bufferViews[accessor.bufferView]);
@@ -175,8 +123,6 @@ void Model::bindMesh(tinygltf::Mesh &mesh) {
             if (attrib.first.compare("POSITION") == 0) vaa = 0;
             if (attrib.first.compare("NORMAL") == 0) vaa = 1;
             if (attrib.first.compare("TEXCOORD_0") == 0) vaa = 2;
-
-            std::cout << "vaa " << vaa << std::endl;
 
             glEnableVertexAttribArray(vaa);
             glVertexAttribPointer(

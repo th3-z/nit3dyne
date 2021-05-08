@@ -14,9 +14,7 @@ worldUp(glm::vec3(0.f, 1.f, 0.f)) {
 
 }
 
-Camera::~Camera() {
-    std::cout << "Destroyed Camera" << std::endl;
-}
+Camera::~Camera() = default;
 
 glm::mat4 Camera::getView() {
     this->front.x = cos(glm::radians(this->yaw)) * cos(glm::radians(this->pitch));

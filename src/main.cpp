@@ -16,50 +16,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
 
-float verticesCube[] = {
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-
-        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f
-};
-
 struct Context {
     SDL_Window *window;
     SDL_GLContext context;
@@ -105,56 +61,23 @@ int main() {
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
     shader.use();
 
-    // Create new VAO
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    // Bind VAO, VAO will remember state, and which VBO to use
-    glBindVertexArray(VAO);
-    // Copy vertices array into a new VBO
-    unsigned int VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCube), verticesCube, GL_STATIC_DRAW);
-
-    // Set vertex attributes pointers
-    glVertexAttribPointer(
-        0,  // Location
-        3,  // Size
-        GL_FLOAT,  // Type
-        GL_FALSE,  // Normalized
-        5 * sizeof(float),  // Stride
-        (void*)0  // Start
-    );
-    glEnableVertexAttribArray(0);
-
-    // Normals
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // TexCoords
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    // Unbind everything
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    std::string textureType("diffuse");
-    std::string texture0FilePath("res/textures/0.png");
-    Texture texture(textureType, texture0FilePath);
-
     Camera *camera;
     CameraFree cameraFree;
     CameraFixed cameraFixed;
     camera = &cameraFree;
-
     glm::mat4 projection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 0.1f, 100.0f);
 
+    std::string textureType("diffuse");
+    std::string texture0FilePath("res/textures/0.png");
+    Texture texture0(textureType, texture0FilePath);
+    std::string texture1FilePath("res/textures/1.png");
+    Texture texture1(textureType, texture1FilePath);
+
     Model cube = Model("res/cube.glb");
+    Model suzanne = Model("res/suzanne.glb");
 
     glm::vec3 sunPosition = glm::vec3(3.0, 10.0, -5.0);
     glm::vec3 sunColor = glm::vec3(1.0);
-
 
     SDL_Event event = {0};
     bool should_quit = false;
@@ -212,51 +135,31 @@ int main() {
         glClearColor(0.9f, 0.5f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Sun
-        shader.setVec3("sunPosition", sunPosition);
-        shader.setVec3("sunColor", sunColor);
-
-        // Render...
-        glActiveTexture(GL_TEXTURE0);  // Active texture unit
-        glBindTexture(GL_TEXTURE_2D, texture.handle);  // Bind texture
-        shader.setInt("tex", 0);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        shader.setMat4("model", model);
         glm::mat4 view = camera->getView();
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
 
+        // Sun
+        shader.setVec3("sunPosition", sunPosition);
+        shader.setVec3("sunColor", sunColor);
 
+        // Cube
+        glActiveTexture(GL_TEXTURE0);  // Active texture unit
+        glBindTexture(GL_TEXTURE_2D, texture0.handle);  // Bind texture
+        shader.setInt("tex", 0);
 
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glm::mat4 model = glm::mat4(1.0f);
+        shader.setMat4("model", model);
+        cube.render(shader);
 
+        // Suzanne
+        glBindTexture(GL_TEXTURE_2D, texture1.handle);  // Bind texture
         model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
         float degsRot = (SDL_GetTicks()%3600)/10;
         model = glm::rotate(model, glm::radians(degsRot), glm::vec3(0.5f, 1.f, 0.1f));
 
         shader.setMat4("model", model);
-
-
-        glm::mat4 model_mat = glm::mat4(1.0f);
-        glm::mat4 model_rot = glm::mat4(1.0f);
-        glm::vec3 model_pos = glm::vec3(-3, 0, -3);
-        glm::mat4 trans =
-                glm::translate(glm::mat4(1.0f), model_pos);  // reposition model
-        model_rot = glm::rotate(model_rot, glm::radians(0.8f),
-                                glm::vec3(0, 1, 0));  // rotate model on y axis
-        model_mat = trans * model_rot;
-        glm::mat4 view_mat = glm::lookAt(
-                glm::vec3(2, 2, 20),                // Camera in World Space
-                model_pos,             // and looks at the origin
-                glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-        );
-
-        shader.setMat4("model", model);
-
-        cube.render(shader);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        suzanne.render(shader);
 
         // Flip buffer
         SDL_GL_SwapWindow(context.window);
