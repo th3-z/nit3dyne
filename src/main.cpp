@@ -7,7 +7,8 @@
 
 #include "shader.h"
 #include "texture.h"
-#include "camera.h"
+#include "camera/cameraFixed.h"
+#include "camera/cameraFree.h"
 #include "model.h"
 
 #define TINYGLTF_IMPLEMENTATION
@@ -79,8 +80,8 @@ Context initGl() {
             "Pain",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
-            640,
-            480,
+            800,
+            600,
             SDL_WINDOW_OPENGL
     );
 
@@ -91,7 +92,7 @@ Context initGl() {
     std::cout << std::left << "OpenGL Vendor: " << (char *)glGetString(GL_VENDOR) << std::endl;
     std::cout << std::left << "OpenGL Renderer: " << (char *)glGetString(GL_RENDERER) << std::endl;
 
-    glViewport(0, 0, 640, 480);
+    glViewport(0, 0, 800, 600);
     glEnable(GL_DEPTH_TEST);  // Enable depth test
 
     return Context{window, context};
@@ -142,7 +143,12 @@ int main() {
     std::string texture0FilePath("res/textures/0.png");
     Texture texture(textureType, texture0FilePath);
 
-    Camera camera = Camera();
+    Camera *camera;
+    CameraFree cameraFree;
+    CameraFixed cameraFixed;
+    camera = &cameraFree;
+
+    glm::mat4 projection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 0.1f, 100.0f);
 
     Model cube = Model("res/cube.glb");
 
@@ -188,12 +194,19 @@ int main() {
                         case SDLK_2:
                             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                             break;
+                        case SDLK_f:
+                            camera = &cameraFixed;
+                            break;
+                        case SDLK_g:
+                            camera = &cameraFree;
+                            break;
                     }
                     break;
             }
         }
 
-        camera.move(directions, mX, mY);
+        camera->handleDirection(directions);
+        camera->handleMouse(mX, mY);
 
         // Clear
         glClearColor(0.9f, 0.5f, 0.3f, 1.0f);
@@ -210,8 +223,9 @@ int main() {
 
         glm::mat4 model = glm::mat4(1.0f);
         shader.setMat4("model", model);
-        shader.setMat4("view", camera.view);
-        shader.setMat4("projection", camera.projection);
+        glm::mat4 view = camera->getView();
+        shader.setMat4("view", view);
+        shader.setMat4("projection", projection);
 
 
 

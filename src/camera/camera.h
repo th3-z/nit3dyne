@@ -5,6 +5,7 @@
 #ifndef GL_CAMERA_H
 #define GL_CAMERA_H
 
+#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -17,39 +18,29 @@ enum Direction {
     BACKWARD = 32
 };
 
-enum Mode {
-    FIXED,
-    FREECAM
-};
 
 class Camera {
 public:
-    glm::mat4 view;
-    glm::mat4 projection;
-
     Camera();
-    void move(int direction, int mX, int mY);
-    void setMode(Mode mode);
+    virtual ~Camera();
 
-private:
+    virtual void handleDirection(int d) = 0;
+    virtual void handleMouse(int x, int y) = 0;
+
+    glm::mat4 getView();
+
+protected:
     glm::vec3 position;
     glm::vec3 front;
     glm::vec3 up;
     glm::vec3 right;
-    glm::vec3 wUp;
-
-    Mode mode = FIXED;
+    glm::vec3 worldUp;
 
     float yaw = -90.f;
-    float pitch = -45.f;
+    float pitch = -0.f;
 
     const float speed = 0.001f;
     const float sensitivity = 1.5f;
-
-    // Fixed cam
-    const float fixedHeight = 10.f;
-    const float fixedYaw = -90.f;
-    const float fixedPitch = -45.f;
 };
 
 
