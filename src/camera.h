@@ -35,7 +35,7 @@ private:
     float yaw = -90.f;
     float pitch = 0.f;
 
-    const float speed = 0.1f;
+    const float speed = 0.001f;
     const float sensitivity = 1.5f;
 };
 

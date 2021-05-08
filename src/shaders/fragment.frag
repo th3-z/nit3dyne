@@ -1,15 +1,17 @@
 #version 330 core
-out vec4 FragColor;
 
+in vec3 normal;
+in vec3 position;
 in vec2 texCoord;
 
-uniform sampler2D tex0;
-uniform sampler2D tex1;
+uniform sampler2D tex;
+uniform vec3 sunPosition;
+uniform vec3 sunColor;
+
+out vec4 fragColor;
+
 
 void main() {
-    FragColor = mix(
-        texture(tex0, texCoord),
-        texture(tex1, texCoord),
-        0.5
-    );
+    float lum = max(dot(normal, normalize(sunPosition)), 0.0);
+    fragColor = texture(tex, texCoord) * vec4((0.3 + 0.7 * lum) * sunColor, 1.0);
 }

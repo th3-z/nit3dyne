@@ -8,11 +8,56 @@
 #include "shader.h"
 #include "texture.h"
 #include "camera.h"
+#include "model.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
+
+float verticesCube[] = {
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f
+};
 
 struct Context {
     SDL_Window *window;
@@ -52,32 +97,6 @@ Context initGl() {
     return Context{window, context};
 }
 
-void testGltf() {
-    tinygltf::Model model;
-    tinygltf::TinyGLTF loader;
-    std::string err;
-    std::string warn;
-
-    //bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, "res/cube.gltf");
-    bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, "res/cube.glb"); // for binary glTF(.glb)
-
-    if (!warn.empty()) {
-        printf("Warn: %s\n", warn.c_str());
-    }
-
-    if (!err.empty()) {
-        printf("Err: %s\n", err.c_str());
-    }
-
-    if (!ret) {
-        printf("Failed to parse glTF\n");
-    }
-
-    model.meshes.begin()
-
-    std::cout << "loaded gltf file" << std::endl;
-}
-
 int main() {
     Context context = initGl();
 
@@ -85,7 +104,7 @@ int main() {
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
     shader.use();
 
-    /*// Create new VAO
+    // Create new VAO
     unsigned int VAO;
     glGenVertexArrays(1, &VAO);
     // Bind VAO, VAO will remember state, and which VBO to use
@@ -107,26 +126,32 @@ int main() {
     );
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    // Normals
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    // TexCoords
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // Unbind everything
     glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);*/
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     std::string textureType("diffuse");
     std::string texture0FilePath("res/textures/0.png");
-    Texture texture0(textureType, texture0FilePath);
-
-    std::string texture1FilePath("res/textures/1.png");
-    Texture texture1(textureType, texture1FilePath);
+    Texture texture(textureType, texture0FilePath);
 
     Camera camera = Camera();
 
+    Model cube = Model("res/cube.glb");
+
+    glm::vec3 sunPosition = glm::vec3(3.0, 10.0, -5.0);
+    glm::vec3 sunColor = glm::vec3(1.0);
+
+
     SDL_Event event = {0};
     bool should_quit = false;
-
-    testGltf();
 
     while (!should_quit) {
         // Events
@@ -174,22 +199,23 @@ int main() {
         glClearColor(0.9f, 0.5f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Sun
+        shader.setVec3("sunPosition", sunPosition);
+        shader.setVec3("sunColor", sunColor);
+
         // Render...
         glActiveTexture(GL_TEXTURE0);  // Active texture unit
-        glBindTexture(GL_TEXTURE_2D, texture0.handle);  // Bind texture
-        shader.setInt("tex0", 0);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture1.handle);
-        shader.setInt("tex1", 1);
+        glBindTexture(GL_TEXTURE_2D, texture.handle);  // Bind texture
+        shader.setInt("tex", 0);
 
         glm::mat4 model = glm::mat4(1.0f);
-
         shader.setMat4("model", model);
         shader.setMat4("view", camera.view);
         shader.setMat4("projection", camera.projection);
 
-        /*glBindVertexArray(VAO);
+
+
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
@@ -197,7 +223,26 @@ int main() {
         model = glm::rotate(model, glm::radians(degsRot), glm::vec3(0.5f, 1.f, 0.1f));
 
         shader.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);*/
+
+
+        glm::mat4 model_mat = glm::mat4(1.0f);
+        glm::mat4 model_rot = glm::mat4(1.0f);
+        glm::vec3 model_pos = glm::vec3(-3, 0, -3);
+        glm::mat4 trans =
+                glm::translate(glm::mat4(1.0f), model_pos);  // reposition model
+        model_rot = glm::rotate(model_rot, glm::radians(0.8f),
+                                glm::vec3(0, 1, 0));  // rotate model on y axis
+        model_mat = trans * model_rot;
+        glm::mat4 view_mat = glm::lookAt(
+                glm::vec3(2, 2, 20),                // Camera in World Space
+                model_pos,             // and looks at the origin
+                glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+        );
+
+        shader.setMat4("model", model);
+
+        cube.render(shader);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // Flip buffer
         SDL_GL_SwapWindow(context.window);

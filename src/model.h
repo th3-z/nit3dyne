@@ -11,6 +11,8 @@
 #include "shader.h"
 #include "texture.h"
 
+#include "tiny_gltf.h"
+
 
 struct Vertex {
     glm::vec3 position;
@@ -18,14 +20,28 @@ struct Vertex {
     glm::vec2 uv;
 };
 
+void dbgModel(tinygltf::Model &model);
+
 class Model {
 public:
-    Model(std::vector<Vertex> &vertices, std::vector<int> &indices, std::vector<Texture> &textures);
+    Model(const char* filePath);
     ~Model();
     void render(Shader &shader);
 
+    glm::mat4 modelMat = glm::mat4(1.f);
+
 private:
-    unsigned int VAO, VBO, EBO;
+    void bindModel();
+    void bindModelNodes(tinygltf::Node &node);
+    void bindMesh(tinygltf::Mesh &mesh);
+
+    void drawModelNodes(tinygltf::Node &node);
+    void drawMesh(tinygltf::Mesh &mesh);
+
+
+    tinygltf::Model model;
+    unsigned int VAO;//, VBO, EBO;
+    std::map<int, unsigned int> VBOs;
     std::vector<Vertex> vertices;
     std::vector<int> indices;
     std::vector<Texture> textures;
