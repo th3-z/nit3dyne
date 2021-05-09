@@ -94,6 +94,15 @@ void Shader::setInt(const std::string &name, int value) const {
     );
 }
 
+void Shader::setMat3(const std::string &name, glm::mat3 &mat) const {
+    glUniformMatrix3fv(
+            glGetUniformLocation(this->handle, name.c_str()),
+            1,  // Send one
+            GL_FALSE,  // Don't transpose (swap rows/cols)
+            glm::value_ptr(mat)
+    );
+}
+
 void Shader::setMat4(const std::string &name, glm::mat4 &mat) const {
     glUniformMatrix4fv(
             glGetUniformLocation(this->handle, name.c_str()),

@@ -72,11 +72,14 @@ int main() {
     Texture texture0(textureType, texture0FilePath);
     std::string texture1FilePath("res/textures/1.png");
     Texture texture1(textureType, texture1FilePath);
+    std::string texture2FilePath("res/textures/2.png");
+    Texture texture2(textureType, texture2FilePath);
 
     Model cube = Model("res/cube.glb");
     Model suzanne = Model("res/suzanne.glb");
+    Model sphere= Model("res/sphere.glb");
 
-    glm::vec3 sunPosition = glm::vec3(0.0, 10.0, -10.0);
+    glm::vec4 sunPosition = glm::vec4(5.0, 5.0, 0.0, 1.0);
     glm::vec3 sunColor = glm::vec3(1.0, 0.7, 0.5);
 
     SDL_Event event = {0};
@@ -135,32 +138,73 @@ int main() {
         glClearColor(0.9f, 0.5f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 view = camera->getView();
-        shader.setMat4("view", view);
-        shader.setMat4("projection", projection);
-
         // Sun
-        shader.setVec3("sunPosition", sunPosition);
+        glm::vec3 viewSunPos = camera->getView() * (glm::mat4(1.0f) * sunPosition);
+        //std::cout << "x" << viewSunPos.x << " y" << viewSunPos.y<< " z" << viewSunPos.z<< std::endl;
+        shader.setVec3("sunPosition", viewSunPos);
         shader.setVec3("sunColor", sunColor);
-        shader.setVec3("viewPosition", camera->position);
-
-        // Cube
-        glActiveTexture(GL_TEXTURE0);  // Active texture unit
-        glBindTexture(GL_TEXTURE_2D, texture0.handle);  // Bind texture
-        shader.setInt("tex", 0);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        shader.setMat4("model", model);
-        cube.render(shader);
 
         // Suzanne
-        glBindTexture(GL_TEXTURE_2D, texture1.handle);  // Bind texture
-        model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
-        float degsRot = (SDL_GetTicks()%3600)/10;
-        model = glm::rotate(model, glm::radians(degsRot), glm::vec3(0.5f, 1.f, 0.1f));
+        glActiveTexture(GL_TEXTURE0);  // Active texture unit
+        glBindTexture(GL_TEXTURE_2D, texture0.handle);  // Bind texture
 
-        shader.setMat4("model", model);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
+        float rotation = (SDL_GetTicks() % 3600) / 10;
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.f, 0.1f));
+
+        glm::mat4 mvp = projection * camera->getView() * model;
+        shader.setMat4("mvp", mvp);
+
+        glm::mat4 modelView = camera->getView() * model;
+        shader.setMat4("modelView", modelView);
+
+        glm::mat3 normalMat = glm::inverse(
+            glm::transpose(glm::mat3(modelView))
+        );
+        shader.setMat3("normalMat", normalMat);
+
         suzanne.render(shader);
+
+        // Cube
+        glBindTexture(GL_TEXTURE_2D, texture1.handle);  // Bind texture
+        shader.setInt("tex", 0);
+
+        model = glm::mat4(1.0f);
+        mvp = projection * camera->getView() * model;
+        shader.setMat4("mvp", mvp);
+
+        modelView = camera->getView() * model;
+        shader.setMat4("modelView", modelView);
+
+        normalMat = glm::inverse(
+                glm::transpose(glm::mat3(modelView))
+        );
+        shader.setMat3("normalMat", normalMat);
+
+        cube.render(shader);
+
+        // Sphere
+        glBindTexture(GL_TEXTURE_2D, texture2.handle);  // Bind texture
+        shader.setInt("tex", 0);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.f, 5.f, 6.5f));
+        rotation = (SDL_GetTicks() % 360);
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.f, 1.f, 0.f));
+
+        mvp = projection * camera->getView() * model;
+        shader.setMat4("mvp", mvp);
+
+        modelView = camera->getView() * model;
+        shader.setMat4("modelView", modelView);
+
+        normalMat = glm::inverse(
+                glm::transpose(glm::mat3(modelView))
+        );
+        shader.setMat3("normalMat", normalMat);
+
+        sphere.render(shader);
 
         // Flip buffer
         SDL_GL_SwapWindow(context.window);
