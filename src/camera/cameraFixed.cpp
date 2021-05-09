@@ -10,19 +10,19 @@ CameraFixed::CameraFixed() {
     this->yaw = this->fixedYaw;
 }
 
-void CameraFixed::handleDirection(int d) {
+void CameraFixed::handleDirection(int d, float timeDelta) {
     if (d & Direction::FORWARD) {
-        this->position.x += this->speed * this->front.x;
-        this->position.z += this->speed * this->front.z;
+        this->position.x += this->speed * timeDelta * this->front.x;
+        this->position.z += this->speed * timeDelta * this->front.z;
     }
     if (d & Direction::LEFT)
-        this->position -= glm::normalize(glm::cross(this->front, this->up)) * this->speed;
+        this->position -= glm::normalize(glm::cross(this->front, this->up)) * this->speed * timeDelta ;
     if (d & Direction::BACKWARD) {
-        this->position.x -= this->speed * this->front.x;
-        this->position.z -= this->speed * this->front.z;
+        this->position.x -= this->speed * timeDelta * this->front.x;
+        this->position.z -= this->speed * timeDelta * this->front.z;
     }
     if (d & Direction::RIGHT)
-        this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed;
+        this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed * timeDelta ;
 }
 
 void CameraFixed::handleMouse(int x, int y) {

@@ -13,7 +13,7 @@
 class CameraFixed : public Camera {
 public:
     CameraFixed();
-    void handleDirection(int d) override;
+    void handleDirection(int d, float timeDelta) override;
     void handleMouse(int x, int y) override;
 
 private:

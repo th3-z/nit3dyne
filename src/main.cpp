@@ -84,8 +84,14 @@ int main() {
 
     SDL_Event event = {0};
     bool should_quit = false;
+    float timeDelta = 0.f;
+    float timeLast = 0.f;
 
     while (!should_quit) {
+        float timeCurrent = (float) SDL_GetTicks() / 1000;
+        timeDelta = timeCurrent - timeLast;
+        timeLast = timeCurrent;
+
         // Events
         int directions = 0;
         int mX = 0;
@@ -131,7 +137,7 @@ int main() {
             }
         }
 
-        camera->handleDirection(directions);
+        camera->handleDirection(directions, timeDelta);
         camera->handleMouse(mX, mY);
 
         // Clear

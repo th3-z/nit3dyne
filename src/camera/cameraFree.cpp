@@ -14,17 +14,17 @@ void CameraFree::handleMouse(int x, int y) {
     if (this->pitch < -89.0f) this->pitch = -89.0;
 }
 
-void CameraFree::handleDirection(int d) {
+void CameraFree::handleDirection(int d, float timeDelta) {
     if (d & Direction::FORWARD)
-        this->position += this->speed * this->front;
+        this->position += this->speed * timeDelta * this->front;
     if (d & Direction::LEFT)
-        this->position -= glm::normalize(glm::cross(this->front, this->up)) * this->speed;
+        this->position -= glm::normalize(glm::cross(this->front, this->up)) * this->speed * timeDelta ;
     if (d & Direction::BACKWARD)
-        this->position -= this->speed * this->front;
+        this->position -= this->speed * timeDelta * this->front;
     if (d & Direction::RIGHT)
-        this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed;
+        this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed * timeDelta ;
     if (d & Direction::UP)
-        this->position += this->speed * this->worldUp;
+        this->position += this->speed * timeDelta * this->worldUp;
     if (d & Direction::DOWN)
-        this->position -= this->speed * this->worldUp;
+        this->position -= this->speed * timeDelta * this->worldUp;
 }
