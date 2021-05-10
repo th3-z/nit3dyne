@@ -21,6 +21,9 @@ struct Context {
     SDL_GLContext context;
 };
 
+unsigned int SCREEN_H = 486;
+unsigned int SCREEN_W = 864;
+
 Context initGl() {
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -36,8 +39,8 @@ Context initGl() {
             "Pain",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
-            800,
-            600,
+            SCREEN_W,
+            SCREEN_H,
             SDL_WINDOW_OPENGL
     );
 
@@ -48,7 +51,7 @@ Context initGl() {
     std::cout << std::left << "OpenGL Vendor: " << (char *)glGetString(GL_VENDOR) << std::endl;
     std::cout << std::left << "OpenGL Renderer: " << (char *)glGetString(GL_RENDERER) << std::endl;
 
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, SCREEN_W, SCREEN_H);
     glEnable(GL_DEPTH_TEST);  // Enable depth test
 
     return Context{window, context};
@@ -65,7 +68,7 @@ int main() {
     CameraFree cameraFree;
     CameraFixed cameraFixed;
     camera = &cameraFree;
-    glm::mat4 projection = glm::perspective(glm::radians(45.f), 800.f / 600.f, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(45.f), (float) SCREEN_W / SCREEN_H, 0.1f, 100.0f);
 
     std::string textureType("diffuse");
     std::string texture0FilePath("res/textures/0.png");
@@ -142,7 +145,7 @@ int main() {
 
         // Clear
         glClearColor(0.9f, 0.5f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Sun
         glm::vec3 viewSunPos = camera->getView() * (glm::mat4(1.0f) * sunPosition);
@@ -156,8 +159,6 @@ int main() {
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
-        float rotation = (SDL_GetTicks() % 3600) / 10;
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.f, 0.1f));
 
         glm::mat4 mvp = projection * camera->getView() * model;
         shader.setMat4("mvp", mvp);
@@ -177,6 +178,9 @@ int main() {
         shader.setInt("tex", 0);
 
         model = glm::mat4(1.0f);
+        float rotation = (SDL_GetTicks() % 3600) / 10;
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.f, 0.1f));
+
         mvp = projection * camera->getView() * model;
         shader.setMat4("mvp", mvp);
 

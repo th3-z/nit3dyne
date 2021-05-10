@@ -2,6 +2,7 @@
 
 in vec3 lightColor;
 in vec2 texCoord;
+in vec3 affineUv;
 
 uniform sampler2D tex;
 
@@ -9,5 +10,10 @@ out vec4 fragColor;
 
 
 void main() {
-    fragColor = texture(tex, texCoord) * vec4(lightColor, 1.0);
+    int colors = 32;
+    fragColor = texture(tex, affineUv.st / affineUv.p) * vec4(lightColor, 1.0);
+
+    fragColor *= colors;
+    fragColor = floor(fragColor);
+    fragColor /= colors;
 }

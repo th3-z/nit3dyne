@@ -5,7 +5,7 @@ layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec2 inTexCoord;
 
 out vec3 lightColor;
-out vec2 texCoord;
+out vec3 affineUv;
 
 uniform vec3 sunPosition;
 uniform vec3 sunColor;
@@ -16,9 +16,16 @@ uniform mat4 mvp;
 
 
 void main() {
-   gl_Position = mvp * vec4(inVertex, 1.0);
+   vec4 snapToPix = mvp * vec4(inVertex, 1.0);
+   vec4 vertex = snapToPix;
+   vertex.xyz = snapToPix.xyz / snapToPix.w;
+   vertex.x = floor(160 * vertex.x) / 160;
+   vertex.y = floor(120 * vertex.y) / 120;
+   vertex.xyz *= snapToPix.w;
+   gl_Position = vertex;
 
    vec3 normal = normalMat * inNormal;
+
    vec3 vertPos = vec3(modelView * vec4(inVertex, 1.0));
 
    // Ambient
@@ -34,5 +41,7 @@ void main() {
    vec3 specular = 0.5 * pow(max(dot(viewDir, reflectDir), 0.0), 32) * sunColor;
 
    lightColor = ambient + diffuse + specular;
-   texCoord = inTexCoord;
+
+   // Affine texture map
+   affineUv = vec3(inTexCoord.st * vertPos.z, vertPos.z);
 }
