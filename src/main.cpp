@@ -11,6 +11,7 @@
 #include "camera/cameraFree.h"
 #include "model.h"
 #include "screen.h"
+#include "input.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -28,10 +29,8 @@ int main() {
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
     shader.use();
 
-    Camera *camera;
-    CameraFree cameraFree;
-    CameraFixed cameraFixed;
-    camera = &cameraFree;
+    Camera *camera = new CameraFree;
+    Input input(&camera);
 
     std::string textureType("diffuse");
     std::string texture0FilePath("res/textures/0.png");
@@ -48,63 +47,16 @@ int main() {
     glm::vec4 sunPosition = glm::vec4(5.0, 5.0, 0.0, 1.0);
     glm::vec3 sunColor = glm::vec3(1.0, 0.7, 0.5);
 
-    SDL_Event event = {0};
-    bool quit = false;
+
     float timeDelta = 0.f;
     float timeLast = 0.f;
 
-    while (!quit) {
+    while (!input.quit) {
         float timeCurrent = (float) SDL_GetTicks() / 1000;
         timeDelta = timeCurrent - timeLast;
         timeLast = timeCurrent;
 
-        // Events
-        int directions = 0;
-        int mX = 0;
-        int mY = 0;
-
-        //continuous-response directions
-        const Uint8* keystate = SDL_GetKeyboardState(NULL);
-        if(keystate[SDL_SCANCODE_W]) directions |= Direction::FORWARD;
-        if(keystate[SDL_SCANCODE_A]) directions |= Direction::LEFT;
-        if(keystate[SDL_SCANCODE_S]) directions |= Direction::BACKWARD;
-        if(keystate[SDL_SCANCODE_D]) directions |= Direction::RIGHT;
-        if(keystate[SDL_SCANCODE_SPACE]) directions |= Direction::UP;
-        if(keystate[SDL_SCANCODE_LSHIFT]) directions |= Direction::DOWN;
-
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    quit = true;
-                    break;
-                case SDL_MOUSEMOTION:
-                    mX = event.motion.xrel;
-                    mY = event.motion.yrel;
-                    break;
-                case SDL_KEYDOWN:
-                    switch (event.key.keysym.sym) {
-                        case SDLK_ESCAPE:
-                            quit = true;
-                            break;
-                        case SDLK_1:
-                            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                            break;
-                        case SDLK_2:
-                            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                            break;
-                        case SDLK_f:
-                            camera = &cameraFixed;
-                            break;
-                        case SDLK_g:
-                            camera = &cameraFree;
-                            break;
-                    }
-                    break;
-            }
-        }
-
-        camera->handleDirection(directions, timeDelta);
-        camera->handleMouse(mX, mY);
+        input.handleEvents(timeDelta);
 
         // Clear
         glClearColor(0.9f, 0.5f, 0.3f, 1.0f);
