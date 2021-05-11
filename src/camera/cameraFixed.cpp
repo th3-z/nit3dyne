@@ -25,6 +25,6 @@ void CameraFixed::handleDirection(int d, float timeDelta) {
         this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed * timeDelta ;
 }
 
-void CameraFixed::handleMouse(int x, int y) {
-    this->yaw += x * this->sensitivity;
+void CameraFixed::handleMouse(int x, int y, float timeDelta) {
+    this->yaw += x * (this->sensitivity * timeDelta);
 }

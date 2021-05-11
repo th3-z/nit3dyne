@@ -14,7 +14,7 @@ class CameraFixed : public Camera {
 public:
     CameraFixed();
     void handleDirection(int d, float timeDelta) override;
-    void handleMouse(int x, int y) override;
+    void handleMouse(int x, int y, float timeDelta) override;
 
 private:
     const float fixedHeight = 10.f;

@@ -1,4 +1,7 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
+
 #include <glad/glad.h>
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
@@ -21,6 +24,9 @@
 const unsigned int SCREEN_H = 486;
 const unsigned int SCREEN_W = 864;
 const float SCREEN_FOV = 45.f;
+
+const unsigned int TARGET_FPS = 75;
+const double TARGET_FRAMETIME = (1.0 / TARGET_FPS) * 1000.0;
 
 int main() {
     Screen screen(SCREEN_W, SCREEN_H, SCREEN_FOV, "Pain");
@@ -48,15 +54,31 @@ int main() {
     glm::vec3 sunColor = glm::vec3(1.0, 0.7, 0.5);
 
 
-    float timeDelta = 0.f;
-    float timeLast = 0.f;
+    double timeDelta;
+    Uint64 timeNow = SDL_GetPerformanceCounter();
+    Uint64 timeLast = 0;
+    unsigned int frames = 0;
 
     while (!input.quit) {
-        float timeCurrent = (float) SDL_GetTicks() / 1000;
-        timeDelta = timeCurrent - timeLast;
-        timeLast = timeCurrent;
+        frames++;
+        timeLast = timeNow;
+        timeNow = SDL_GetPerformanceCounter();  // TODO: Improve timing precision
+        timeDelta = (double)((timeNow - timeLast) / (double)SDL_GetPerformanceFrequency() );
+        if (frames % (TARGET_FPS*5) == 0)
+            std::cout << "Frame time: " << timeDelta*1e3 << "ms (" << 1/timeDelta << "fps), ";
 
-        input.handleEvents(timeDelta);
+        if (timeDelta < TARGET_FRAMETIME) {
+            std::this_thread::sleep_for(std::chrono::nanoseconds(
+                    (int) floor(((TARGET_FRAMETIME - timeDelta)*1.0e6))
+            ));
+        }
+
+        timeNow = SDL_GetPerformanceCounter();
+        timeDelta = (double)((timeNow - timeLast) / (double)SDL_GetPerformanceFrequency() );
+        if (frames % (TARGET_FPS*5) == 0)
+            std::cout << timeDelta*1e3 << "ms (" << 1/timeDelta << "fps)" << std::endl;
+
+        input.handleEvents((float) timeDelta);
 
         // Clear
         glClearColor(0.9f, 0.5f, 0.3f, 1.0f);

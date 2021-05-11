@@ -6,9 +6,9 @@
 
 CameraFree::CameraFree() = default;
 
-void CameraFree::handleMouse(int x, int y) {
-    this->yaw += x * this->sensitivity;
-    this->pitch -= y * this->sensitivity;
+void CameraFree::handleMouse(int x, int y, float timeDelta) {
+    this->yaw += x * (this->sensitivity * timeDelta);
+    this->pitch -= y * (this->sensitivity * timeDelta);
 
     if (this->pitch > 89.0f) this->pitch = 89.0;
     if (this->pitch < -89.0f) this->pitch = -89.0;

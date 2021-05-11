@@ -14,7 +14,7 @@ class CameraFree : public Camera {
 public:
     CameraFree();
     void handleDirection(int d, float timeDelta) override;
-    void handleMouse(int x, int y) override;
+    void handleMouse(int x, int y, float timeDelta) override;
 };
 
 

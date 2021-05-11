@@ -61,5 +61,5 @@ void Input::handleEvents(float timeDelta) {
     }
 
     (*this->camera)->handleDirection(directions, timeDelta);
-    (*this->camera)->handleMouse(mX, mY);
+    (*this->camera)->handleMouse(mX, mY, timeDelta);
 }

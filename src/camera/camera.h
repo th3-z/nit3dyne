@@ -25,7 +25,7 @@ public:
     virtual ~Camera();
 
     virtual void handleDirection(int d, float timeDelta) = 0;
-    virtual void handleMouse(int x, int y) = 0;
+    virtual void handleMouse(int x, int y, float timeDelta) = 0;
     glm::mat4 getView();
 
     glm::vec3 position;
@@ -40,7 +40,7 @@ protected:
     float pitch = -0.f;
 
     const float speed = 5.f;  // units per second
-    const float sensitivity = 1.5f;
+    const float sensitivity = 55.f;
 };
 
 
