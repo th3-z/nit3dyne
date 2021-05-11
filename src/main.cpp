@@ -10,55 +10,19 @@
 #include "camera/cameraFixed.h"
 #include "camera/cameraFree.h"
 #include "model.h"
+#include "screen.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
 
-struct Context {
-    SDL_Window *window;
-    SDL_GLContext context;
-};
-
-unsigned int SCREEN_H = 486;
-unsigned int SCREEN_W = 864;
-
-Context initGl() {
-    SDL_Init(SDL_INIT_EVERYTHING);
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-    SDL_GL_SetSwapInterval(1);  // Wait for vblank on swap
-
-    SDL_Window *window = SDL_CreateWindow(
-            "Pain",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            SCREEN_W,
-            SCREEN_H,
-            SDL_WINDOW_OPENGL
-    );
-
-    SDL_GLContext context = SDL_GL_CreateContext(window);
-    gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
-    std::cout << std::left << "OpenGL Version: " << GLVersion.major << "." << GLVersion.minor << std::endl;
-    std::cout << std::left << "OpenGL Shading Language Version: " << (char *)glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    std::cout << std::left << "OpenGL Vendor: " << (char *)glGetString(GL_VENDOR) << std::endl;
-    std::cout << std::left << "OpenGL Renderer: " << (char *)glGetString(GL_RENDERER) << std::endl;
-
-    glViewport(0, 0, SCREEN_W, SCREEN_H);
-    glEnable(GL_DEPTH_TEST);  // Enable depth test
-
-    return Context{window, context};
-}
+const unsigned int SCREEN_H = 486;
+const unsigned int SCREEN_W = 864;
+const float SCREEN_FOV = 45.f;
 
 int main() {
-    Context context = initGl();
+    Screen screen(SCREEN_W, SCREEN_H, SCREEN_FOV, "Pain");
 
     // SHADERS
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
@@ -68,7 +32,6 @@ int main() {
     CameraFree cameraFree;
     CameraFixed cameraFixed;
     camera = &cameraFree;
-    glm::mat4 projection = glm::perspective(glm::radians(45.f), (float) SCREEN_W / SCREEN_H, 0.1f, 100.0f);
 
     std::string textureType("diffuse");
     std::string texture0FilePath("res/textures/0.png");
@@ -86,11 +49,11 @@ int main() {
     glm::vec3 sunColor = glm::vec3(1.0, 0.7, 0.5);
 
     SDL_Event event = {0};
-    bool should_quit = false;
+    bool quit = false;
     float timeDelta = 0.f;
     float timeLast = 0.f;
 
-    while (!should_quit) {
+    while (!quit) {
         float timeCurrent = (float) SDL_GetTicks() / 1000;
         timeDelta = timeCurrent - timeLast;
         timeLast = timeCurrent;
@@ -112,7 +75,7 @@ int main() {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
-                    should_quit = true;
+                    quit = true;
                     break;
                 case SDL_MOUSEMOTION:
                     mX = event.motion.xrel;
@@ -121,7 +84,7 @@ int main() {
                 case SDL_KEYDOWN:
                     switch (event.key.keysym.sym) {
                         case SDLK_ESCAPE:
-                            should_quit = true;
+                            quit = true;
                             break;
                         case SDLK_1:
                             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -149,18 +112,20 @@ int main() {
 
         // Sun
         glm::vec3 viewSunPos = camera->getView() * (glm::mat4(1.0f) * sunPosition);
-        //std::cout << "x" << viewSunPos.x << " y" << viewSunPos.y<< " z" << viewSunPos.z<< std::endl;
         shader.setVec3("sunPosition", viewSunPos);
         shader.setVec3("sunColor", sunColor);
 
         // Suzanne
         glActiveTexture(GL_TEXTURE0);  // Active texture unit
         glBindTexture(GL_TEXTURE_2D, texture0.handle);  // Bind texture
+        shader.setInt("tex", 0);
 
         glm::mat4 model = glm::mat4(1.0f);
+        float rotation = (SDL_GetTicks() % 3600) / 10;
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.f, 0.1f));
         model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
 
-        glm::mat4 mvp = projection * camera->getView() * model;
+        glm::mat4 mvp = screen.perspective * camera->getView() * model;
         shader.setMat4("mvp", mvp);
 
         glm::mat4 modelView = camera->getView() * model;
@@ -178,10 +143,8 @@ int main() {
         shader.setInt("tex", 0);
 
         model = glm::mat4(1.0f);
-        float rotation = (SDL_GetTicks() % 3600) / 10;
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.f, 0.1f));
 
-        mvp = projection * camera->getView() * model;
+        mvp = screen.perspective * camera->getView() * model;
         shader.setMat4("mvp", mvp);
 
         modelView = camera->getView() * model;
@@ -203,7 +166,7 @@ int main() {
         rotation = (SDL_GetTicks() % 360);
         model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.f, 1.f, 0.f));
 
-        mvp = projection * camera->getView() * model;
+        mvp = screen.perspective * camera->getView() * model;
         shader.setMat4("mvp", mvp);
 
         modelView = camera->getView() * model;
@@ -216,13 +179,8 @@ int main() {
 
         sphere.render(shader);
 
-        // Flip buffer
-        SDL_GL_SwapWindow(context.window);
+        screen.flip();
     }
-
-    SDL_GL_DeleteContext(context.context);
-    SDL_DestroyWindow(context.window);
-    SDL_Quit();
 
     return 0;
 }

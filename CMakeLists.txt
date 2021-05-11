@@ -18,7 +18,7 @@ link_directories(lib)
 
 add_library(glad lib/glad/src/glad.c)
 
-add_executable(gl src/main.cpp src/shader.cpp src/shader.h src/texture.cpp src/texture.h src/util/image.cpp src/util/image.h src/model.cpp src/model.h src/camera/cameraFixed.cpp src/camera/cameraFixed.h src/camera/cameraFree.cpp src/camera/cameraFree.h src/camera/camera.cpp src/camera/camera.h)
+add_executable(gl src/main.cpp src/shader.cpp src/shader.h src/texture.cpp src/texture.h src/util/image.cpp src/util/image.h src/model.cpp src/model.h src/camera/cameraFixed.cpp src/camera/cameraFixed.h src/camera/cameraFree.cpp src/camera/cameraFree.h src/camera/camera.cpp src/camera/camera.h src/screen.cpp src/screen.h)
 target_link_libraries(gl glad ${SDL2_LIBRARIES} ${GLM_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${CMAKE_DL_LIBS})
 
 file( COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
