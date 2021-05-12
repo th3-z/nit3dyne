@@ -5,10 +5,11 @@
 #ifndef GL_TEXTURE_H
 #define GL_TEXTURE_H
 
-
+#include <iostream>
 #include <string>
 #include <glad/glad.h>
-#include "util/image.h"
+
+#include "stb_image.h"
 
 class Texture {
 public:
