@@ -71,6 +71,7 @@ w(w), h(h), fov(fov) {
         std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
 
     unsigned int quadVbo;
     glGenVertexArrays(1, &this->fboQuadVao);
