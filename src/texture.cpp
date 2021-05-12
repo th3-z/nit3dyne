@@ -4,7 +4,7 @@
 
 #include "texture.h"
 
-unsigned int Texture::cHandle = 0;
+unsigned int Texture::cHandle = 1;
 
 Texture::Texture(std::string &type, std::string &filePath):
 handle(cHandle++),

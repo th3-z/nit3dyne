@@ -62,6 +62,8 @@ Shader::Shader(const char *vPath, const char *fPath) {
     if (!success)
     {
         glGetProgramInfoLog(this->handle, 512, NULL, infoLog);
+        std::cout << vPath << std::endl;
+        std::cout << fPath << std::endl;
         std::cout << "Error: Failed to link shader program\n" << infoLog << std::endl;
     }
 

@@ -34,6 +34,11 @@ int main() {
     // SHADERS
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
     shader.use();
+    shader.setInt("tex", 0);
+
+    Shader postShader("shaders/post.vert", "shaders/post.frag");
+    postShader.use();
+    postShader.setInt("tex", 0);
 
     Camera *camera = new CameraFree;
     Input input(&camera);
@@ -51,7 +56,7 @@ int main() {
     Model sphere= Model("res/sphere.glb");
 
     glm::vec4 sunPosition = glm::vec4(5.0, 5.0, 0.0, 1.0);
-    glm::vec3 sunColor = glm::vec3(1.0, 0.7, 0.5);
+    glm::vec3 sunColor = glm::vec3(0.65, 0.8, 0.9);
 
 
     double timeDelta;
@@ -73,6 +78,9 @@ int main() {
             ));
         }
 
+        // FIXME: This shouldn't be needed since each model calls shader.use()
+        shader.use();
+
         timeNow = SDL_GetPerformanceCounter();
         timeDelta = (double)((timeNow - timeLast) / (double)SDL_GetPerformanceFrequency() );
         if (frames % (TARGET_FPS*5) == 0)
@@ -81,7 +89,7 @@ int main() {
         input.handleEvents((float) timeDelta);
 
         // Clear
-        glClearColor(0.9f, 0.5f, 0.3f, 1.0f);
+        glClearColor(0.05f, 0.1f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Sun
@@ -92,7 +100,6 @@ int main() {
         // Suzanne
         glActiveTexture(GL_TEXTURE0);  // Active texture unit
         glBindTexture(GL_TEXTURE_2D, texture0.handle);  // Bind texture
-        shader.setInt("tex", 0);
 
         glm::mat4 model = glm::mat4(1.0f);
         float rotation = (SDL_GetTicks() % 3600) / 10;
@@ -114,7 +121,6 @@ int main() {
 
         // Cube
         glBindTexture(GL_TEXTURE_2D, texture1.handle);  // Bind texture
-        shader.setInt("tex", 0);
 
         model = glm::mat4(1.0f);
 
@@ -133,7 +139,6 @@ int main() {
 
         // Sphere
         glBindTexture(GL_TEXTURE_2D, texture2.handle);  // Bind texture
-        shader.setInt("tex", 0);
 
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.f, 5.f, 6.5f));
@@ -153,7 +158,7 @@ int main() {
 
         sphere.render(shader);
 
-        screen.flip();
+        screen.flip(postShader);
     }
 
     return 0;

@@ -11,13 +11,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "shader.h"
+
+
 class Screen {
 public:
     Screen(int w, int h, float fov, const char* title);
     ~Screen();
 
     void resize();
-    void flip();
+    void flip(Shader &postShader);
 
     int w;
     int h;
@@ -26,6 +29,10 @@ public:
 private:
     SDL_Window *window;
     SDL_GLContext context;
+    unsigned int fbo;
+    unsigned int rbo;
+    unsigned int fboTexHandle;
+    unsigned int fboQuadVao;
 };
 
 

@@ -27,6 +27,7 @@ Model::~Model() {
 }
 
 void Model::render(Shader &shader) {
+    shader.use();
     glBindVertexArray(this->VAO);
 
     const tinygltf::Scene &scene = this->model.scenes[this->model.defaultScene];
