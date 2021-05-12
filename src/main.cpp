@@ -21,9 +21,9 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
 
-const unsigned int SCREEN_H = 486;
-const unsigned int SCREEN_W = 864;
-const float SCREEN_FOV = 45.f;
+const unsigned int SCREEN_W = 1920;
+const unsigned int SCREEN_H = 1200;
+const float SCREEN_FOV = 90.f;
 
 const unsigned int TARGET_FPS = 75;
 const double TARGET_FRAMETIME = (1.0 / TARGET_FPS) * 1000.0;
@@ -36,9 +36,11 @@ int main() {
     shader.use();
     shader.setInt("tex", 0);
 
+    // TODO: Move into screen.cpp
     Shader postShader("shaders/post.vert", "shaders/post.frag");
     postShader.use();
     postShader.setInt("tex", 0);
+    postShader.setInt("texDither", 1);
 
     Camera *camera = new CameraFree;
     Input input(&camera);
@@ -50,6 +52,10 @@ int main() {
     Texture texture1(textureType, texture1FilePath);
     std::string texture2FilePath("res/textures/2.png");
     Texture texture2(textureType, texture2FilePath);
+
+    // TODO: Move into screen.cpp
+    std::string ditherFilePath("res/textures/dith.png");
+    Texture textureDither(textureType, ditherFilePath);
 
     Model cube = Model("res/cube.glb");
     Model suzanne = Model("res/suzanne.glb");
@@ -158,7 +164,7 @@ int main() {
 
         sphere.render(shader);
 
-        screen.flip(postShader);
+        screen.flip(postShader, textureDither.handle);
     }
 
     return 0;

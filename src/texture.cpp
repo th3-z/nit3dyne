@@ -4,11 +4,8 @@
 
 #include "texture.h"
 
-unsigned int Texture::cHandle = 1;
-
 Texture::Texture(std::string &type, std::string &filePath):
-handle(cHandle++),
-type(type){
+type(type) {
     int w, h, nChannels;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(filePath.c_str(), &w, &h, &nChannels, 0);

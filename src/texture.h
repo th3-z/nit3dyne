@@ -18,8 +18,6 @@ public:
 
     Texture(std::string &type, std::string &filePath);
     ~Texture();
-private:
-    static unsigned int cHandle;
 };
 
 

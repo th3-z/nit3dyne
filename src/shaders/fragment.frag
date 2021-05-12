@@ -10,10 +10,5 @@ out vec4 fragColor;
 
 
 void main() {
-    int colors = 32;
     fragColor = texture(tex, affineUv.st / affineUv.p) * vec4(lightColor, 1.0);
-
-    fragColor *= colors;
-    fragColor = floor(fragColor);
-    fragColor /= colors;
 }
