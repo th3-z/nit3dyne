@@ -79,6 +79,8 @@ w(w), h(h), fov(fov) {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     unsigned int quadVbo;
     glGenVertexArrays(1, &this->fboQuadVao);
@@ -147,5 +149,4 @@ void Screen::flip(Shader &postShader, int ditherHandle) {
     glBindFramebuffer(GL_FRAMEBUFFER, this->fbo[0]);
     glViewport(0, 0, SCREEN_W_VIRTUAL, SCREEN_H_VIRTUAL);
     glEnable(GL_DEPTH_TEST);
-
 }

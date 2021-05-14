@@ -16,6 +16,10 @@ public:
     unsigned int handle;
     std::string type;
 
+    int w;
+    int h;
+    int channels;
+
     Texture(std::string &type, std::string &filePath);
     ~Texture();
 };

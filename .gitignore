@@ -6,4 +6,5 @@ build/
 # editors
 *.kate-swp
 *.swp
+*~
 .idea/

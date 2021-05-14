@@ -18,6 +18,7 @@ add_executable(gl
     src/camera/camera.cpp src/camera/camera.h
     src/screen.cpp src/screen.h
     src/input.cpp src/input.h
+    src/font.cpp src/font.h
 )
 target_link_libraries(gl ${SDL2_LIBRARIES} ${GLM_LIBRARIES} ${CMAKE_DL_LIBS})
 

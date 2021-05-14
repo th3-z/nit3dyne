@@ -20,6 +20,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
+#include "font.h"
 
 const unsigned int SCREEN_W = 1920;
 const unsigned int SCREEN_H = 1200;
@@ -30,6 +31,9 @@ const double TARGET_FRAMETIME = (1.0 / TARGET_FPS) * 1000.0;
 
 int main() {
     Screen screen(SCREEN_W, SCREEN_H, SCREEN_FOV, "Pain");
+
+    Font font("The quick brown fox jumps over the lazy dog.");
+    //font.draw();
 
     // SHADERS
     Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
@@ -83,6 +87,9 @@ int main() {
                     (int) floor(((TARGET_FRAMETIME - timeDelta)*1.0e6))
             ));
         }
+
+
+
 
         // FIXME: This shouldn't be needed since each model calls shader.use()
         shader.use();
@@ -163,6 +170,8 @@ int main() {
         shader.setMat3("normalMat", normalMat);
 
         sphere.render(shader);
+
+        font.draw();
 
         screen.flip(postShader, textureDither.handle);
     }
