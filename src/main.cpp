@@ -76,7 +76,7 @@ int main() {
         timeNow = SDL_GetPerformanceCounter();  // TODO: Improve timing precision
         timeDelta = (double)((timeNow - timeLast) / (double)SDL_GetPerformanceFrequency() );
         if (frames % (TARGET_FPS*5) == 0)
-            std::cout << "Frame time: " << timeDelta*1e3 << "ms (" << 1/timeDelta << "fps), ";
+            std::cout << "Frame time: " << timeDelta*1e3 << "ms\t(" << 1/timeDelta << "fps),\t";
 
         if (timeDelta < TARGET_FRAMETIME) {
             std::this_thread::sleep_for(std::chrono::nanoseconds(
@@ -90,7 +90,7 @@ int main() {
         timeNow = SDL_GetPerformanceCounter();
         timeDelta = (double)((timeNow - timeLast) / (double)SDL_GetPerformanceFrequency() );
         if (frames % (TARGET_FPS*5) == 0)
-            std::cout << timeDelta*1e3 << "ms (" << 1/timeDelta << "fps)" << std::endl;
+            std::cout << timeDelta*1e3 << "ms\t(" << 1/timeDelta << "fps)" << std::endl;
 
         input.handleEvents((float) timeDelta);
 
