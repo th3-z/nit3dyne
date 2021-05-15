@@ -2,14 +2,21 @@ cmake_minimum_required(VERSION 3.10)
 project(gl)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "-O3 -Wall")
 
-find_package(SDL2 REQUIRED)
-find_package(glm REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} lib/glad/include lib)
+# Header-only libs
+include_directories(lib)
 
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "*.cpp")
+# External targets
+set(GLFW_BUILD_TESTS OFF CACHE BOOL  "GLFW lib only")
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL  "GLFW lib only")
+set(GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only")
+set(GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only")
+add_subdirectory(lib/glfw)
+add_subdirectory(lib/glm)
+add_subdirectory(lib/glad)
+
 add_executable(gl
-    lib/glad/src/glad.c
     src/main.cpp
     src/shader.cpp src/shader.h src/texture.cpp src/texture.h
     src/model.cpp src/model.h
@@ -20,13 +27,14 @@ add_executable(gl
     src/input.cpp src/input.h
     src/font.cpp src/font.h
 )
-target_link_libraries(gl ${SDL2_LIBRARIES} ${GLM_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(gl glfw glm glad ${CMAKE_DL_LIBS})
 
+# Link resources
 add_custom_command(
-        TARGET gl POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-            ${CMAKE_SOURCE_DIR}/src/shaders ${CMAKE_CURRENT_BINARY_DIR}/shaders
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-            ${CMAKE_SOURCE_DIR}/src/res ${CMAKE_CURRENT_BINARY_DIR}/res
-        COMMENT "Linking resources"
+    TARGET gl POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+        ${CMAKE_SOURCE_DIR}/src/shaders ${CMAKE_CURRENT_BINARY_DIR}/shaders
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+        ${CMAKE_SOURCE_DIR}/src/res ${CMAKE_CURRENT_BINARY_DIR}/res
+    COMMENT "Linking resources"
 )

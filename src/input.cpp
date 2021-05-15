@@ -4,62 +4,56 @@
 
 #include "input.h"
 
-Input::Input(Camera **camera):
-camera(camera), event({0}), quit(false) {
+double Input::mouseLastX = 0.;
+double Input::mouseLastY = 0.;
 
+void Input::callbackMouse(GLFWwindow *window, double mouseX, double mouseY) {
+    auto *windowState = (WindowState*) glfwGetWindowUserPointer(window);
+
+    float xOffset = mouseX - mouseLastX;
+    float yOffset = mouseY - mouseLastY;
+
+    mouseLastX = mouseX;
+    mouseLastY = mouseY;
+
+    windowState->camera->handleMouse(xOffset, yOffset, (float) windowState->timeDelta);
 }
 
-Input::~Input() {
-    delete *(this->camera);
-}
+void Input::callbackKey(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    auto *windowState = (WindowState*) glfwGetWindowUserPointer(window);
 
-void Input::handleEvents(float timeDelta) {
-    int directions = 0;
-    int mX = 0;
-    int mY = 0;
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
 
-    //continuous-response directions
-    const Uint8* keystate = SDL_GetKeyboardState(NULL);
-    if(keystate[SDL_SCANCODE_W]) directions |= Direction::FORWARD;
-    if(keystate[SDL_SCANCODE_A]) directions |= Direction::LEFT;
-    if(keystate[SDL_SCANCODE_S]) directions |= Direction::BACKWARD;
-    if(keystate[SDL_SCANCODE_D]) directions |= Direction::RIGHT;
-    if(keystate[SDL_SCANCODE_SPACE]) directions |= Direction::UP;
-    if(keystate[SDL_SCANCODE_LSHIFT]) directions |= Direction::DOWN;
-
-    while (SDL_PollEvent(&this->event)) {
-        switch (this->event.type) {
-            case SDL_QUIT:
-                this->quit = true;
-                break;
-            case SDL_MOUSEMOTION:
-                mX = this->event.motion.xrel;
-                mY = this->event.motion.yrel;
-                break;
-            case SDL_KEYDOWN:
-                switch (this->event.key.keysym.sym) {
-                    case SDLK_ESCAPE:
-                        this->quit = true;
-                        break;
-                    case SDLK_1:
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                        break;
-                    case SDLK_2:
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                        break;
-                    case SDLK_f:
-                        delete *(this->camera);
-                        *(this->camera) = new CameraFixed;
-                        break;
-                    case SDLK_g:
-                        delete *(this->camera);
-                        *(this->camera) = new CameraFree;
-                        break;
-                }
-                break;
-        }
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+        delete windowState->camera;
+        windowState->camera = new CameraFree;
     }
+    if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+        delete windowState->camera;
+        windowState->camera = new CameraFixed;
+    }
+}
 
-    (*this->camera)->handleDirection(directions, timeDelta);
-    (*this->camera)->handleMouse(mX, mY, timeDelta);
+void Input::registerCallbacks(GLFWwindow *window) {
+    glfwSetKeyCallback(window, callbackKey);
+    glfwSetCursorPosCallback(window, callbackMouse);
+}
+
+void Input::processContinuousInput(GLFWwindow *window) {
+    auto *windowState = (WindowState*) glfwGetWindowUserPointer(window);
+
+    int direction = 0;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) direction |= Direction::FORWARD;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) direction |= Direction::LEFT;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) direction |= Direction::BACKWARD;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) direction |= Direction::RIGHT;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) direction |= Direction::UP;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) direction |= Direction::DOWN;
+
+    windowState->camera->handleDirection(direction, (float) windowState->timeDelta);
 }

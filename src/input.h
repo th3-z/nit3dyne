@@ -6,23 +6,26 @@
 #define GL_INPUT_H
 
 #include <glad/glad.h>
-#include <SDL2/SDL.h>
+#include <GLFW/glfw3.h>
 #include "camera/camera.h"
 #include "camera/cameraFixed.h"
 #include "camera/cameraFree.h"
 
+struct WindowState {
+    double timeDelta = 0.;
+    Camera *camera;
+};
+
 class Input {
 public:
-    Input(Camera **camera);
-    ~Input();
-
-    void handleEvents(float timeDelta);
-
-    bool quit;
+    static void processContinuousInput(GLFWwindow *window);
+    static void callbackKey(GLFWwindow *window, int key, int scancode, int action, int mods);
+    static void callbackMouse(GLFWwindow *window, double mouseX, double mouseY);
+    static void registerCallbacks(GLFWwindow *window);
 
 private:
-    Camera **camera;
-    SDL_Event event;
+    static double mouseLastX;
+    static double mouseLastY;
 };
 
 

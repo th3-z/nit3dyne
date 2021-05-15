@@ -20,28 +20,20 @@ const float SCREEN_H_VIRTUAL = 486;
 
 Screen::Screen(int w, int h, float fov, const char *title):
 w(w), h(h), fov(fov) {
-    SDL_Init(SDL_INIT_EVERYTHING);
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    glfwWindowHint(GLFW_DEPTH_BITS, 24);
+    glfwWindowHint(GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
+    this->window = glfwCreateWindow(this->w, this->h, title, NULL, NULL);
+    glfwMakeContextCurrent(this->window);
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    this->window = SDL_CreateWindow(
-            title,
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            this->w,
-            this->h,
-            SDL_WINDOW_OPENGL
-    );
-
-    SDL_SetWindowBordered(this->window, SDL_FALSE);
-
-    this->context = SDL_GL_CreateContext(window);
-    gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        std::cout << "ERROR: Failed to initialize GLAD" << std::endl;
 
     std::cout << "GL Version: " << GLVersion.major << "." << GLVersion.minor << std::endl;
     std::cout << "GLSL Version: " << (char *)glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
@@ -107,9 +99,8 @@ Screen::~Screen() {
     glDeleteTextures(2, this->fboTexHandle);
     glDeleteVertexArrays(1, &this->fboQuadVao);
 
-    SDL_GL_DeleteContext(this->context);
-    SDL_DestroyWindow(this->window);
-    SDL_Quit();
+    glfwDestroyWindow(this->window);
+    glfwTerminate();
 }
 
 void Screen::resize() {}
@@ -144,7 +135,8 @@ void Screen::flip(Shader &postShader, int ditherHandle) {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, ditherHandle);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    SDL_GL_SwapWindow(this->window);
+    glfwSwapBuffers(this->window);
+    glfwPollEvents();
 
     glBindFramebuffer(GL_FRAMEBUFFER, this->fbo[0]);
     glViewport(0, 0, SCREEN_W_VIRTUAL, SCREEN_H_VIRTUAL);

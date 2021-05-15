@@ -3,7 +3,7 @@
 #include <thread>
 
 #include <glad/glad.h>
-#include <SDL2/SDL.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -27,10 +27,15 @@ const unsigned int SCREEN_H = 1200;
 const float SCREEN_FOV = 90.f;
 
 const unsigned int TARGET_FPS = 75;
-const double TARGET_FRAMETIME = (1.0 / TARGET_FPS) * 1000.0;
+const double TARGET_FRAMETIME = 1.0 / TARGET_FPS;
+
 
 int main() {
     Screen screen(SCREEN_W, SCREEN_H, SCREEN_FOV, "Pain");
+    WindowState windowState;
+    windowState.camera = new CameraFree;
+    glfwSetWindowUserPointer(screen.window, (void*) &windowState);
+    Input::registerCallbacks(screen.window);
 
     Font font("The quick brown fox jumps over the lazy dog.");
     //font.draw();
@@ -45,9 +50,6 @@ int main() {
     postShader.use();
     postShader.setInt("tex", 0);
     postShader.setInt("texDither", 1);
-
-    Camera *camera = new CameraFree;
-    Input input(&camera);
 
     std::string textureType("diffuse");
     std::string texture0FilePath("res/textures/0.png");
@@ -68,45 +70,39 @@ int main() {
     glm::vec4 sunPosition = glm::vec4(5.0, 5.0, 0.0, 1.0);
     glm::vec3 sunColor = glm::vec3(0.65, 0.8, 0.9);
 
+    double timeDelta, timeNow, timeLast;
+    unsigned long frames = 0;
 
-    double timeDelta;
-    Uint64 timeNow = SDL_GetPerformanceCounter();
-    Uint64 timeLast = 0;
-    unsigned int frames = 0;
-
-    while (!input.quit) {
+    while (!glfwWindowShouldClose(screen.window)) {
         frames++;
         timeLast = timeNow;
-        timeNow = SDL_GetPerformanceCounter();  // TODO: Improve timing precision
-        timeDelta = (double)((timeNow - timeLast) / (double)SDL_GetPerformanceFrequency() );
+        timeNow = glfwGetTime();
+        timeDelta = timeNow - timeLast;
         if (frames % (TARGET_FPS*5) == 0)
             std::cout << "Frame time: " << timeDelta*1e3 << "ms\t(" << 1/timeDelta << "fps),\t";
 
-        if (timeDelta < TARGET_FRAMETIME) {
+        if (timeDelta < TARGET_FRAMETIME)
             std::this_thread::sleep_for(std::chrono::nanoseconds(
-                    (int) floor(((TARGET_FRAMETIME - timeDelta)*1.0e6))
+                    (int) ((TARGET_FRAMETIME - timeDelta) * 1.0e9)
             ));
-        }
 
-
-
-
-        // FIXME: This shouldn't be needed since each model calls shader.use()
-        shader.use();
-
-        timeNow = SDL_GetPerformanceCounter();
-        timeDelta = (double)((timeNow - timeLast) / (double)SDL_GetPerformanceFrequency() );
+        timeNow = glfwGetTime();
+        timeDelta = timeNow - timeLast;
+        windowState.timeDelta = timeDelta;
         if (frames % (TARGET_FPS*5) == 0)
             std::cout << timeDelta*1e3 << "ms\t(" << 1/timeDelta << "fps)" << std::endl;
 
-        input.handleEvents((float) timeDelta);
+        Input::processContinuousInput(screen.window);
+
+        // FIXME: This shouldn't be needed since each model calls shader.use()
+        shader.use();
 
         // Clear
         glClearColor(0.05f, 0.1f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Sun
-        glm::vec3 viewSunPos = camera->getView() * (glm::mat4(1.0f) * sunPosition);
+        glm::vec3 viewSunPos = windowState.camera->getView() * (glm::mat4(1.0f) * sunPosition);
         shader.setVec3("sunPosition", viewSunPos);
         shader.setVec3("sunColor", sunColor);
 
@@ -115,14 +111,14 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, texture0.handle);  // Bind texture
 
         glm::mat4 model = glm::mat4(1.0f);
-        float rotation = (SDL_GetTicks() % 3600) / 10;
+        float rotation = (int) (glfwGetTime()*100) % 360;
         model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.f, 0.1f));
         model = glm::translate(model, glm::vec3(0.f, 0.5f, -2.5f));
 
-        glm::mat4 mvp = screen.perspective * camera->getView() * model;
+        glm::mat4 mvp = screen.perspective * windowState.camera->getView() * model;
         shader.setMat4("mvp", mvp);
 
-        glm::mat4 modelView = camera->getView() * model;
+        glm::mat4 modelView = windowState.camera->getView() * model;
         shader.setMat4("modelView", modelView);
 
         glm::mat3 normalMat = glm::inverse(
@@ -137,10 +133,10 @@ int main() {
 
         model = glm::mat4(1.0f);
 
-        mvp = screen.perspective * camera->getView() * model;
+        mvp = screen.perspective * windowState.camera->getView() * model;
         shader.setMat4("mvp", mvp);
 
-        modelView = camera->getView() * model;
+        modelView = windowState.camera->getView() * model;
         shader.setMat4("modelView", modelView);
 
         normalMat = glm::inverse(
@@ -155,13 +151,13 @@ int main() {
 
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.f, 5.f, 6.5f));
-        rotation = (SDL_GetTicks() % 360);
+        rotation = (int) (glfwGetTime()*100) % 360;
         model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.f, 1.f, 0.f));
 
-        mvp = screen.perspective * camera->getView() * model;
+        mvp = screen.perspective * windowState.camera->getView() * model;
         shader.setMat4("mvp", mvp);
 
-        modelView = camera->getView() * model;
+        modelView = windowState.camera->getView() * model;
         shader.setMat4("modelView", modelView);
 
         normalMat = glm::inverse(
@@ -175,6 +171,8 @@ int main() {
 
         screen.flip(postShader, textureDither.handle);
     }
+
+    delete windowState.camera;
 
     return 0;
 }

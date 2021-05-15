@@ -1,10 +1,11 @@
 # GL
 
-Toy OpenGL/SDL2 project.
+Toy OpenGL project.
 
 ## Building (Linux)
 
-- Install requirements (Ubuntu 20.10) `sudo apt install libsdl2-dev build-essential libglm-dev cmake`
-- Run cmake `cmake -S . -B build`
-- Run make `cd build && make`
+- Install requirements (Ubuntu 20.10) `sudo apt install xorg-dev build-essential cmake`
+- Run cmake `mkdir build && cd build`
+- Run cmake `cmake ..`
+- Run make `make`
 - Launch `./gl`

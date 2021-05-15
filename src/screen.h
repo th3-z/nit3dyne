@@ -6,14 +6,13 @@
 #define GL_SCREEN_H
 
 #include <iostream>
-#include <SDL2/SDL.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "shader.h"
 #include "texture.h"
-
 
 class Screen {
 public:
@@ -23,14 +22,13 @@ public:
     void resize();
     void flip(Shader &postShader, int ditherHandle);
 
+    GLFWwindow *window;
+
     int w;
     int h;
     float fov;
     glm::mat4 perspective;
 private:
-    SDL_Window *window;
-    SDL_GLContext context;
-
     Shader *copyShader;
 
     unsigned int fbo[2];
