@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 project(gl)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-O3 -Wall")
 
 # Header-only libs
 include_directories(lib)
@@ -15,6 +14,13 @@ set(GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only")
 add_subdirectory(lib/glfw)
 add_subdirectory(lib/glm)
 add_subdirectory(lib/glad)
+set(SOLOUD_STATIC ON)
+set(SOLOUD_BACKEND_MINIAUDIO ON)
+set(SOLOUD_BACKEND_SDL2 OFF)
+set(SOLOUD_BACKEND_NULL OFF)
+set(SOLOUD_BACKEND_SOLOUD_BACKEND_WINMM OFF)
+set(SOLOUD_BACKEND_SOLOUD_BACKEND_OPENSLES ON)
+set(SOLOUD_BACKEND_SOLOUD_BACKEND_COREAUDIO OFF)
 add_subdirectory(lib/soloud)
 
 add_executable(gl
