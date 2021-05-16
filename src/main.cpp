@@ -7,6 +7,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <soloud/include/soloud.h>
+#include <soloud/include/soloud_wav.h>
 
 #include "shader.h"
 #include "texture.h"
@@ -73,6 +75,20 @@ int main() {
     double timeDelta, timeNow, timeLast;
     unsigned long frames = 0;
 
+    SoLoud::Soloud soloud; // Engine core
+    SoLoud::Wav sample;    // One sample
+
+// Initialize SoLoud (automatic back-end selection)
+    soloud.init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION);
+    soloud.setGlobalVolume(4.f);
+
+    sample.load("res/sound/dunkelheit.ogg"); // Load a wave file
+    sample.setLooping(true);
+    sample.set3dMinMaxDistance(1, 30);
+    sample.set3dAttenuation(SoLoud::AudioSource::EXPONENTIAL_DISTANCE, 0.5);
+
+    SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);        // Play it
+
     while (!glfwWindowShouldClose(screen.window)) {
         frames++;
         timeLast = timeNow;
@@ -127,6 +143,14 @@ int main() {
         shader.setMat3("normalMat", normalMat);
 
         suzanne.render(shader);
+
+        glm::vec4 suzannePosView =  modelView * glm::vec4(0.5,0.5,0.5,1.0);
+        float w = suzannePosView.w;
+        soloud.set3dSourceParameters(sampleHandle, suzannePosView.x/w, suzannePosView.y/w, suzannePosView.z/w, 0.f, 0.f, 0.f);
+
+        soloud.set3dListenerPosition(0,0,0);
+
+        soloud.update3dAudio();
 
         // Cube
         glBindTexture(GL_TEXTURE_2D, texture1.handle);  // Bind texture

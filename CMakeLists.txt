@@ -15,6 +15,7 @@ set(GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only")
 add_subdirectory(lib/glfw)
 add_subdirectory(lib/glm)
 add_subdirectory(lib/glad)
+add_subdirectory(lib/soloud)
 
 add_executable(gl
     src/main.cpp
@@ -27,7 +28,7 @@ add_executable(gl
     src/input.cpp src/input.h
     src/font.cpp src/font.h
 )
-target_link_libraries(gl glfw glm glad ${CMAKE_DL_LIBS})
+target_link_libraries(gl glfw glm glad soloud ${CMAKE_DL_LIBS})
 
 # Link resources
 add_custom_command(
