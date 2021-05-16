@@ -2,25 +2,23 @@
 // Created by the_z on 08/05/2021.
 //
 
-#ifndef GL_CAMERAFIXED_H
-#define GL_CAMERAFIXED_H
+#ifndef GL_CAMERAFPS_H
+#define GL_CAMERAFPS_H
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "camera.h"
 
-class CameraFixed : public Camera {
+class CameraFps : public Camera {
 public:
-    CameraFixed();
+    CameraFps();
     void handleDirection(int d, float timeDelta) override;
     void handleMouse(int x, int y, float timeDelta) override;
 
 private:
-    const float fixedHeight = 10.f;
-    const float fixedYaw = -90.f;
-    const float fixedPitch = -45.f;
+    const float playerHeight = 2.f;
 };
 
 
-#endif //GL_CAMERAFIXED_H
+#endif //GL_CAMERAFPS_H

@@ -12,7 +12,7 @@
 
 #include "shader.h"
 #include "texture.h"
-#include "camera/cameraFixed.h"
+#include "camera/cameraFps.h"
 #include "camera/cameraFree.h"
 #include "model.h"
 #include "screen.h"
@@ -35,7 +35,7 @@ const double TARGET_FRAMETIME = 1.0 / TARGET_FPS;
 int main() {
     Screen screen(SCREEN_W, SCREEN_H, SCREEN_FOV, "Pain");
     WindowState windowState;
-    windowState.camera = new CameraFree;
+    windowState.camera = new CameraFps;
     glfwSetWindowUserPointer(screen.window, (void*) &windowState);
     Input::registerCallbacks(screen.window);
 
@@ -114,7 +114,7 @@ int main() {
         shader.use();
 
         // Clear
-        glClearColor(0.05f, 0.1f, 0.2f, 1.0f);
+        glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Sun

@@ -27,7 +27,7 @@ add_executable(gl
     src/main.cpp
     src/shader.cpp src/shader.h src/texture.cpp src/texture.h
     src/model.cpp src/model.h
-    src/camera/cameraFixed.cpp src/camera/cameraFixed.h
+        src/camera/cameraFps.cpp src/camera/cameraFps.h
     src/camera/cameraFree.cpp src/camera/cameraFree.h
     src/camera/camera.cpp src/camera/camera.h
     src/screen.cpp src/screen.h

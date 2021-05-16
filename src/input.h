@@ -8,7 +8,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "camera/camera.h"
-#include "camera/cameraFixed.h"
+#include "camera/cameraFps.h"
 #include "camera/cameraFree.h"
 
 struct WindowState {

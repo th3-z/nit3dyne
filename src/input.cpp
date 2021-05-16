@@ -35,7 +35,7 @@ void Input::callbackKey(GLFWwindow *window, int key, int scancode, int action, i
     }
     if (key == GLFW_KEY_G && action == GLFW_PRESS) {
         delete windowState->camera;
-        windowState->camera = new CameraFixed;
+        windowState->camera = new CameraFps;
     }
 }
 

@@ -29,7 +29,7 @@ void main() {
    vec3 vertPos = vec3(modelView * vec4(inVertex, 1.0));
 
    // Ambient
-   vec3 ambient = sunColor * 0.2;
+   vec3 ambient = sunColor * 0.1;
 
    // Diffuse
    vec3 lightDir = normalize(sunPosition - vertPos);
