@@ -16,12 +16,12 @@ uniform mat4 mvp;
 
 
 void main() {
-   vec4 snapToPix = mvp * vec4(inVertex, 1.0);
-   vec4 vertex = snapToPix;
-   vertex.xyz = snapToPix.xyz / snapToPix.w;
+   // Vertex snapping
+   vec4 vertex = mvp * vec4(inVertex, 1.0);
+   vertex.xyz = vertex.xyz / vertex.w;
    vertex.x = floor(160 * vertex.x) / 160;
    vertex.y = floor(120 * vertex.y) / 120;
-   vertex.xyz *= snapToPix.w;
+   vertex.xyz *= vertex.w;
    gl_Position = vertex;
 
    vec3 normal = normalMat * inNormal;

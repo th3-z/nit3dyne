@@ -14,7 +14,7 @@
 #include "texture.h"
 #include "camera/cameraFps.h"
 #include "camera/cameraFree.h"
-#include "model.h"
+#include "mesh.h"
 #include "screen.h"
 #include "input.h"
 
@@ -65,9 +65,9 @@ int main() {
     std::string ditherFilePath("res/textures/dith.png");
     Texture textureDither(textureType, ditherFilePath);
 
-    Model cube = Model("res/cube.glb");
-    Model suzanne = Model("res/suzanne.glb");
-    Model sphere= Model("res/sphere.glb");
+    Mesh cube = Mesh("res/cube.glb");
+    Mesh suzanne = Mesh("res/suzanne.glb");
+    Mesh sphere= Mesh("res/sphere.glb");
 
     glm::vec4 sunPosition = glm::vec4(5.0, 5.0, 0.0, 1.0);
     glm::vec3 sunColor = glm::vec3(0.65, 0.8, 0.9);
@@ -99,7 +99,7 @@ int main() {
 
         if (timeDelta < TARGET_FRAMETIME)
             std::this_thread::sleep_for(std::chrono::nanoseconds(
-                    (int) ((TARGET_FRAMETIME - timeDelta) * 1.0e9)
+                    (int) ((TARGET_FRAMETIME - timeDelta) * 1.0e9 - 1.5e5)
             ));
 
         timeNow = glfwGetTime();
@@ -110,11 +110,10 @@ int main() {
 
         Input::processContinuousInput(screen.window);
 
-        // FIXME: This shouldn't be needed since each model calls shader.use()
         shader.use();
 
         // Clear
-        glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+        glClearColor(0.f, 0.f, 0.f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Sun
@@ -142,7 +141,7 @@ int main() {
         );
         shader.setMat3("normalMat", normalMat);
 
-        suzanne.render(shader);
+        suzanne.draw();
 
         glm::vec4 suzannePosView =  modelView * glm::vec4(0.5,0.5,0.5,1.0);
         float w = suzannePosView.w;
@@ -168,7 +167,7 @@ int main() {
         );
         shader.setMat3("normalMat", normalMat);
 
-        cube.render(shader);
+        cube.draw();
 
         // Sphere
         glBindTexture(GL_TEXTURE_2D, texture2.handle);  // Bind texture
@@ -189,7 +188,7 @@ int main() {
         );
         shader.setMat3("normalMat", normalMat);
 
-        sphere.render(shader);
+        sphere.draw();
 
         font.draw();
 
