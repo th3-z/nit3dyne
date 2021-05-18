@@ -4,8 +4,7 @@
 
 #include "texture.h"
 
-Texture::Texture(std::string &type, std::string &filePath):
-type(type) {
+Texture::Texture(const std::string &filePath) {
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(filePath.c_str(), &this->w, &this->h, &this->channels, 0);
     if (!data) {

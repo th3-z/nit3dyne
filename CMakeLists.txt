@@ -25,15 +25,15 @@ add_subdirectory(lib/soloud)
 
 add_executable(gl
     src/main.cpp
-    src/shader.cpp src/shader.h src/texture.cpp src/texture.h
-    src/mesh.cpp src/mesh.h
+        src/graphics/shader.cpp src/graphics/shader.h src/graphics/texture.cpp src/graphics/texture.h
+        src/graphics/mesh.cpp src/graphics/mesh.h
     src/camera/cameraFps.cpp src/camera/cameraFps.h
     src/camera/cameraFree.cpp src/camera/cameraFree.h
     src/camera/camera.cpp src/camera/camera.h
     src/screen.cpp src/screen.h
     src/input.cpp src/input.h
     src/font.cpp src/font.h
-)
+        src/graphics/model.cpp src/graphics/model.h)
 target_link_libraries(gl glfw glm glad soloud ${CMAKE_DL_LIBS})
 
 # Link resources

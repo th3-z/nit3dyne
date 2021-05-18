@@ -25,9 +25,8 @@ const unsigned int FONT_WIDTHS[95] = {
 };
 
 Font::Font(const char *str) {
-    std::string tType("diffuse");
     std::string tPath(FONT_FILE);
-    this->texture = new Texture(tType, tPath);
+    this->texture = new Texture(tPath);
 
     float strWidth = 0.f;
 
@@ -103,7 +102,7 @@ Font::Font(const char *str) {
 
     this->shader = new Shader("shaders/font.vert","shaders/font.frag");
     this->shader->use();
-    this->shader->setInt("tex", 0);
+    this->shader->setUniform("tex", 0);
 }
 
 void Font::draw() {

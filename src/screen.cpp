@@ -89,7 +89,7 @@ w(w), h(h), fov(fov) {
 
     this->copyShader = new Shader("shaders/copy.vert", "shaders/copy.frag");
     this->copyShader->use();
-    this->copyShader->setInt("tex", 0);
+    this->copyShader->setUniform("tex", 0);
 }
 
 Screen::~Screen() {

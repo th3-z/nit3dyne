@@ -13,15 +13,13 @@
 
 class Texture {
 public:
-    unsigned int handle;
-    std::string type;
+    explicit Texture(const std::string &filePath);
+    ~Texture();
 
+    unsigned int handle;
+    int channels;
     int w;
     int h;
-    int channels;
-
-    Texture(std::string &type, std::string &filePath);
-    ~Texture();
 };
 
 

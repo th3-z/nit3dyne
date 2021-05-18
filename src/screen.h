@@ -11,8 +11,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "shader.h"
-#include "texture.h"
+#include "graphics/shader.h"
+#include "graphics/texture.h"
 
 class Screen {
 public:

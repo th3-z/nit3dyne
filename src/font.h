@@ -7,8 +7,8 @@
 
 #include <iostream>
 #include <vector>
-#include "shader.h"
-#include "texture.h"
+#include "graphics/shader.h"
+#include "graphics/texture.h"
 
 class Font {
 public:

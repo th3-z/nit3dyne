@@ -23,7 +23,7 @@ Shader::Shader(const char *vPath, const char *fPath) {
 
         vSrc = vStream.str();
         fSrc = fStream.str();
-    } catch (std::ifstream::failure e) {
+    } catch (std::ifstream::failure &e) {
         std::cout << "Shader read error" << std::endl;
     }
 
@@ -71,32 +71,32 @@ Shader::Shader(const char *vPath, const char *fPath) {
     glDeleteShader(fId);
 }
 
-void Shader::use() {
+void Shader::use() const {
     glUseProgram(this->handle);
 }
 
-void Shader::setBool(const std::string &name, bool value) const {
+void Shader::setUniform(const std::string &name, bool value) const {
     glUniform1i(
         glGetUniformLocation(this->handle, name.c_str()),
         (int)value
     );
 }
 
-void Shader::setFloat(const std::string &name, float value) const {
+void Shader::setUniform(const std::string &name, float value) const {
     glUniform1f(
         glGetUniformLocation(this->handle, name.c_str()),
         value
     );
 }
 
-void Shader::setInt(const std::string &name, int value) const {
+void Shader::setUniform(const std::string &name, int value) const {
     glUniform1i(
         glGetUniformLocation(this->handle, name.c_str()),
         value
     );
 }
 
-void Shader::setMat3(const std::string &name, glm::mat3 &mat) const {
+void Shader::setUniform(const std::string &name, glm::mat3 &mat) const {
     glUniformMatrix3fv(
             glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one
@@ -105,7 +105,7 @@ void Shader::setMat3(const std::string &name, glm::mat3 &mat) const {
     );
 }
 
-void Shader::setMat4(const std::string &name, glm::mat4 &mat) const {
+void Shader::setUniform(const std::string &name, glm::mat4 &mat) const {
     glUniformMatrix4fv(
             glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one
@@ -114,7 +114,7 @@ void Shader::setMat4(const std::string &name, glm::mat4 &mat) const {
     );
 }
 
-void Shader::setVec3(const std::string &name, glm::vec3 &vec) const {
+void Shader::setUniform(const std::string &name, glm::vec3 &vec) const {
     glUniform3fv(
             glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one

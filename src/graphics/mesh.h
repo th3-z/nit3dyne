@@ -15,7 +15,7 @@
 
 class Mesh {
 public:
-    explicit Mesh(const char* filePath);
+    explicit Mesh(const std::string &filePath);
     ~Mesh();
 
     void draw();
