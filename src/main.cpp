@@ -24,8 +24,13 @@
 #include "font.h"
 #include "graphics/model.h"
 
+#ifndef NDEBUG
+const unsigned int SCREEN_W = 864;
+const unsigned int SCREEN_H = 486;
+#else
 const unsigned int SCREEN_W = 1920;
 const unsigned int SCREEN_H = 1200;
+#endif
 const float SCREEN_FOV = 90.f;
 
 const unsigned int TARGET_FPS = 75;
@@ -63,6 +68,16 @@ int main() {
     Model suzanne = Model("res/suzanne.glb", "res/textures/0.png");
     suzanne.setMaterial(Materials::metallic);
     suzanne.translate(0.f, 0.0f, 5.f);
+
+    std::vector<Model*> monkeys;
+    int nMonkeys = 128;
+    for (int i = 0; i < nMonkeys; ++i) {
+        monkeys.emplace_back(
+            new Model("res/suzanne.glb", "res/textures/0.png")
+        );
+        monkeys[i]->setMaterial(Materials::metallic);
+        monkeys[i]->translate((i * 2.5f) - (2.5f*nMonkeys)/2, sin(i)*5 + 5.f, -5.f);
+    }
 
     Model cube = Model("res/cube.glb", "res/textures/1.png");
     cube.setMaterial(Materials::emissive);
@@ -122,10 +137,14 @@ int main() {
         );
         sphere.draw(shader, screen.perspective, windowState.camera->getView());
 
-        suzanne.rotate(
-            (360.f * 1.) * windowState.timeDelta, 1.f, 0.f, 0.f, false
-        );
         suzanne.draw(shader, screen.perspective, windowState.camera->getView());
+
+        for (Model *monkey : monkeys) {
+            monkey->rotate(
+                    (360.f * 1.) * windowState.timeDelta, 0.f, 1.f, 0.f, false
+            );
+            monkey->draw(shader, screen.perspective, windowState.camera->getView());
+        }
 
 
         // Update audio
@@ -148,6 +167,9 @@ int main() {
         frames++;
     }
 
+    for (Model *monkey : monkeys) {
+        delete monkey;
+    }
     delete windowState.camera;
 
     return 0;

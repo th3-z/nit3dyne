@@ -13,7 +13,7 @@
 class Model {
 public:
     // TODO Add another constructor with a default material
-    explicit Model(const std::string &meshFilename, const std::string &textureFilename /*, Material &material  */);
+    explicit Model(const std::string &meshFilename, const std::string &textureFilename);
     ~Model();
 
     void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);

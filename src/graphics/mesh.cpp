@@ -9,7 +9,7 @@ Mesh::Mesh(const std::string &filename) {
     tinygltf::TinyGLTF loader;
     std::string err, warn;
 
-    bool res = loader.LoadBinaryFromFile(&this->gltf, &err, &warn, filename.c_str());
+    bool res = loader.LoadBinaryFromFile(&this->gltf, &err, &warn, filename);
     if (!warn.empty())
         std::cout << "WARN: " << warn << std::endl;
     if (!err.empty())

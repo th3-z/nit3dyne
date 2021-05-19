@@ -24,14 +24,19 @@ w(w), h(h), fov(fov) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
     glfwWindowHint(GLFW_DEPTH_BITS, 24);
     glfwWindowHint(GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
+#ifdef NDEBUG
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+#endif
+
     this->window = glfwCreateWindow(this->w, this->h, title, NULL, NULL);
     glfwMakeContextCurrent(this->window);
-    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+#ifdef NDEBUG
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+#endif
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         std::cout << "ERROR: Failed to initialize GLAD" << std::endl;
 
