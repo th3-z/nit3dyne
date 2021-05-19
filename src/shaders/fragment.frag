@@ -1,7 +1,6 @@
 #version 330 core
 
 in vec3 lightColor;
-in vec2 texCoord;
 in vec3 affineUv;
 
 uniform sampler2D tex;

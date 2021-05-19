@@ -54,22 +54,23 @@ int main() {
     shader.use();
     shader.setUniform("tex", 0);
 
-    // Assets
+    // Scene
+    glm::vec4 sunPosition = glm::vec4(0.f, -5.f, 0.f, 1.0);
+    glm::vec3 sunColor = glm::vec3(1.0f, 1.0f, 1.0f);
+    shader.use();
+    shader.setUniform("sunColor", sunColor);
+
     Model suzanne = Model("res/suzanne.glb", "res/textures/0.png");
+    suzanne.setMaterial(Materials::metallic);
     suzanne.translate(0.f, 0.0f, 5.f);
 
     Model cube = Model("res/cube.glb", "res/textures/1.png");
+    cube.setMaterial(Materials::emissive);
     cube.translate(5.f, 0.f, 0.f);
 
     Model sphere = Model("res/sphere.glb", "res/textures/3.png");
     sphere.translate(0.f, 5.f, 0.f);
-    sphere.scale(1.f, 0.5f, 3.f);
-
-    // Sun
-    glm::vec4 sunPosition = glm::vec4(5.0, 5.0, 0.0, 1.0);
-    glm::vec3 sunColor = glm::vec3(0.65, 0.8, 0.9);
-    shader.use();
-    shader.setUniform("sunColor", sunColor);
+    sphere.scale(1.f, 1.f, 1.f);
 
     // Audio
     SoLoud::Soloud soloud; // Engine core
@@ -77,7 +78,7 @@ int main() {
 
     // Initialize SoLoud, miniaudio backend
     soloud.init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION, SoLoud::Soloud::BACKENDS::MINIAUDIO);
-    soloud.setGlobalVolume(4.f);
+    soloud.setGlobalVolume(.5f);
 
     sample.load("res/sound/dunkelheit.ogg"); // Load a wave file
     sample.setLooping(true);
@@ -86,56 +87,48 @@ int main() {
     SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);        // Play it
 
     // Timing
-    double timeDelta, timeNow, timeLast;
+    double timeNow, timeLast = 0.;
     unsigned long frames = 0;
 
     while (!glfwWindowShouldClose(screen.window)) {
-        frames++;
+        // Calculate frame time, cap framerate to target
         timeLast = timeNow;
         timeNow = glfwGetTime();
-        timeDelta = timeNow - timeLast;
+        while ((timeNow - timeLast) < TARGET_FRAMETIME) timeNow = glfwGetTime();
+        windowState.timeDelta = timeNow - timeLast;
+
         if (frames % (TARGET_FPS*5) == 0)
-            std::cout << "Frame time: " << timeDelta*1e3 << "ms\t(" << 1/timeDelta << "fps),\t";
+            std::cout << "Previous frame time: "
+                      << windowState.timeDelta*1e3 << "ms\t("
+                      << 1/windowState.timeDelta << "fps)"
+                      << std::endl;
 
-        if (timeDelta < TARGET_FRAMETIME)
-            std::this_thread::sleep_for(std::chrono::nanoseconds(
-                    (int) ((TARGET_FRAMETIME - timeDelta) * 1.0e9 - 1.5e5)
-            ));
-
-        timeNow = glfwGetTime();
-        timeDelta = timeNow - timeLast;
-        windowState.timeDelta = timeDelta;
-        if (frames % (TARGET_FPS*5) == 0)
-            std::cout << timeDelta*1e3 << "ms\t(" << 1/timeDelta << "fps)" << std::endl;
-
+        // Handle continuous response keys
         Input::processContinuousInput(screen.window);
 
-        // Clear
+        // Clear FB
         glClearColor(0.f, 0.f, 0.f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Sun
+        // Render scene
         glm::vec3 viewSunPos = windowState.camera->getView() * (glm::mat4(1.0f) * sunPosition);
         shader.use();
         shader.setUniform("sunPosition", viewSunPos);
 
-        // Cube
         cube.draw(shader, screen.perspective, windowState.camera->getView());
 
-        // Sphere
         sphere.rotate(
-            (360.f * .1 /* rev per s */) * timeDelta, 0.f, 1.f, 0.f, false
+            (360.f * .1 /* rev per s */) * windowState.timeDelta, 0.f, 1.f, 0.f, false
         );
         sphere.draw(shader, screen.perspective, windowState.camera->getView());
 
-        // Suzanne
         suzanne.rotate(
-            (360.f * 1.) * timeDelta, 1.f, 0.f, 0.f, false
+            (360.f * 1.) * windowState.timeDelta, 1.f, 0.f, 0.f, false
         );
         suzanne.draw(shader, screen.perspective, windowState.camera->getView());
 
 
-        // Audio test
+        // Update audio
 //        glm::vec4 suzannePosView =  modelView * glm::vec4(0.5,0.5,0.5,1.0);
 //        float w = suzannePosView.w;
 //        soloud.set3dSourceParameters(
@@ -148,9 +141,11 @@ int main() {
 //
 //        soloud.update3dAudio();
 
+        // Render UI
         font.draw();
 
         screen.flip(postShader, textureDither.handle);
+        frames++;
     }
 
     delete windowState.camera;

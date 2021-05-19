@@ -75,28 +75,28 @@ void Shader::use() const {
     glUseProgram(this->handle);
 }
 
-void Shader::setUniform(const std::string &name, bool value) const {
+void Shader::setUniform(const std::string &name, const bool value) const {
     glUniform1i(
         glGetUniformLocation(this->handle, name.c_str()),
         (int)value
     );
 }
 
-void Shader::setUniform(const std::string &name, float value) const {
+void Shader::setUniform(const std::string &name, const float value) const {
     glUniform1f(
         glGetUniformLocation(this->handle, name.c_str()),
         value
     );
 }
 
-void Shader::setUniform(const std::string &name, int value) const {
+void Shader::setUniform(const std::string &name, const int value) const {
     glUniform1i(
         glGetUniformLocation(this->handle, name.c_str()),
         value
     );
 }
 
-void Shader::setUniform(const std::string &name, glm::mat3 &mat) const {
+void Shader::setUniform(const std::string &name, const glm::mat3 &mat) const {
     glUniformMatrix3fv(
             glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one
@@ -105,7 +105,7 @@ void Shader::setUniform(const std::string &name, glm::mat3 &mat) const {
     );
 }
 
-void Shader::setUniform(const std::string &name, glm::mat4 &mat) const {
+void Shader::setUniform(const std::string &name, const glm::mat4 &mat) const {
     glUniformMatrix4fv(
             glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one
@@ -114,7 +114,7 @@ void Shader::setUniform(const std::string &name, glm::mat4 &mat) const {
     );
 }
 
-void Shader::setUniform(const std::string &name, glm::vec3 &vec) const {
+void Shader::setUniform(const std::string &name, const glm::vec3 &vec) const {
     glUniform3fv(
             glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one
@@ -124,4 +124,11 @@ void Shader::setUniform(const std::string &name, glm::vec3 &vec) const {
 
 Shader::~Shader() {
     glDeleteProgram(this->handle);
+}
+
+void Shader::attachMaterial(const Material &material) const {
+    this->setUniform("material.ambient", material.ambient);
+    this->setUniform("material.diffuse", material.diffuse);
+    this->setUniform("material.specular", material.specular);
+    this->setUniform("material.shininess", material.shininess);
 }

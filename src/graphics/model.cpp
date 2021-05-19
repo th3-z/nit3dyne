@@ -12,6 +12,7 @@ Model::~Model() = default;
 
 void Model::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view) {
     shader.use();
+    shader.attachMaterial(*this->material);
 
     glm::mat4 mvp = perspective * view * this->modelMat;
     glm::mat4 modelView = view * this->modelMat;
@@ -42,4 +43,8 @@ void Model::rotate(float deg, float x, float y, float z, bool normalize) {
             glm::normalize(glm::vec3(x, y, z)):
             glm::vec3(x, y, z)
     );
+}
+
+void Model::setMaterial(const Material &material) {
+    this->material = &material;
 }

@@ -15,8 +15,9 @@ public:
     // TODO Add another constructor with a default material
     explicit Model(const std::string &meshFilename, const std::string &textureFilename /*, Material &material  */);
     ~Model();
-    void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);
 
+    void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);
+    void setMaterial(const Material &material);
     void translate(float x, float y, float z);
     void scale(float x, float y, float z);
     void rotate(float deg, float x, float y, float z, bool normalize = true);
@@ -25,7 +26,7 @@ public:
 private:
     Mesh mesh;
     Texture texture;
-    // TODO Materials
+    const Material *material = &Materials::basic;
 };
 
 

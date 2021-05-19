@@ -14,6 +14,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "material.h"
+
 
 class Shader {
 
@@ -23,13 +25,14 @@ public:
     Shader(const char *vPath, const char *fPath);
     ~Shader();
     void use() const;
+    void attachMaterial(const Material &material) const;
 
-    void setUniform(const std::string &name, bool value) const;
-    void setUniform(const std::string &name, int value) const;
-    void setUniform(const std::string &name, float value) const;
-    void setUniform(const std::string &name, glm::mat3 &mat) const;
-    void setUniform(const std::string &name, glm::mat4 &mat) const;
-    void setUniform(const std::string &name, glm::vec3 &vec) const;
+    void setUniform(const std::string &name, const bool value) const;
+    void setUniform(const std::string &name, const int value) const;
+    void setUniform(const std::string &name, const float value) const;
+    void setUniform(const std::string &name, const glm::mat3 &mat) const;
+    void setUniform(const std::string &name, const glm::mat4 &mat) const;
+    void setUniform(const std::string &name, const glm::vec3 &vec) const;
 };
 
 
