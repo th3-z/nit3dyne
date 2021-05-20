@@ -60,10 +60,8 @@ int main() {
     shader.setUniform("tex", 0);
 
     // Scene
-    glm::vec4 sunPosition = glm::vec4(0.f, -5.f, 0.f, 1.0);
-    glm::vec3 sunColor = glm::vec3(1.0f, 1.0f, 1.0f);
-    shader.use();
-    shader.setUniform("sunColor", sunColor);
+    DirectionalLight dLight = DirectionalLight();
+    shader.setDirectionalLight(dLight);
 
     Model suzanne = Model("res/suzanne.glb", "res/textures/0.png");
     suzanne.setMaterial(Materials::metallic);
@@ -126,9 +124,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render scene
-        glm::vec3 viewSunPos = windowState.camera->getView() * (glm::mat4(1.0f) * sunPosition);
         shader.use();
-        shader.setUniform("sunPosition", viewSunPos);
+        shader.setUniform("dLight.direction", windowState.camera->getView() * dLight.direction);
 
         cube.draw(shader, screen.perspective, windowState.camera->getView());
 
@@ -141,7 +138,7 @@ int main() {
 
         for (Model *monkey : monkeys) {
             monkey->rotate(
-                    (360.f * 1.) * windowState.timeDelta, 0.f, 1.f, 0.f, false
+                (360.f * 1.) * windowState.timeDelta, 0.f, 1.f, 0.f, false
             );
             monkey->draw(shader, screen.perspective, windowState.camera->getView());
         }

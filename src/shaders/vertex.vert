@@ -11,6 +11,14 @@ struct Material {
    float shininess;
 };
 
+struct DLight {
+   vec4 direction;
+
+   vec3 ambient;
+   vec3 diffuse;
+   vec3 specular;
+};
+
 out vec3 lightColor;
 out vec3 affineUv;
 
@@ -22,6 +30,7 @@ uniform mat4 modelView;
 uniform mat4 mvp;
 
 uniform Material material;
+uniform DLight dLight;
 
 
 void main() {
@@ -34,27 +43,20 @@ void main() {
    gl_Position = vertex;
 
    vec3 normal = normalMat * inNormal;
-
    vec3 vertPos = vec3(modelView * vec4(inVertex, 1.0));
-
-   // Light source intensities * material props
-   vec3 amb = vec3(0.1f, 0.1f, 0.1f) * material.ambient;
-   vec3 diff = vec3(0.7f, 0.75, 0.7f) * material.diffuse;
-   vec3 spec = vec3(.5f, .5f, .5f) * material.specular;
-   float shininess = material.shininess;
+   vec3 lightDir = normalize(-dLight.direction.xyz);
 
    // Ambient
-   vec3 ambient = sunColor * amb; // Ambient component
+   vec3 ambient = dLight.ambient.xyz * material.ambient; // Ambient component
 
    // Diffuse
-   vec3 lightDir = normalize(sunPosition - vertPos);
-   vec3 diffuse = sunColor * (max(dot(normal, lightDir), 0.0) * diff);
+   vec3 diffuse = dLight.diffuse.xyz * (max(dot(normal, lightDir), 0.0) * material.diffuse);
 
    // Specular
    vec3 viewDir = normalize(-vertPos);
    vec3 reflectDir = reflect(-lightDir, normal);
-   vec3 specular = sunColor * (
-      pow(max(dot(viewDir, reflectDir), 0.0), shininess) * spec
+   vec3 specular = dLight.specular.xyz * (
+      pow(max(dot(viewDir, reflectDir), 0.0), material.shininess) * material.specular
    );
 
    lightColor = ambient + diffuse + specular;

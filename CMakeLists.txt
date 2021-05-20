@@ -33,7 +33,7 @@ add_executable(gl
     src/screen.cpp src/screen.h
     src/input.cpp src/input.h
     src/font.cpp src/font.h
-        src/graphics/model.cpp src/graphics/model.h src/graphics/material.cpp src/graphics/material.h)
+        src/graphics/model.cpp src/graphics/model.h src/graphics/material.cpp src/graphics/material.h src/graphics/lighting.cpp src/graphics/lighting.h)
 target_link_libraries(gl glfw glm glad soloud ${CMAKE_DL_LIBS})
 
 # Link resources

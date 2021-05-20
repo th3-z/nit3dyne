@@ -122,6 +122,18 @@ void Shader::setUniform(const std::string &name, const glm::vec3 &vec) const {
     );
 }
 
+void Shader::setUniform(const std::string &name, const glm::vec4 &vec) const {
+    std::cout << "vec4set " << name << std::endl;
+    std::cout  << vec.x << std::endl;
+    std::cout  << vec.y << std::endl;
+    std::cout  << vec.z << std::endl;
+    glUniform4fv(
+            glGetUniformLocation(this->handle, name.c_str()),
+            1,  // Send one
+            glm::value_ptr(vec)
+    );
+}
+
 Shader::~Shader() {
     glDeleteProgram(this->handle);
 }
@@ -131,4 +143,12 @@ void Shader::attachMaterial(const Material &material) const {
     this->setUniform("material.diffuse", material.diffuse);
     this->setUniform("material.specular", material.specular);
     this->setUniform("material.shininess", material.shininess);
+}
+
+void Shader::setDirectionalLight(const DirectionalLight &dLight) const {
+    this->setUniform("dLight.direction", dLight.direction);
+
+    this->setUniform("dLight.ambient", dLight.ambient);
+    this->setUniform("dLight.diffuse", dLight.diffuse);
+    this->setUniform("dLight.specular", dLight.specular);
 }
