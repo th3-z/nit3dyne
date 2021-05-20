@@ -68,7 +68,7 @@ int main() {
 
     Model suzanne = Model("res/suzanne.glb", "res/textures/0.png");
     suzanne.setMaterial(Materials::metallic);
-    suzanne.translate(0.f, 0.0f, 5.f);
+    suzanne.translate(0.f, 2.0f, 5.f);
 
     std::vector<Model*> monkeys;
     int nMonkeys = 128;
@@ -77,12 +77,17 @@ int main() {
             new Model("res/suzanne.glb", "res/textures/0.png")
         );
         monkeys[i]->setMaterial(Materials::metallic);
-        monkeys[i]->translate((i * 2.5f) - (2.5f*nMonkeys)/2, sin(i)*5 + 5.f, -5.f);
+        monkeys[i]->translate((i * 2.5f) - (2.5f*nMonkeys)/2, sin(i)*5 + 6.5f, -5.f);
     }
 
     Model cube = Model("res/cube.glb", "res/textures/1.png");
-    cube.setMaterial(Materials::emissive);
-    cube.translate(5.f, 0.f, 0.f);
+    cube.setMaterial(Materials::metallic);
+    cube.translate(5.f, 2.f, 0.f);
+
+    Model plane = Model("res/plane.glb", "res/textures/1.png");
+    plane.setMaterial(Materials::metallic);
+    plane.scale(7.f, 0.f, 7.f);
+    //plane.translate(-7.5f, 0.f, -7.5f);
 
     Model sphere = Model("res/sphere.glb", "res/textures/3.png");
     sphere.translate(0.f, 5.f, 0.f);
@@ -136,6 +141,8 @@ int main() {
         shader.setUniform("dLight.direction", windowState.camera->getView() * dLight.direction);
 
         cube.draw(shader, screen.perspective, windowState.camera->getView());
+
+        plane.draw(shader, screen.perspective, windowState.camera->getView());
 
         sphere.rotate(
             (360.f * .1 /* rev per s */) * windowState.timeDelta, 0.f, 1.f, 0.f, false
