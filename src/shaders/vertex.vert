@@ -19,6 +19,13 @@ struct DLight {
    vec3 specular;
 };
 
+struct SLight {
+   vec4 position;
+   vec4 direction;
+
+   float cutOff;
+};
+
 out vec3 lightColor;
 out vec3 affineUv;
 
@@ -31,6 +38,7 @@ uniform mat4 mvp;
 
 uniform Material material;
 uniform DLight dLight;
+uniform SLight sLight;
 
 
 void main() {
@@ -46,6 +54,18 @@ void main() {
    vec3 vertPos = vec3(modelView * vec4(inVertex, 1.0));
    vec3 lightDir = normalize(-dLight.direction.xyz);
 
+
+   // SpotLight
+   vec3 sLightDir = normalize(sLight.position.xyz - vertPos);
+   float theta = dot(sLightDir, normalize(-sLight.direction.xyz));
+
+   vec3 sLightColor = vec3(0.0, 0.0, 0.0);
+   if (theta > sLight.cutOff) {
+      float dist = length(sLight.position.xyz - vertPos);
+      float att =  1.0 / (dist/4 /* intensity */);
+      sLightColor = vec3(.65/2, .6/2, .5/2) * att;
+   }
+
    // Ambient
    vec3 ambient = dLight.ambient.xyz * material.ambient; // Ambient component
 
@@ -59,7 +79,7 @@ void main() {
       pow(max(dot(viewDir, reflectDir), 0.0), material.shininess) * material.specular
    );
 
-   lightColor = ambient + diffuse + specular;
+   lightColor = ambient + diffuse + specular + sLightColor;
 
    // Affine texture map
    affineUv = vec3(inTexCoord.st * vertPos.z, vertPos.z);

@@ -29,6 +29,7 @@ public:
 
     void attachMaterial(const Material &material) const;
     void setDirectionalLight(const DirectionalLight &dLight) const;
+    void setSpotLight(const SpotLight &sLight) const;
 
     void setUniform(const std::string &name, const bool value) const;
     void setUniform(const std::string &name, const int value) const;

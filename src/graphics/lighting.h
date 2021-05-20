@@ -16,7 +16,7 @@ struct DirectionalLight {
 
     DirectionalLight():
         direction(glm::vec4(0.f, -1.0f, 0.f, 0.0f)),
-        ambient(glm::vec3(0.1f, 0.1f, 0.1f)),
+        ambient(glm::vec3(0.02f, 0.02f, 0.02f)),
         diffuse(glm::vec3(0.7f, 0.7f, 0.7f)),
         specular(glm::vec3(0.5f, 0.5f, 0.5f))
     {};
@@ -49,9 +49,10 @@ struct SpotLight {
     float cutOff;
 
     SpotLight():
-            position(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)),
-            direction(glm::vec4(1.0f, 1.0f, 1.0f, 0.0f)),
-            cutOff(1.f)
+        // Defaults are in view-space, it will never move relative to the view
+        position(glm::vec4(0.5f, 0.5f, 0.f, 0.0f)),
+        direction(glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)),
+        cutOff(glm::cos(glm::radians(24.5f)))
     {};
 };
 

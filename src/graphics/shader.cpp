@@ -123,10 +123,6 @@ void Shader::setUniform(const std::string &name, const glm::vec3 &vec) const {
 }
 
 void Shader::setUniform(const std::string &name, const glm::vec4 &vec) const {
-    std::cout << "vec4set " << name << std::endl;
-    std::cout  << vec.x << std::endl;
-    std::cout  << vec.y << std::endl;
-    std::cout  << vec.z << std::endl;
     glUniform4fv(
             glGetUniformLocation(this->handle, name.c_str()),
             1,  // Send one
@@ -151,4 +147,10 @@ void Shader::setDirectionalLight(const DirectionalLight &dLight) const {
     this->setUniform("dLight.ambient", dLight.ambient);
     this->setUniform("dLight.diffuse", dLight.diffuse);
     this->setUniform("dLight.specular", dLight.specular);
+}
+
+void Shader::setSpotLight(const SpotLight &sLight) const {
+    this->setUniform("sLight.direction", sLight.direction);
+    this->setUniform("sLight.position", sLight.position);
+    this->setUniform("sLight.cutOff", sLight.cutOff);
 }

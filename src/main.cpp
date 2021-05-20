@@ -63,6 +63,9 @@ int main() {
     DirectionalLight dLight = DirectionalLight();
     shader.setDirectionalLight(dLight);
 
+    SpotLight sLight = SpotLight();
+    shader.setSpotLight(sLight);
+
     Model suzanne = Model("res/suzanne.glb", "res/textures/0.png");
     suzanne.setMaterial(Materials::metallic);
     suzanne.translate(0.f, 0.0f, 5.f);
@@ -93,11 +96,16 @@ int main() {
     soloud.init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION, SoLoud::Soloud::BACKENDS::MINIAUDIO);
     soloud.setGlobalVolume(.5f);
 
-    sample.load("res/sound/dunkelheit.ogg"); // Load a wave file
+    sample.load("res/sound/dunkelheit.ogg");
     sample.setLooping(true);
     sample.set3dMinMaxDistance(1, 30);
     sample.set3dAttenuation(SoLoud::AudioSource::EXPONENTIAL_DISTANCE, 0.5);
-    SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);        // Play it
+    SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);
+    soloud.set3dSourceParameters(
+        sampleHandle,
+        0.f, 5.f, 0.f,
+        0.f, 0.f, 0.f
+    );
 
     // Timing
     double timeNow, timeLast = 0.;
@@ -145,17 +153,8 @@ int main() {
 
 
         // Update audio
-//        glm::vec4 suzannePosView =  modelView * glm::vec4(0.5,0.5,0.5,1.0);
-//        float w = suzannePosView.w;
-//        soloud.set3dSourceParameters(
-//            sampleHandle,
-//            suzannePosView.x/w, suzannePosView.y/w, suzannePosView.z/w,
-//            0.f, 0.f, 0.f
-//        );
-//
-//        soloud.set3dListenerPosition(0,0,0);
-//
-//        soloud.update3dAudio();
+        soloud.set3dListenerPosition(windowState.camera->position.x,windowState.camera->position.y,windowState.camera->position.z);
+        soloud.update3dAudio();
 
         // Render UI
         font.draw();
