@@ -1,17 +1,12 @@
-//
-// Created by the_z on 05/05/2021.
-//
-
 #ifndef GL_MESH_H
 #define GL_MESH_H
 
 #include <glad/glad.h>
 #include <iostream>
-#include <string>
 #include <map>
+#include <string>
 
 #include "tiny_gltf.h"
-
 
 class Mesh {
 public:
@@ -19,6 +14,7 @@ public:
     ~Mesh();
 
     void draw();
+
 private:
     unsigned int VAO;
     tinygltf::Model gltf;
@@ -26,5 +22,4 @@ private:
     void bindBuffers();
 };
 
-
-#endif //GL_MESH_H
+#endif // GL_MESH_H

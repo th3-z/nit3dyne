@@ -1,13 +1,9 @@
-//
-// Created by the_z on 26/04/2021.
-//
-
 #ifndef GL_TEXTURE_H
 #define GL_TEXTURE_H
 
+#include <glad/glad.h>
 #include <iostream>
 #include <string>
-#include <glad/glad.h>
 
 #include "stb_image.h"
 
@@ -22,5 +18,4 @@ public:
     int h;
 };
 
-
-#endif //GL_TEXTURE_H
+#endif // GL_TEXTURE_H

@@ -1,18 +1,8 @@
-//
-// Created by the_z on 03/05/2021.
-//
-
-
 #include "camera.h"
 
-
-Camera::Camera():
-position(glm::vec3(0.f, 0.f, 0.f)),
-up(glm::vec3(0.0f, 1.0f,  0.0f)),
-front(glm::vec3(0.0f, 0.0f, -1.0f)),
-worldUp(glm::vec3(0.f, 1.f, 0.f)) {
-
-}
+Camera::Camera()
+: position(glm::vec3(0.f, 0.f, 0.f)), up(glm::vec3(0.0f, 1.0f, 0.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)),
+  worldUp(glm::vec3(0.f, 1.f, 0.f)) {}
 
 Camera::~Camera() = default;
 
@@ -27,4 +17,3 @@ glm::mat4 Camera::getView() {
 
     return glm::lookAt(this->position, this->position + this->front, this->up);
 }
-

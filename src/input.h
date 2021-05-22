@@ -1,15 +1,11 @@
-//
-// Created by the_z on 11/05/2021.
-//
-
 #ifndef GL_INPUT_H
 #define GL_INPUT_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "camera/camera.h"
 #include "camera/cameraFps.h"
 #include "camera/cameraFree.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 struct WindowState {
     double timeDelta = 0.;
@@ -28,5 +24,4 @@ private:
     static double mouseLastY;
 };
 
-
-#endif //GL_INPUT_H
+#endif // GL_INPUT_H

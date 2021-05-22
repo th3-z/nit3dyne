@@ -1,10 +1,5 @@
-//
-// Created by the_z on 18/05/2021.
-//
-
 #ifndef GL_MATERIAL_H
 #define GL_MATERIAL_H
-
 
 #include <glm/vec3.hpp>
 
@@ -19,9 +14,6 @@ namespace Materials {
     extern const Material basic;
     extern const Material metallic;
     extern const Material emissive;
-}
+} // namespace Materials
 
-
-
-
-#endif //GL_MATERIAL_H
+#endif // GL_MATERIAL_H

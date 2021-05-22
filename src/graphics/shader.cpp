@@ -1,7 +1,3 @@
-//
-// Created by the_z on 24/04/2021.
-//
-
 #include "shader.h"
 
 Shader::Shader(const char *vPath, const char *fPath) {
@@ -36,8 +32,7 @@ Shader::Shader(const char *vPath, const char *fPath) {
     glShaderSource(vId, 1, &vSrcC, NULL);
     glCompileShader(vId);
     glGetShaderiv(vId, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(vId, 512, NULL, infoLog);
         std::cout << "Error: Failed to compile vertex shader\n" << infoLog << std::endl;
     }
@@ -47,8 +42,7 @@ Shader::Shader(const char *vPath, const char *fPath) {
     glShaderSource(fId, 1, &fSrcC, NULL);
     glCompileShader(fId);
     glGetShaderiv(fId, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetShaderInfoLog(vId, 512, NULL, infoLog);
         std::cout << "Error: Failed to compile fragment shader\n" << infoLog << std::endl;
     }
@@ -59,8 +53,7 @@ Shader::Shader(const char *vPath, const char *fPath) {
     glLinkProgram(this->handle);
 
     glGetProgramiv(this->handle, GL_LINK_STATUS, &success);
-    if (!success)
-    {
+    if (!success) {
         glGetProgramInfoLog(this->handle, 512, NULL, infoLog);
         std::cout << "Error: Failed to link shader program\n" << infoLog << std::endl;
         std::cout << "VS: " << vPath << std::endl;
@@ -71,68 +64,47 @@ Shader::Shader(const char *vPath, const char *fPath) {
     glDeleteShader(fId);
 }
 
-void Shader::use() const {
-    glUseProgram(this->handle);
-}
+void Shader::use() const { glUseProgram(this->handle); }
 
 void Shader::setUniform(const std::string &name, const bool value) const {
-    glUniform1i(
-        glGetUniformLocation(this->handle, name.c_str()),
-        (int)value
-    );
+    glUniform1i(glGetUniformLocation(this->handle, name.c_str()), (int)value);
 }
 
 void Shader::setUniform(const std::string &name, const float value) const {
-    glUniform1f(
-        glGetUniformLocation(this->handle, name.c_str()),
-        value
-    );
+    glUniform1f(glGetUniformLocation(this->handle, name.c_str()), value);
 }
 
 void Shader::setUniform(const std::string &name, const int value) const {
-    glUniform1i(
-        glGetUniformLocation(this->handle, name.c_str()),
-        value
-    );
+    glUniform1i(glGetUniformLocation(this->handle, name.c_str()), value);
 }
 
 void Shader::setUniform(const std::string &name, const glm::mat3 &mat) const {
-    glUniformMatrix3fv(
-            glGetUniformLocation(this->handle, name.c_str()),
-            1,  // Send one
-            GL_FALSE,  // Don't transpose (swap rows/cols)
-            glm::value_ptr(mat)
-    );
+    glUniformMatrix3fv(glGetUniformLocation(this->handle, name.c_str()),
+                       1,        // Send one
+                       GL_FALSE, // Don't transpose (swap rows/cols)
+                       glm::value_ptr(mat));
 }
 
 void Shader::setUniform(const std::string &name, const glm::mat4 &mat) const {
-    glUniformMatrix4fv(
-            glGetUniformLocation(this->handle, name.c_str()),
-            1,  // Send one
-            GL_FALSE,  // Don't transpose (swap rows/cols)
-            glm::value_ptr(mat)
-    );
+    glUniformMatrix4fv(glGetUniformLocation(this->handle, name.c_str()),
+                       1,        // Send one
+                       GL_FALSE, // Don't transpose (swap rows/cols)
+                       glm::value_ptr(mat));
 }
 
 void Shader::setUniform(const std::string &name, const glm::vec3 &vec) const {
-    glUniform3fv(
-            glGetUniformLocation(this->handle, name.c_str()),
-            1,  // Send one
-            glm::value_ptr(vec)
-    );
+    glUniform3fv(glGetUniformLocation(this->handle, name.c_str()),
+                 1, // Send one
+                 glm::value_ptr(vec));
 }
 
 void Shader::setUniform(const std::string &name, const glm::vec4 &vec) const {
-    glUniform4fv(
-            glGetUniformLocation(this->handle, name.c_str()),
-            1,  // Send one
-            glm::value_ptr(vec)
-    );
+    glUniform4fv(glGetUniformLocation(this->handle, name.c_str()),
+                 1, // Send one
+                 glm::value_ptr(vec));
 }
 
-Shader::~Shader() {
-    glDeleteProgram(this->handle);
-}
+Shader::~Shader() { glDeleteProgram(this->handle); }
 
 void Shader::attachMaterial(const Material &material) const {
     this->setUniform("material.ambient", material.ambient);

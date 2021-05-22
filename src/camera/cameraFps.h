@@ -1,7 +1,3 @@
-//
-// Created by the_z on 08/05/2021.
-//
-
 #ifndef GL_CAMERAFPS_H
 #define GL_CAMERAFPS_H
 
@@ -20,5 +16,4 @@ private:
     const float playerHeight = 2.f;
 };
 
-
-#endif //GL_CAMERAFPS_H
+#endif // GL_CAMERAFPS_H

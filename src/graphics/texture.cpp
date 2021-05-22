@@ -1,7 +1,3 @@
-//
-// Created by the_z on 26/04/2021.
-//
-
 #include "texture.h"
 
 Texture::Texture(const std::string &filePath) {
@@ -30,8 +26,4 @@ Texture::Texture(const std::string &filePath) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Texture::~Texture() {
-    glDeleteTextures(1, &this->handle);
-}
-
-
+Texture::~Texture() { glDeleteTextures(1, &this->handle); }

@@ -1,14 +1,10 @@
-//
-// Created by the_z on 11/05/2021.
-//
-
 #include "input.h"
 
 double Input::mouseLastX = 0.;
 double Input::mouseLastY = 0.;
 
 void Input::callbackMouse(GLFWwindow *window, double mouseX, double mouseY) {
-    auto *windowState = (WindowState*) glfwGetWindowUserPointer(window);
+    auto *windowState = (WindowState *) glfwGetWindowUserPointer(window);
 
     float xOffset = mouseX - mouseLastX;
     float yOffset = mouseY - mouseLastY;
@@ -20,7 +16,7 @@ void Input::callbackMouse(GLFWwindow *window, double mouseX, double mouseY) {
 }
 
 void Input::callbackKey(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    auto *windowState = (WindowState*) glfwGetWindowUserPointer(window);
+    auto *windowState = (WindowState *) glfwGetWindowUserPointer(window);
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -45,15 +41,21 @@ void Input::registerCallbacks(GLFWwindow *window) {
 }
 
 void Input::processContinuousInput(GLFWwindow *window) {
-    auto *windowState = (WindowState*) glfwGetWindowUserPointer(window);
+    auto *windowState = (WindowState *) glfwGetWindowUserPointer(window);
 
     int direction = 0;
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) direction |= Direction::FORWARD;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) direction |= Direction::LEFT;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) direction |= Direction::BACKWARD;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) direction |= Direction::RIGHT;
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) direction |= Direction::UP;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) direction |= Direction::DOWN;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        direction |= Direction::FORWARD;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        direction |= Direction::LEFT;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        direction |= Direction::BACKWARD;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        direction |= Direction::RIGHT;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        direction |= Direction::UP;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        direction |= Direction::DOWN;
 
     windowState->camera->handleDirection(direction, (float) windowState->timeDelta);
 }

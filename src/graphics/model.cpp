@@ -1,7 +1,3 @@
-//
-// Created by the_z on 18/05/2021.
-//
-
 #include "model.h"
 
 Model::Model(const std::string &meshFilename, const std::string &textureFilename):
@@ -16,9 +12,7 @@ void Model::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &
 
     glm::mat4 mvp = perspective * view * this->modelMat;
     glm::mat4 modelView = view * this->modelMat;
-    glm::mat3 normalMat = glm::inverse(
-            glm::transpose(glm::mat3(modelView))
-    );
+    glm::mat3 normalMat = glm::inverse(glm::transpose(glm::mat3(modelView)));
 
     shader.setUniform("mvp", mvp);
     shader.setUniform("modelView", modelView);
@@ -39,10 +33,7 @@ void Model::scale(float x, float y, float z) {
 
 void Model::rotate(float deg, float x, float y, float z, bool normalize) {
     this->modelMat = glm::rotate(
-        this->modelMat, glm::radians(deg), normalize?
-            glm::normalize(glm::vec3(x, y, z)):
-            glm::vec3(x, y, z)
-    );
+        this->modelMat, glm::radians(deg), normalize ? glm::normalize(glm::vec3(x, y, z)) : glm::vec3(x, y, z));
 }
 
 void Model::setMaterial(const Material &material) {

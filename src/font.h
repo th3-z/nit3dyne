@@ -1,19 +1,16 @@
-//
-// Created by the_z on 14/05/2021.
-//
-
 #ifndef GL_FONT_H
 #define GL_FONT_H
 
-#include <iostream>
-#include <vector>
 #include "graphics/shader.h"
 #include "graphics/texture.h"
+#include <iostream>
+#include <vector>
 
 class Font {
 public:
-    explicit Font(const char* str);
+    explicit Font(const char *str);
     void draw();
+
 private:
     unsigned int textureHandle;
     unsigned int VAO;
@@ -28,5 +25,4 @@ private:
     std::pair<float, float> getTexelCoord(int x, int y);
 };
 
-
-#endif //GL_FONT_H
+#endif // GL_FONT_H

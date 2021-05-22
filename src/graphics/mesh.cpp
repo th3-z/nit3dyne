@@ -1,9 +1,4 @@
-//
-// Created by the_z on 05/05/2021.
-//
-
 #include "mesh.h"
-
 
 Mesh::Mesh(const std::string &filename) {
     tinygltf::TinyGLTF loader;
@@ -32,11 +27,7 @@ void Mesh::draw() {
     tinygltf::Accessor indexAccessor = this->gltf.accessors[primitive.indices];
 
     glDrawElements(
-        primitive.mode,
-        indexAccessor.count,
-        indexAccessor.componentType,
-        (char *)NULL + (indexAccessor.byteOffset)
-    );
+        primitive.mode, indexAccessor.count, indexAccessor.componentType, (char *) NULL + (indexAccessor.byteOffset));
 
     glBindVertexArray(0);
 }
@@ -56,7 +47,7 @@ void Mesh::bindBuffers() {
 
     std::map<int, unsigned int> VBOs;
 
-    for (int i = 0; i < this->gltf.bufferViews.size(); ++i) {
+    for (size_t i = 0; i < this->gltf.bufferViews.size(); ++i) {
         const tinygltf::BufferView &bufferView = this->gltf.bufferViews[i];
 
         unsigned int VBO;
@@ -65,11 +56,7 @@ void Mesh::bindBuffers() {
         glBindBuffer(bufferView.target, VBO);
 
         glBufferData(
-                bufferView.target,
-                bufferView.byteLength,
-                &buffer.data.at(0) + bufferView.byteOffset,
-                GL_STATIC_DRAW
-        );
+            bufferView.target, bufferView.byteLength, &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
     }
 
     for (auto &attrib : primitive.attributes) {
@@ -80,23 +67,24 @@ void Mesh::bindBuffers() {
         int size = accessor.type;
 
         int vaa = -1;
-        if (attrib.first.compare("POSITION") == 0) vaa = 0;
-        if (attrib.first.compare("NORMAL") == 0) vaa = 1;
-        if (attrib.first.compare("TEXCOORD_0") == 0) vaa = 2;
+        if (attrib.first.compare("POSITION") == 0)
+            vaa = 0;
+        if (attrib.first.compare("NORMAL") == 0)
+            vaa = 1;
+        if (attrib.first.compare("TEXCOORD_0") == 0)
+            vaa = 2;
 
         glEnableVertexAttribArray(vaa);
-        glVertexAttribPointer(
-                vaa,
-                size,
-                accessor.componentType,
-                accessor.normalized ? GL_TRUE : GL_FALSE,
-                byteStride,
-                (char *) NULL + (accessor.byteOffset)
-        );
+        glVertexAttribPointer(vaa,
+                              size,
+                              accessor.componentType,
+                              accessor.normalized ? GL_TRUE : GL_FALSE,
+                              byteStride,
+                              (char *) NULL + (accessor.byteOffset));
     }
 
     glBindVertexArray(0);
-    for (int i = 0; i < VBOs.size(); ++i) {
+    for (size_t i = 0; i < VBOs.size(); ++i) {
         glDeleteBuffers(1, &VBOs[i]);
     }
 }

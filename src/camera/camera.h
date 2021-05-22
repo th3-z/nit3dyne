@@ -1,23 +1,11 @@
-//
-// Created by the_z on 03/05/2021.
-//
-
 #ifndef GL_CAMERA_H
 #define GL_CAMERA_H
 
-#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
-enum Direction {
-    UP = 1,
-    LEFT = 2,
-    DOWN = 4,
-    RIGHT = 8,
-    FORWARD = 16,
-    BACKWARD = 32
-};
-
+enum Direction { UP = 1, LEFT = 2, DOWN = 4, RIGHT = 8, FORWARD = 16, BACKWARD = 32 };
 
 class Camera {
 public:
@@ -39,9 +27,8 @@ protected:
     float yaw = -90.f;
     float pitch = -0.f;
 
-    const float speed = 5.f;  // units per second
+    const float speed = 5.f; // units per second
     const float sensitivity = 5.f;
 };
 
-
-#endif //GL_CAMERA_H
+#endif // GL_CAMERA_H

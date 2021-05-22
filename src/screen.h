@@ -1,22 +1,18 @@
-//
-// Created by the_z on 11/05/2021.
-//
-
 #ifndef GL_SCREEN_H
 #define GL_SCREEN_H
 
-#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 
 class Screen {
 public:
-    Screen(int w, int h, float fov, const char* title);
+    Screen(int w, int h, float fov, const char *title);
     ~Screen();
 
     void resize();
@@ -28,6 +24,7 @@ public:
     int h;
     float fov;
     glm::mat4 perspective;
+
 private:
     Shader *copyShader;
 
@@ -38,5 +35,4 @@ private:
     unsigned int fboQuadVao;
 };
 
-
-#endif //GL_SCREEN_H
+#endif // GL_SCREEN_H

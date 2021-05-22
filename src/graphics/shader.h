@@ -1,7 +1,3 @@
-//
-// Created by the_z on 24/04/2021.
-//
-
 #ifndef GL_SHADER_H
 #define GL_SHADER_H
 
@@ -9,14 +5,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <string>
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
-#include "material.h"
 #include "lighting.h"
-
+#include "material.h"
 
 class Shader {
 
@@ -40,5 +35,4 @@ public:
     void setUniform(const std::string &name, const glm::vec4 &vec) const;
 };
 
-
-#endif //GL_SHADER_H
+#endif // GL_SHADER_H
