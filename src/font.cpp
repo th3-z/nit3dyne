@@ -1,23 +1,111 @@
 #include "font.h"
 
-const char *FONT_FILE = "res/textures/font.png";
+const char *FONT_FILE = "font";
 const unsigned int FONT_WIDTH = 5;
 const unsigned int FONT_HEIGHT = 8;
 const unsigned int FONT_WIDTHS[95] = {
     // SPACE !"#%&'()*+,-./
-    5, 1, 3, 5, 5, 5, 5, 1, 2, 2, 3, 3, 2, 3, 1, 4,
+    5,
+    1,
+    3,
+    5,
+    5,
+    5,
+    5,
+    1,
+    2,
+    2,
+    3,
+    3,
+    2,
+    3,
+    1,
+    4,
     // 0 - 9
-    4, 3, 4, 4, 4, 4, 4, 4, 4, 4,
+    4,
+    3,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
     // :;<=>?@
-    1, 1, 4, 4, 4, 4, 5,
+    1,
+    1,
+    4,
+    4,
+    4,
+    4,
+    5,
     // A - Z
-    4, 4, 4, 4, 4, 4, 4, 4, 3, 5, 4, 4, 5, 5, 4, 4, 5, 4, 4, 5, 4, 5, 5, 5, 5, 5,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    3,
+    5,
+    4,
+    4,
+    5,
+    5,
+    4,
+    4,
+    5,
+    4,
+    4,
+    5,
+    4,
+    5,
+    5,
+    5,
+    5,
+    5,
     // [\]^_`
-    2, 4, 2, 3, 5, 2,
+    2,
+    4,
+    2,
+    3,
+    5,
+    2,
     // a - z
-    4, 4, 4, 4, 4, 2, 4, 4, 1, 2, 3, 2, 5, 4, 4, 4, 4, 3, 4, 3, 4, 3, 5, 5, 4, 4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    2,
+    4,
+    4,
+    1,
+    2,
+    3,
+    2,
+    5,
+    4,
+    4,
+    4,
+    4,
+    3,
+    4,
+    3,
+    4,
+    3,
+    5,
+    5,
+    4,
+    4,
     // {|}~
-    2, 1, 2, 5};
+    2,
+    1,
+    2,
+    5};
 
 Font::Font(const char *str) {
     std::string tPath(FONT_FILE);
@@ -71,19 +159,20 @@ Font::Font(const char *str) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(float), &this->vertices[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *) 0);
 
     unsigned int VBO2;
     glGenBuffers(1, &VBO2);
     glBindBuffer(GL_ARRAY_BUFFER, VBO2);
     glBufferData(GL_ARRAY_BUFFER, this->uvs.size() * sizeof(float), &uvs[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *)0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *) 0);
 
     unsigned int EBO;
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+    glBufferData(
+        GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
     glBindVertexArray(0);
 
@@ -104,5 +193,5 @@ void Font::draw() {
 }
 
 std::pair<float, float> Font::getTexelCoord(int x, int y) {
-    return std::pair<float, float>((x) / (float)this->texture->w, (y) / (float)this->texture->h);
+    return std::pair<float, float>((x) / (float) this->texture->w, (y) / (float) this->texture->h);
 }

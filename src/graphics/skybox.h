@@ -3,17 +3,20 @@
 
 #include <string>
 #include <vector>
+#include <array>
+#include <cassert>
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 #include "stb_image.h"
-#include <cassert>
 #include <glad/glad.h>
 
 #include "shader.h"
 
 class Skybox {
 public:
-    // faceFilePaths should always be of size six
-    Skybox(std::vector<std::string> faceFilePaths);
+    Skybox(const std::string &resourceName);
     ~Skybox();
 
     void draw(Shader &shader, glm::mat4 &&view, glm::mat4 &proj);

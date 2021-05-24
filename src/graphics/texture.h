@@ -2,14 +2,16 @@
 #define GL_TEXTURE_H
 
 #include <glad/glad.h>
-#include <iostream>
 #include <string>
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 #include "stb_image.h"
 
 class Texture {
 public:
-    explicit Texture(const std::string &filePath);
+    explicit Texture(const std::string &resourceName);
     ~Texture();
 
     unsigned int handle;

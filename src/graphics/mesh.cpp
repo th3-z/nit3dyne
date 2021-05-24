@@ -1,16 +1,21 @@
 #include "mesh.h"
 
-Mesh::Mesh(const std::string &filename) {
+std::string ext = ".glb";
+std::string path = "res/mesh/";
+
+Mesh::Mesh(const std::string &resourceName) {
     tinygltf::TinyGLTF loader;
     std::string err, warn;
 
-    bool res = loader.LoadBinaryFromFile(&this->gltf, &err, &warn, filename);
+    bool res = loader.LoadBinaryFromFile(&this->gltf, &err, &warn, path + resourceName + ext);
+#ifndef NDEBUG
     if (!warn.empty())
-        std::cout << "WARN: " << warn << std::endl;
+        std::cout << "Mesh warning: " << warn << std::endl;
     if (!err.empty())
-        std::cout << "ERR: " << err << std::endl;
+        std::cout << "Mesh error: " << err << std::endl;
     if (!res)
-        std::cout << "Failed to load GLTF file: " << filename << std::endl;
+        std::cout << "Failed to load mesh: " << resourceName << std::endl;
+#endif
 
     this->bindBuffers();
 }
@@ -26,8 +31,10 @@ void Mesh::draw() {
     tinygltf::Primitive primitive = mesh.primitives.front();
     tinygltf::Accessor indexAccessor = this->gltf.accessors[primitive.indices];
 
-    glDrawElements(
-        primitive.mode, indexAccessor.count, indexAccessor.componentType, (char *) NULL + (indexAccessor.byteOffset));
+    glDrawElements(primitive.mode,
+                   indexAccessor.count,
+                   indexAccessor.componentType,
+                   (char *) NULL + (indexAccessor.byteOffset));
 
     glBindVertexArray(0);
 }
@@ -55,8 +62,10 @@ void Mesh::bindBuffers() {
         VBOs[i] = VBO;
         glBindBuffer(bufferView.target, VBO);
 
-        glBufferData(
-            bufferView.target, bufferView.byteLength, &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
+        glBufferData(bufferView.target,
+                     bufferView.byteLength,
+                     &buffer.data.at(0) + bufferView.byteOffset,
+                     GL_STATIC_DRAW);
     }
 
     for (auto &attrib : primitive.attributes) {

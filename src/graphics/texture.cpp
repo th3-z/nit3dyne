@@ -1,11 +1,17 @@
 #include "texture.h"
 
-Texture::Texture(const std::string &filePath) {
+const std::string ext = ".png";
+const std::string path = "res/texture/";
+
+Texture::Texture(const std::string &resourceName) {
     stbi_set_flip_vertically_on_load(true);
-    unsigned char *data = stbi_load(filePath.c_str(), &this->w, &this->h, &this->channels, 0);
+    unsigned char *data =
+        stbi_load((path + resourceName + ext).c_str(), &this->w, &this->h, &this->channels, 0);
+#ifndef NDEBUG
     if (!data) {
-        std::cout << "Failed to load texture: " << filePath << std::endl;
+        std::cout << "Failed to load texture: " << resourceName << std::endl;
     }
+#endif
 
     int mode = GL_RGB;
     if (this->channels == 4)
@@ -26,4 +32,6 @@ Texture::Texture(const std::string &filePath) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Texture::~Texture() { glDeleteTextures(1, &this->handle); }
+Texture::~Texture() {
+    glDeleteTextures(1, &this->handle);
+}

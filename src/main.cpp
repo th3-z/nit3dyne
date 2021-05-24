@@ -9,6 +9,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <soloud/include/soloud.h>
 #include <soloud/include/soloud_wav.h>
+#include <entt/entt.hpp>
+#include <memory>
 
 #include "camera/cameraFps.h"
 #include "graphics/mesh.h"
@@ -17,6 +19,7 @@
 #include "input.h"
 #include "screen.h"
 #include "graphics/skybox.h"
+#include "resourceCache.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -49,8 +52,7 @@ int main() {
     postShader.use();
     postShader.setUniform("tex", 0);
     postShader.setUniform("texDither", 1);
-    std::string ditherFilePath("res/textures/dith.png");
-    Texture textureDither(ditherFilePath);
+    Texture textureDither("dith");
 
     // Skybox shader
     Shader shaderSkybox("shaders/skybox.vert", "shaders/skybox.frag");
@@ -69,39 +71,45 @@ int main() {
     DirectionalLight dLight = DirectionalLight();
     shader.setDirectionalLight(dLight);
 
+    ResourceCache<Texture> textureCache = ResourceCache<Texture>();
+    { std::shared_ptr<Texture> a = textureCache.loadResource("0"); }
+    textureCache.dbg();
+    textureCache.sweep();
+    textureCache.dbg();
+
+#ifndef NDEBUG
+    // textureCache.dbg();
+// textureCache.sweep();
+// textureCache.dbg();
+#endif
+
     SpotLight sLight = SpotLight();
     shader.setSpotLight(sLight);
 
-    std::vector<std::string> skyboxFaces = {"res/cubemap.posx.png",
-                                            "res/cubemap.negx.png",
-                                            "res/cubemap.posy.png",
-                                            "res/cubemap.negy.png",
-                                            "res/cubemap.posz.png",
-                                            "res/cubemap.negz.png"};
-    Skybox skybox(skyboxFaces);
+    Skybox skybox("cubemap");
 
-    Model suzanne = Model("res/suzanne.glb", "res/textures/0.png");
+    Model suzanne = Model("suzanne", "0");
     suzanne.setMaterial(Materials::metallic);
     suzanne.translate(0.f, 2.0f, 5.f);
 
     std::vector<Model *> monkeys;
     int nMonkeys = 128;
     for (int i = 0; i < nMonkeys; ++i) {
-        monkeys.emplace_back(new Model("res/suzanne.glb", "res/textures/0.png"));
+        monkeys.emplace_back(new Model("suzanne", "0"));
         monkeys[i]->setMaterial(Materials::metallic);
         monkeys[i]->translate((i * 2.5f) - (2.5f * nMonkeys) / 2, sin(i) * 5 + 6.5f, -5.f);
     }
 
-    Model cube = Model("res/cube.glb", "res/textures/1.png");
+    Model cube = Model("cube", "1");
     cube.setMaterial(Materials::metallic);
     cube.translate(5.f, 2.f, 0.f);
 
-    Model plane = Model("res/plane.glb", "res/textures/1.png");
+    Model plane = Model("plane", "1");
     plane.setMaterial(Materials::metallic);
     plane.scale(7.f, 0.f, 7.f);
     // plane.translate(-7.5f, 0.f, -7.5f);
 
-    Model sphere = Model("res/sphere.glb", "res/textures/3.png");
+    Model sphere = Model("sphere", "3");
     sphere.translate(0.f, 5.f, 0.f);
     sphere.scale(1.f, 1.f, 1.f);
 
@@ -167,11 +175,11 @@ int main() {
             windowState.camera->position.x, windowState.camera->position.y, windowState.camera->position.z);
         soloud.update3dAudio();
 
-        // Render UI
-        font.draw();
-
         // Render skybox
         skybox.draw(shaderSkybox, glm::mat4(glm::mat3(windowState.camera->getView())), screen.perspective);
+
+        // Render UI
+        font.draw();
 
         screen.flip(postShader, textureDither.handle);
         frames++;
