@@ -71,45 +71,52 @@ int main() {
     DirectionalLight dLight = DirectionalLight();
     shader.setDirectionalLight(dLight);
 
-    ResourceCache<Texture> textureCache = ResourceCache<Texture>();
-    { std::shared_ptr<Texture> a = textureCache.loadResource("0"); }
-    textureCache.dbg();
-    textureCache.sweep();
-    textureCache.dbg();
-
-#ifndef NDEBUG
-    // textureCache.dbg();
-// textureCache.sweep();
-// textureCache.dbg();
-#endif
+    ResourceCache<Texture> textureCache;
+    ResourceCache<Mesh> meshCache;
 
     SpotLight sLight = SpotLight();
     shader.setSpotLight(sLight);
 
     Skybox skybox("cubemap");
 
-    Model suzanne = Model("suzanne", "0");
+    Model suzanne(meshCache.loadResource("suzanne"), textureCache.loadResource("0"));
     suzanne.setMaterial(Materials::metallic);
     suzanne.translate(0.f, 2.0f, 5.f);
 
-    std::vector<Model *> monkeys;
-    int nMonkeys = 128;
+    std::vector<std::unique_ptr<Model>> monkeys;
+
+    int nMonkeys = 256;
     for (int i = 0; i < nMonkeys; ++i) {
-        monkeys.emplace_back(new Model("suzanne", "0"));
+        monkeys.emplace_back(std::make_unique<Model>(
+            Model(meshCache.loadResource("suzanne"), textureCache.loadResource("0"))));
         monkeys[i]->setMaterial(Materials::metallic);
-        monkeys[i]->translate((i * 2.5f) - (2.5f * nMonkeys) / 2, sin(i) * 5 + 6.5f, -5.f);
+        monkeys[i]->translate((i * 2.5f) - (2.5f * nMonkeys) / 3, sin(i) * 5 + 6.5f, -5.f);
     }
 
-    Model cube = Model("cube", "1");
+    for (int i = 0; i < nMonkeys; ++i) {
+        monkeys.emplace_back(std::make_unique<Model>(
+            Model(meshCache.loadResource("suzanne"), textureCache.loadResource("2"))));
+        monkeys[i + nMonkeys]->setMaterial(Materials::emissive);
+        monkeys[i + nMonkeys]->translate((i * 2.5f) - (2.5f * nMonkeys) / 3, sin(i) * 5 + 6.5f, -10.f);
+    }
+
+    for (int i = 0; i < nMonkeys; ++i) {
+        monkeys.emplace_back(std::make_unique<Model>(
+            Model(meshCache.loadResource("suzanne"), textureCache.loadResource("3"))));
+        monkeys[i + nMonkeys * 2]->setMaterial(Materials::basic);
+        monkeys[i + nMonkeys * 2]->translate((i * 2.5f) - (2.5f * nMonkeys) / 3, sin(i) * 5 + 6.5f, -15.f);
+    }
+
+    Model cube(meshCache.loadResource("cube"), textureCache.loadResource("1"));
     cube.setMaterial(Materials::metallic);
     cube.translate(5.f, 2.f, 0.f);
 
-    Model plane = Model("plane", "1");
+    Model plane(meshCache.loadResource("plane"), textureCache.loadResource("1"));
     plane.setMaterial(Materials::metallic);
     plane.scale(7.f, 0.f, 7.f);
     // plane.translate(-7.5f, 0.f, -7.5f);
 
-    Model sphere = Model("sphere", "3");
+    Model sphere(meshCache.loadResource("sphere"), textureCache.loadResource("3"));
     sphere.translate(0.f, 5.f, 0.f);
     sphere.scale(1.f, 1.f, 1.f);
 
@@ -165,7 +172,7 @@ int main() {
 
         suzanne.draw(shader, screen.perspective, windowState.camera->getView());
 
-        for (Model *monkey : monkeys) {
+        for (auto &monkey : monkeys) {
             monkey->rotate((360.f * 1.) * windowState.timeDelta, 0.f, 1.f, 0.f, false);
             monkey->draw(shader, screen.perspective, windowState.camera->getView());
         }
@@ -185,9 +192,6 @@ int main() {
         frames++;
     }
 
-    for (Model *monkey : monkeys) {
-        delete monkey;
-    }
     delete windowState.camera;
 
     return 0;

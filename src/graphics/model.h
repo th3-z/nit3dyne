@@ -1,6 +1,8 @@
 #ifndef GL_MODEL_H
 #define GL_MODEL_H
 
+#include <memory>
+
 #include "mesh.h"
 #include "shader.h"
 #include "texture.h"
@@ -9,7 +11,7 @@
 class Model {
 public:
     // TODO Add another constructor with a default material
-    explicit Model(const std::string &meshFilename, const std::string &textureFilename);
+    explicit Model(const std::shared_ptr<Mesh> mesh, const std::shared_ptr<Texture> texture);
     ~Model();
 
     void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);
@@ -21,8 +23,8 @@ public:
     glm::mat4 modelMat;
 
 private:
-    Mesh mesh;
-    Texture texture;
+    std::shared_ptr<Mesh> mesh;
+    std::shared_ptr<Texture> texture;
     const Material *material = &Materials::basic;
 };
 

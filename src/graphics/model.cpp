@@ -1,7 +1,7 @@
 #include "model.h"
 
-Model::Model(const std::string &meshFilename, const std::string &textureFilename):
-mesh(meshFilename), texture(textureFilename), modelMat(glm::mat4(1.f)) {
+Model::Model(const std::shared_ptr<Mesh> mesh, const std::shared_ptr<Texture> texture):
+modelMat(glm::mat4(1.f)), mesh(mesh), texture(texture) {
 }
 
 Model::~Model() = default;
@@ -19,8 +19,8 @@ void Model::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &
     shader.setUniform("normalMat", normalMat);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, this->texture.handle);
-    this->mesh.draw();
+    glBindTexture(GL_TEXTURE_2D, this->texture->handle);
+    this->mesh->draw();
 }
 
 void Model::translate(float x, float y, float z) {
@@ -32,8 +32,9 @@ void Model::scale(float x, float y, float z) {
 }
 
 void Model::rotate(float deg, float x, float y, float z, bool normalize) {
-    this->modelMat = glm::rotate(
-        this->modelMat, glm::radians(deg), normalize ? glm::normalize(glm::vec3(x, y, z)) : glm::vec3(x, y, z));
+    this->modelMat = glm::rotate(this->modelMat,
+                                 glm::radians(deg),
+                                 normalize ? glm::normalize(glm::vec3(x, y, z)) : glm::vec3(x, y, z));
 }
 
 void Model::setMaterial(const Material &material) {
