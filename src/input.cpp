@@ -15,29 +15,36 @@ void Input::callbackMouse(GLFWwindow *window, double mouseX, double mouseY) {
     windowState->camera->handleMouse(xOffset, yOffset, (float) windowState->timeDelta);
 }
 
+void Input::callbackScroll(GLFWwindow *window, double xOffset, double yOffset) {
+    auto *windowState = (WindowState *) glfwGetWindowUserPointer(window);
+
+    windowState->camera->setFov(windowState->camera->fov - yOffset * 5);
+}
+
 void Input::callbackKey(GLFWwindow *window, int key, int scancode, int action, int mods) {
     auto *windowState = (WindowState *) glfwGetWindowUserPointer(window);
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     if (key == GLFW_KEY_2 && action == GLFW_PRESS)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-        delete windowState->camera;
-        windowState->camera = new CameraFree;
+        // delete windowState->camera;
+        windowState->camera =
+            std::make_unique<CameraFps>(windowState->camera->fov, windowState->camera->viewPort);
     }
     if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-        delete windowState->camera;
-        windowState->camera = new CameraFps;
+        windowState->camera =
+            std::make_unique<CameraFree>(windowState->camera->fov, windowState->camera->viewPort);
     }
 }
 
 void Input::registerCallbacks(GLFWwindow *window) {
     glfwSetKeyCallback(window, callbackKey);
     glfwSetCursorPosCallback(window, callbackMouse);
+    glfwSetScrollCallback(window, callbackScroll);
 }
 
 void Input::processContinuousInput(GLFWwindow *window) {

@@ -8,7 +8,7 @@
 
 class CameraFree : public Camera {
 public:
-    CameraFree();
+    CameraFree(const float fov, const std::pair<int, int> &viewPort);
     void handleDirection(int d, float timeDelta) override;
     void handleMouse(int x, int y, float timeDelta) override;
 };

@@ -6,13 +6,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <string>
 
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 
 class Screen {
 public:
-    Screen(int w, int h, float fov, const char *title);
+    Screen(std::pair<int, int> &viewPort, std::pair<int, int> &viewPortVirtual, const std::string &title);
     ~Screen();
 
     void resize();
@@ -20,10 +21,8 @@ public:
 
     GLFWwindow *window;
 
-    int w;
-    int h;
-    float fov;
-    glm::mat4 perspective;
+    std::pair<int, int> &viewPort;
+    std::pair<int, int> &viewPortVirtual;
 
 private:
     Shader *copyShader;

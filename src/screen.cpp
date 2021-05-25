@@ -1,15 +1,11 @@
 #include "screen.h"
 
-float quadVertices[] = {
-    // Pos         // TexCoord
-    -1.0f, 1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f,
+float quadVertices[] = {-1.0f, 1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f,
 
-    -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f};
+                        -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f};
 
-const float SCREEN_W_VIRTUAL = 864;
-const float SCREEN_H_VIRTUAL = 486;
-
-Screen::Screen(int w, int h, float fov, const char *title): w(w), h(h), fov(fov) {
+Screen::Screen(std::pair<int, int> &viewPort, std::pair<int, int> &viewPortVirtual, const std::string &title):
+viewPort(viewPort), viewPortVirtual(viewPortVirtual) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -20,22 +16,13 @@ Screen::Screen(int w, int h, float fov, const char *title): w(w), h(h), fov(fov)
     glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 #endif
 
-    this->window = glfwCreateWindow(this->w, this->h, title, NULL, NULL);
+    this->window = glfwCreateWindow(this->viewPort.first, this->viewPort.second, title.c_str(), NULL, NULL);
     glfwMakeContextCurrent(this->window);
+    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 
     glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-        std::cout << "ERROR: Failed to initialize GLAD" << std::endl;
-
-    std::cout << "GL Version: " << GLVersion.major << "." << GLVersion.minor << std::endl;
-    std::cout << "GLSL Version: " << (char *) glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-    std::cout << "Vendor: " << (char *) glGetString(GL_VENDOR) << std::endl;
-    std::cout << "Renderer: " << (char *) glGetString(GL_RENDERER) << std::endl;
-
-    glViewport(0, 0, this->w, this->h);
-
-    this->perspective = glm::perspective(glm::radians(this->fov), (float) this->w / this->h, 0.1f, 100.0f);
+    glViewport(0, 0, this->viewPort.first, this->viewPort.second);
 
     glGenFramebuffers(2, this->fbo);
     glGenTextures(2, this->fboTexHandle);
@@ -45,14 +32,22 @@ Screen::Screen(int w, int h, float fov, const char *title): w(w), h(h), fov(fov)
         glBindFramebuffer(GL_FRAMEBUFFER, this->fbo[i]);
 
         glBindTexture(GL_TEXTURE_2D, this->fboTexHandle[i]);
-        glTexImage2D(
-            GL_TEXTURE_2D, 0, GL_RGB, SCREEN_W_VIRTUAL, SCREEN_H_VIRTUAL, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_2D,
+                     0,
+                     GL_RGB,
+                     this->viewPortVirtual.first,
+                     this->viewPortVirtual.second,
+                     0,
+                     GL_RGB,
+                     GL_UNSIGNED_BYTE,
+                     NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->fboTexHandle[i], 0);
 
         glBindRenderbuffer(GL_RENDERBUFFER, this->rbo[i]);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_W_VIRTUAL, SCREEN_H_VIRTUAL);
+        glRenderbufferStorage(
+            GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, this->viewPortVirtual.first, this->viewPortVirtual.second);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->rbo[i]);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -99,15 +94,6 @@ void Screen::resize() {
 }
 
 void Screen::flip(Shader &postShader, int ditherHandle) {
-    /*
-     * disable depth
-     * bind intermediate FBO
-     * clear color buffer
-     * use post shader
-     *
-     * bind fbo tex
-     * draw quad
-     */
     glDisable(GL_DEPTH_TEST);
     glBindFramebuffer(GL_FRAMEBUFFER, this->fbo[1]);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -118,7 +104,7 @@ void Screen::flip(Shader &postShader, int ditherHandle) {
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, this->w, this->h);
+    glViewport(0, 0, this->viewPort.first, this->viewPort.second);
 
     glClear(GL_COLOR_BUFFER_BIT);
     this->copyShader->use(); // Use copy shader
@@ -132,6 +118,6 @@ void Screen::flip(Shader &postShader, int ditherHandle) {
     glfwPollEvents();
 
     glBindFramebuffer(GL_FRAMEBUFFER, this->fbo[0]);
-    glViewport(0, 0, SCREEN_W_VIRTUAL, SCREEN_H_VIRTUAL);
+    glViewport(0, 0, this->viewPortVirtual.first, this->viewPortVirtual.second);
     glEnable(GL_DEPTH_TEST);
 }

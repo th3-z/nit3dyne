@@ -29,21 +29,26 @@
 #include "tiny_gltf.h"
 
 #ifndef NDEBUG
-const unsigned int SCREEN_W = 1600;
-const unsigned int SCREEN_H = 1000;
+const int SCREEN_W = 1600;
+const int SCREEN_H = 1000;
 #else
 const unsigned int SCREEN_W = 1920;
 const unsigned int SCREEN_H = 1200;
 #endif
 const float SCREEN_FOV = 90.f;
+const int SCREEN_W_VIRTUAL = 864;
+const int SCREEN_H_VIRTUAL = 486;
 
 const unsigned int TARGET_FPS = 75;
 const double TARGET_FRAMETIME = 1.0 / TARGET_FPS;
 
 int main() {
-    Screen screen(SCREEN_W, SCREEN_H, SCREEN_FOV, "Pain");
+    std::pair<int, int> viewPort(SCREEN_W, SCREEN_H);
+    std::pair<int, int> viewPortVirtual(SCREEN_W_VIRTUAL, SCREEN_H_VIRTUAL);
+    Screen screen(viewPort, viewPortVirtual, "Pain");
+
     WindowState windowState;
-    windowState.camera = new CameraFps;
+    windowState.camera = std::make_unique<CameraFps>(SCREEN_FOV, viewPortVirtual);
     glfwSetWindowUserPointer(screen.window, (void *) &windowState);
     Input::registerCallbacks(screen.window);
 
@@ -163,18 +168,18 @@ int main() {
         shader.use();
         shader.setUniform("dLight.direction", windowState.camera->getView() * dLight.direction);
 
-        cube.draw(shader, screen.perspective, windowState.camera->getView());
+        cube.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
-        plane.draw(shader, screen.perspective, windowState.camera->getView());
+        plane.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
         sphere.rotate((360.f * .1 /* rev per s */) * windowState.timeDelta, 0.f, 1.f, 0.f, false);
-        sphere.draw(shader, screen.perspective, windowState.camera->getView());
+        sphere.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
-        suzanne.draw(shader, screen.perspective, windowState.camera->getView());
+        suzanne.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
         for (auto &monkey : monkeys) {
             monkey->rotate((360.f * 1.) * windowState.timeDelta, 0.f, 1.f, 0.f, false);
-            monkey->draw(shader, screen.perspective, windowState.camera->getView());
+            monkey->draw(shader, windowState.camera->projection, windowState.camera->getView());
         }
 
         // Update audio
@@ -183,7 +188,9 @@ int main() {
         soloud.update3dAudio();
 
         // Render skybox
-        skybox.draw(shaderSkybox, glm::mat4(glm::mat3(windowState.camera->getView())), screen.perspective);
+        skybox.draw(shaderSkybox,
+                    glm::mat4(glm::mat3(windowState.camera->getView())),
+                    windowState.camera->projection);
 
         // Render UI
         font.draw();
@@ -191,8 +198,6 @@ int main() {
         screen.flip(postShader, textureDither.handle);
         frames++;
     }
-
-    delete windowState.camera;
 
     return 0;
 }

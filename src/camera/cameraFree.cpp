@@ -1,6 +1,6 @@
 #include "cameraFree.h"
 
-CameraFree::CameraFree() = default;
+CameraFree::CameraFree(const float fov, const std::pair<int, int> &viewPort): Camera(fov, viewPort){};
 
 void CameraFree::handleMouse(int x, int y, float timeDelta) {
     this->yaw += x * (this->sensitivity * timeDelta);
@@ -22,7 +22,7 @@ void CameraFree::handleDirection(int d, float timeDelta) {
     if (d & Direction::RIGHT)
         this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed * timeDelta;
     if (d & Direction::UP)
-        this->position += this->speed * timeDelta * this->worldUp;
+        this->position += this->speed * timeDelta * this->up;
     if (d & Direction::DOWN)
-        this->position -= this->speed * timeDelta * this->worldUp;
+        this->position -= this->speed * timeDelta * this->up;
 }
