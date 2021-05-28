@@ -21,6 +21,7 @@ public:
     void rotate(float deg, float x, float y, float z, bool normalize = true);
 
     glm::mat4 modelMat;
+    bool cullFaces = true;
 
 private:
     std::shared_ptr<Mesh> mesh;

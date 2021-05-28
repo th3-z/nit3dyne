@@ -4,7 +4,7 @@ const std::string ext = ".png";
 const std::string path = "res/texture/";
 
 Texture::Texture(const std::string &resourceName) {
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(false);
     unsigned char *data =
         stbi_load((path + resourceName + ext).c_str(), &this->w, &this->h, &this->channels, 0);
 #ifndef NDEBUG

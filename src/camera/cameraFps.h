@@ -13,7 +13,7 @@ public:
     void handleMouse(int x, int y, float timeDelta) override;
 
 private:
-    const float playerHeight = 2.f;
+    const float playerHeight = 1.7f;
 };
 
 #endif // GL_CAMERAFPS_H

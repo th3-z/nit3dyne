@@ -84,9 +84,20 @@ int main() {
 
     Skybox skybox("cubemap");
 
+    Model desk(meshCache.loadResource("desk"), textureCache.loadResource("desk"));
+    desk.translate(0.f, 0.4f, 2.f);
+    Model chair(meshCache.loadResource("chair"), textureCache.loadResource("chair"));
+    chair.cullFaces = false;
+
     Model suzanne(meshCache.loadResource("suzanne"), textureCache.loadResource("0"));
     suzanne.setMaterial(Materials::metallic);
     suzanne.translate(0.f, 2.0f, 5.f);
+
+    Model speaker(meshCache.loadResource("speaker"), textureCache.loadResource("speaker"));
+    speaker.translate(0.f, 1.0f, 15.f);
+
+    Model lightSwitch(meshCache.loadResource("switch"), textureCache.loadResource("switch"));
+    lightSwitch.translate(0.f, 4.0f, 15.f);
 
     std::vector<std::unique_ptr<Model>> monkeys;
 
@@ -112,7 +123,7 @@ int main() {
         monkeys[i + nMonkeys * 2]->translate((i * 2.5f) - (2.5f * nMonkeys) / 3, sin(i) * 5 + 6.5f, -15.f);
     }
 
-    Model cube(meshCache.loadResource("cube"), textureCache.loadResource("1"));
+    Model cube(meshCache.loadResource("cube"), textureCache.loadResource("cube"));
     cube.setMaterial(Materials::metallic);
     cube.translate(5.f, 2.f, 0.f);
 
@@ -176,11 +187,16 @@ int main() {
         sphere.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
         suzanne.draw(shader, windowState.camera->projection, windowState.camera->getView());
+        desk.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
         for (auto &monkey : monkeys) {
             monkey->rotate((360.f * 1.) * windowState.timeDelta, 0.f, 1.f, 0.f, false);
             monkey->draw(shader, windowState.camera->projection, windowState.camera->getView());
         }
+
+        chair.draw(shader, windowState.camera->projection, windowState.camera->getView());
+        speaker.draw(shader, windowState.camera->projection, windowState.camera->getView());
+        lightSwitch.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
         // Update audio
         soloud.set3dListenerPosition(
@@ -193,6 +209,7 @@ int main() {
                     windowState.camera->projection);
 
         // Render UI
+        chair.draw(shader, windowState.camera->projection, windowState.camera->getView());
         font.draw();
 
         screen.flip(postShader, textureDither.handle);

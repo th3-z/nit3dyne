@@ -20,7 +20,11 @@ void Model::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->texture->handle);
+    if (!this->cullFaces)
+        glDisable(GL_CULL_FACE);
     this->mesh->draw();
+    if (!this->cullFaces)
+        glEnable(GL_CULL_FACE);
 }
 
 void Model::translate(float x, float y, float z) {
