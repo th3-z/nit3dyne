@@ -87,6 +87,7 @@ int main() {
     Model desk(meshCache.loadResource("desk"), textureCache.loadResource("desk"));
     desk.translate(0.f, 0.4f, 2.f);
     Model chair(meshCache.loadResource("chair"), textureCache.loadResource("chair"));
+    chair.translate(-0.6f, -0.2f, 0.5f);
     chair.cullFaces = false;
 
     Model suzanne(meshCache.loadResource("suzanne"), textureCache.loadResource("0"));
@@ -94,7 +95,8 @@ int main() {
     suzanne.translate(0.f, 2.0f, 5.f);
 
     Model speaker(meshCache.loadResource("speaker"), textureCache.loadResource("speaker"));
-    speaker.translate(0.f, 1.0f, 15.f);
+    speaker.translate(-0.2f, 1.5f, 3.f);
+    speaker.rotate(105.f, 0.f, 1.f, 0.f);
 
     Model lightSwitch(meshCache.loadResource("switch"), textureCache.loadResource("switch"));
     lightSwitch.translate(0.f, 4.0f, 15.f);
@@ -150,7 +152,7 @@ int main() {
     sample.set3dMinMaxDistance(1, 30);
     sample.set3dAttenuation(SoLoud::AudioSource::EXPONENTIAL_DISTANCE, 0.5);
     SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);
-    soloud.set3dSourceParameters(sampleHandle, 0.f, 5.f, 0.f, 0.f, 0.f, 0.f);
+    soloud.set3dSourceParameters(sampleHandle, 5.f, 2.f, 0.f, 0.05f, 0.f, 0.f);
 
     // Timing
     double timeNow, timeLast = 0.;
