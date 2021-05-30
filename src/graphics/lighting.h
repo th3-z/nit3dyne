@@ -11,7 +11,7 @@ struct DirectionalLight {
     glm::vec3 specular;
 
     DirectionalLight():
-    direction(glm::vec4(-0.2f, -1.0f, -0.3f, 0.0f)), ambient(glm::vec3(0.06f, 0.06f, 0.06f)),
+    direction(glm::vec4(-0.2f, -1.0f, -0.3f, 0.0f)), ambient(glm::vec3(0.2f, 0.2f, 0.2f)),
     diffuse(glm::vec3(0.7f, 0.7f, 0.7f)), specular(glm::vec3(0.5f, 0.5f, 0.5f)){};
 };
 

@@ -102,6 +102,13 @@ int main() {
     sphere.translate(0.f, 5.f, 0.f);
     sphere.scale(1.f, 1.f, 1.f);
 
+    Model viewModel(meshCache.loadResource("m4a1"), textureCache.loadResource("m4a1"));
+    viewModel.translate(0.45f, -0.25f, -0.65f);
+    viewModel.rotate(95.f, 0.f, 1.f, 0.f);
+    viewModel.rotate(-5.f, 0.f, 0.f, 1.f);
+    viewModel.rotate(-5.f, 0.f, 1.f, 0.f);
+    viewModel.scale(.45f, .45f, .45f);
+
     // Audio
     SoLoud::Soloud soloud; // Engine core
     SoLoud::Wav sample;    // One sample
@@ -152,6 +159,9 @@ int main() {
             prop->rotate((360.f * 1.) * (windowState.timeDelta / 10.), 0.f, 1.f, 0.f, false);
             prop->draw(shader, windowState.camera->projection, windowState.camera->getView());
         }
+
+        // FIXME: Lighting calculations still need the real camera view mat
+        viewModel.draw(shader, glm::mat4(1.f), windowState.camera->projection);
 
         // Update audio
         soloud.set3dListenerPosition(
