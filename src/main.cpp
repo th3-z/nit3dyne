@@ -11,6 +11,7 @@
 #include <soloud/include/soloud_wav.h>
 #include <entt/entt.hpp>
 #include <memory>
+#include <array>
 
 #include "camera/cameraFps.h"
 #include "graphics/mesh.h"
@@ -84,57 +85,20 @@ int main() {
 
     Skybox skybox("cubemap");
 
-    Model desk(meshCache.loadResource("desk"), textureCache.loadResource("desk"));
-    desk.translate(0.f, 0.4f, 2.f);
-    Model chair(meshCache.loadResource("chair"), textureCache.loadResource("chair"));
-    chair.translate(-0.6f, -0.2f, 0.5f);
-    chair.cullFaces = false;
+    std::array<std::string, 7> propNames = {"desk", "chair", "axe", "speaker", "switch", "m4a1", "cube"};
+    std::vector<std::unique_ptr<Model>> props;
 
-    Model suzanne(meshCache.loadResource("suzanne"), textureCache.loadResource("0"));
-    suzanne.setMaterial(Materials::metallic);
-    suzanne.translate(0.f, 2.0f, 5.f);
-
-    Model speaker(meshCache.loadResource("speaker"), textureCache.loadResource("speaker"));
-    speaker.translate(-0.2f, 1.5f, 3.f);
-    speaker.rotate(105.f, 0.f, 1.f, 0.f);
-
-    Model lightSwitch(meshCache.loadResource("switch"), textureCache.loadResource("switch"));
-    lightSwitch.translate(0.f, 4.0f, 15.f);
-
-    std::vector<std::unique_ptr<Model>> monkeys;
-
-    int nMonkeys = 256;
-    for (int i = 0; i < nMonkeys; ++i) {
-        monkeys.emplace_back(std::make_unique<Model>(
-            Model(meshCache.loadResource("suzanne"), textureCache.loadResource("0"))));
-        monkeys[i]->setMaterial(Materials::metallic);
-        monkeys[i]->translate((i * 2.5f) - (2.5f * nMonkeys) / 3, sin(i) * 5 + 6.5f, -5.f);
+    for (size_t i = 0; i < propNames.size(); ++i) {
+        props.emplace_back(std::make_unique<Model>(
+            Model(meshCache.loadResource(propNames[i]), textureCache.loadResource(propNames[i]))));
+        props[i]->translate(i * 5.f, 2.f, -2.f);
     }
 
-    for (int i = 0; i < nMonkeys; ++i) {
-        monkeys.emplace_back(std::make_unique<Model>(
-            Model(meshCache.loadResource("suzanne"), textureCache.loadResource("2"))));
-        monkeys[i + nMonkeys]->setMaterial(Materials::emissive);
-        monkeys[i + nMonkeys]->translate((i * 2.5f) - (2.5f * nMonkeys) / 3, sin(i) * 5 + 6.5f, -10.f);
-    }
-
-    for (int i = 0; i < nMonkeys; ++i) {
-        monkeys.emplace_back(std::make_unique<Model>(
-            Model(meshCache.loadResource("suzanne"), textureCache.loadResource("3"))));
-        monkeys[i + nMonkeys * 2]->setMaterial(Materials::basic);
-        monkeys[i + nMonkeys * 2]->translate((i * 2.5f) - (2.5f * nMonkeys) / 3, sin(i) * 5 + 6.5f, -15.f);
-    }
-
-    Model cube(meshCache.loadResource("cube"), textureCache.loadResource("cube"));
-    cube.setMaterial(Materials::metallic);
-    cube.translate(5.f, 2.f, 0.f);
-
-    Model plane(meshCache.loadResource("plane"), textureCache.loadResource("1"));
+    Model plane(meshCache.loadResource("plane"), textureCache.loadResource("red"));
     plane.setMaterial(Materials::metallic);
     plane.scale(7.f, 0.f, 7.f);
-    // plane.translate(-7.5f, 0.f, -7.5f);
 
-    Model sphere(meshCache.loadResource("sphere"), textureCache.loadResource("3"));
+    Model sphere(meshCache.loadResource("sphere"), textureCache.loadResource("red"));
     sphere.translate(0.f, 5.f, 0.f);
     sphere.scale(1.f, 1.f, 1.f);
 
@@ -181,24 +145,13 @@ int main() {
         shader.use();
         shader.setUniform("dLight.direction", windowState.camera->getView() * dLight.direction);
 
-        cube.draw(shader, windowState.camera->projection, windowState.camera->getView());
-
         plane.draw(shader, windowState.camera->projection, windowState.camera->getView());
-
-        sphere.rotate((360.f * .1 /* rev per s */) * windowState.timeDelta, 0.f, 1.f, 0.f, false);
         sphere.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
-        suzanne.draw(shader, windowState.camera->projection, windowState.camera->getView());
-        desk.draw(shader, windowState.camera->projection, windowState.camera->getView());
-
-        for (auto &monkey : monkeys) {
-            monkey->rotate((360.f * 1.) * windowState.timeDelta, 0.f, 1.f, 0.f, false);
-            monkey->draw(shader, windowState.camera->projection, windowState.camera->getView());
+        for (auto &prop : props) {
+            prop->rotate((360.f * 1.) * (windowState.timeDelta / 10.), 0.f, 1.f, 0.f, false);
+            prop->draw(shader, windowState.camera->projection, windowState.camera->getView());
         }
-
-        chair.draw(shader, windowState.camera->projection, windowState.camera->getView());
-        speaker.draw(shader, windowState.camera->projection, windowState.camera->getView());
-        lightSwitch.draw(shader, windowState.camera->projection, windowState.camera->getView());
 
         // Update audio
         soloud.set3dListenerPosition(
@@ -211,7 +164,6 @@ int main() {
                     windowState.camera->projection);
 
         // Render UI
-        chair.draw(shader, windowState.camera->projection, windowState.camera->getView());
         font.draw();
 
         screen.flip(postShader, textureDither.handle);
