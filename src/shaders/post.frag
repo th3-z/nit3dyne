@@ -14,6 +14,7 @@ void main()
     vec2 bufSize = vec2(textureSize(tex, 0));
 
     fragColor = texture(tex, texCoord);
+
     vec3 dith = texture(texDither, texCoord*(bufSize / dithSize)).rgb;
     dith -= 0.5;
 

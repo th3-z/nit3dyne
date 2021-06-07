@@ -85,7 +85,8 @@ int main() {
 
     Skybox skybox("cubemap");
 
-    std::array<std::string, 7> propNames = {"desk", "chair", "axe", "speaker", "switch", "m4a1", "cube"};
+    std::array<std::string, 8> propNames = {
+        "desk", "chair", "axe", "speaker", "switch", "stg44", "m4a1", "cube"};
     std::vector<std::unique_ptr<Model>> props;
 
     for (size_t i = 0; i < propNames.size(); ++i) {

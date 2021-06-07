@@ -14,6 +14,7 @@ glm::mat4 Camera::getView() {
     this->front = glm::normalize(this->front);
 
     this->right = glm::normalize(glm::cross(front, this->up));
+
     return glm::lookAt(this->position, this->position + this->front, this->up);
 }
 

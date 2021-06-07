@@ -14,7 +14,7 @@ public:
     virtual void handleDirection(int d, float timeDelta) = 0;
     virtual void handleMouse(int x, int y, float timeDelta) = 0;
     void setFov(float fov);
-    glm::mat4 getView();
+    virtual glm::mat4 getView();
 
     glm::mat4 projection;
     glm::vec3 position = glm::vec3(0.f, 0.f, 0.f);

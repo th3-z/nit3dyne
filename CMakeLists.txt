@@ -32,6 +32,7 @@ add_executable(gl
     src/camera/cameraFps.cpp src/camera/cameraFps.h
     src/camera/cameraFree.cpp src/camera/cameraFree.h
     src/camera/camera.cpp src/camera/camera.h
+
     src/screen.cpp src/screen.h
     src/input.cpp src/input.h
     src/font.cpp src/font.h
@@ -41,7 +42,27 @@ add_executable(gl
     src/graphics/skybox.cpp src/graphics/skybox.h
     src/resourceCache.h
 )
+add_executable(viewer
+    src/viewer.cpp
+    src/graphics/shader.cpp src/graphics/shader.h
+    src/graphics/texture.cpp src/graphics/texture.h
+    src/graphics/mesh.cpp src/graphics/mesh.h
+    src/camera/cameraFps.cpp src/camera/cameraFps.h
+    src/camera/cameraFree.cpp src/camera/cameraFree.h
+    src/camera/cameraOrbit.cpp src/camera/cameraOrbit.h
+    src/camera/camera.cpp src/camera/camera.h
+    src/screen.cpp src/screen.h
+    src/input.cpp src/input.h
+    src/font.cpp src/font.h
+    src/graphics/model.cpp src/graphics/model.h
+    src/graphics/material.cpp src/graphics/material.h
+    src/graphics/lighting.cpp src/graphics/lighting.h
+    src/graphics/skybox.cpp src/graphics/skybox.h
+    src/resourceCache.h
+)
+
 target_link_libraries(gl glfw glm glad soloud EnTT ${CMAKE_DL_LIBS})
+target_link_libraries(viewer glfw glm glad soloud EnTT ${CMAKE_DL_LIBS})
 
 # Link resources
 add_custom_command(
