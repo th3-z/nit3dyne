@@ -8,22 +8,30 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 
-struct WindowState {
-    double timeDelta = 0.;
-    std::unique_ptr<Camera> camera;
-};
+enum Direction { UP = 1, LEFT = 2, DOWN = 4, RIGHT = 8, FORWARD = 16, BACKWARD = 32 };
 
 class Input {
 public:
-    static void processContinuousInput(GLFWwindow *window);
-    static void callbackKey(GLFWwindow *window, int key, int scancode, int action, int mods);
+    inline static std::pair<double, double> mousePos;
+    inline static std::pair<double, double> mousePosDelta;
+    inline static std::pair<double, double> scrollDelta;
+    inline static int direction;
+
+    // Pointer owned by Display
+    static void init(GLFWwindow *glfwWindow);
+    static void update();
+    static bool getKey(int scanCode);
+
     static void callbackMouse(GLFWwindow *window, double mouseX, double mouseY);
-    static void callbackScroll(GLFWwindow *window, double xOffset, double yOffset);
-    static void registerCallbacks(GLFWwindow *window);
+    static void callbackScroll(GLFWwindow *window, double scrollX, double scrollY);
+    static void registerCallbacks();
 
 private:
-    static double mouseLastX;
-    static double mouseLastY;
+    inline static double mouseLastX;
+    inline static double mouseLastY;
+
+    // Pointer owned by display
+    inline static GLFWwindow *window;
 };
 
 #endif // GL_INPUT_H

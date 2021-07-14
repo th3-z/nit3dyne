@@ -19,9 +19,7 @@ Shader::Shader(const char *vPath, const char *fPath) {
 
         vSrc = vStream.str();
         fSrc = fStream.str();
-    } catch (std::ifstream::failure &e) {
-        std::cout << "Shader read error" << std::endl;
-    }
+    } catch (std::ifstream::failure &e) { std::cout << "Shader read error" << std::endl; }
 
     unsigned int vId, fId;
     int success;
@@ -64,10 +62,12 @@ Shader::Shader(const char *vPath, const char *fPath) {
     glDeleteShader(fId);
 }
 
-void Shader::use() const { glUseProgram(this->handle); }
+void Shader::use() const {
+    glUseProgram(this->handle);
+}
 
 void Shader::setUniform(const std::string &name, const bool value) const {
-    glUniform1i(glGetUniformLocation(this->handle, name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(this->handle, name.c_str()), (int) value);
 }
 
 void Shader::setUniform(const std::string &name, const float value) const {
@@ -104,7 +104,16 @@ void Shader::setUniform(const std::string &name, const glm::vec4 &vec) const {
                  glm::value_ptr(vec));
 }
 
-Shader::~Shader() { glDeleteProgram(this->handle); }
+void Shader::setUniform(const std::string &name, const std::vector<glm::mat4> &mats) const {
+    glUniformMatrix4fv(glGetUniformLocation(this->handle, name.c_str()),
+                       mats.size(), // Send all
+                       GL_FALSE,
+                       glm::value_ptr(mats.front()));
+}
+
+Shader::~Shader() {
+    glDeleteProgram(this->handle);
+}
 
 void Shader::attachMaterial(const Material &material) const {
     this->setUniform("material.ambient", material.ambient);

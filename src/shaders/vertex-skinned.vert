@@ -3,6 +3,11 @@
 layout (location = 0) in vec3 inVertex;
 layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec2 inTexCoord;
+layout (location = 3) in ivec4 inJoints;
+layout (location = 4) in vec4 inWeights;
+
+const int MAX_JOINTS = 25;
+const int MAX_WEIGHTS = 4;
 
 struct Material {
    vec3 ambient;
@@ -36,6 +41,7 @@ uniform vec3 sunColor;
 uniform mat3 normalMat;
 uniform mat4 modelView;
 uniform mat4 mvp;
+uniform mat4 jointTransforms[MAX_JOINTS];
 
 uniform Material material;
 uniform DLight dLight;
@@ -43,16 +49,30 @@ uniform SLight sLight;
 
 
 void main() {
+    //skinning
+    vec4 localVertex = vec4(0.0);
+    vec4 localNormal = vec4(0.0);
+
+    for (int i = 0; i < MAX_WEIGHTS; i++) {
+        mat4 jointTransform = jointTransforms[inJoints[i]];
+        vec4 posePos = jointTransform * vec4(inVertex, 1.0);
+        localVertex += posePos * inWeights[i];
+
+        vec4 poseNormal = jointTransform * vec4(inNormal, 0.0);
+        localNormal += poseNormal * inWeights[i];
+    }
+
    // Vertex snapping
-   vec4 vertex = mvp * vec4(inVertex, 1.0);
+   vec4 vertex = mvp * localVertex;
    vertex.xyz = vertex.xyz / vertex.w;
    vertex.x = floor(160 * vertex.x) / 160;
    vertex.y = floor(120 * vertex.y) / 120;
    vertex.xyz *= vertex.w;
    gl_Position = vertex;
 
-   vec3 normal = normalMat * inNormal;
-   vec3 vertPos = vec3(modelView * vec4(inVertex, 1.0));
+   vec3 normal = vec3(normalMat * localNormal.xyz);
+   vec3 vertPos = vec3(modelView * localVertex);
+
    vec3 lightDir = normalize(-dLight.direction.xyz);
 
 
@@ -84,5 +104,5 @@ void main() {
 
    // Affine texture map
    affineUv = vec3(inTexCoord.st * vertPos.z, vertPos.z);
-    perspectiveUv = inTexCoord.st;
+   perspectiveUv = inTexCoord.st;
 }

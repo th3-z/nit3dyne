@@ -11,12 +11,22 @@
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 
+float QUAD_VERTICES[] = {
+        -1.0f,  1.0f,  0.0f,
+        1.0f, -1.0f, -1.0f,
+        0.0f,  0.0f,  1.0f,
+        -1.0f,  1.0f,  0.0f,
+        -1.0f,  1.0f,  0.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f,  0.0f,  1.0f,
+        1.0f,  1.0f,  1.0f
+};
+
 class Screen {
 public:
     Screen(std::pair<int, int> &viewPort, std::pair<int, int> &viewPortVirtual, const std::string &title);
     ~Screen();
 
-    void resize();
     void flip(Shader &postShader, int ditherHandle);
 
     GLFWwindow *window;

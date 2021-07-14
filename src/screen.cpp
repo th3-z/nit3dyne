@@ -1,11 +1,8 @@
 #include "screen.h"
 
-float quadVertices[] = {-1.0f, 1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f,
-
-                        -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  -1.0f, 1.0f, 0.0f, 1.0f, 1.0f,  1.0f, 1.0f};
-
-Screen::Screen(std::pair<int, int> &viewPort, std::pair<int, int> &viewPortVirtual, const std::string &title):
-viewPort(viewPort), viewPortVirtual(viewPortVirtual) {
+Screen::Screen(std::pair<int, int> &viewPort, std::pair<int, int> &viewPortVirtual, const std::string &title)
+: viewPort(viewPort)
+, viewPortVirtual(viewPortVirtual) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -20,7 +17,7 @@ viewPort(viewPort), viewPortVirtual(viewPortVirtual) {
     glfwMakeContextCurrent(this->window);
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 
-    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glViewport(0, 0, this->viewPort.first, this->viewPort.second);
 
@@ -67,7 +64,7 @@ viewPort(viewPort), viewPortVirtual(viewPortVirtual) {
 
     glBindVertexArray(this->fboQuadVao);
     glBindBuffer(GL_ARRAY_BUFFER, quadVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(QUAD_VERTICES), &QUAD_VERTICES, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) 0);
@@ -88,9 +85,6 @@ Screen::~Screen() {
 
     glfwDestroyWindow(this->window);
     glfwTerminate();
-}
-
-void Screen::resize() {
 }
 
 void Screen::flip(Shader &postShader, int ditherHandle) {

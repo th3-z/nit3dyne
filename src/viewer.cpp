@@ -1,25 +1,16 @@
-#include <chrono>
 #include <iostream>
 #include <thread>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <soloud/include/soloud.h>
-#include <soloud/include/soloud_wav.h>
-#include <entt/entt.hpp>
-#include <memory>
-#include <array>
 
 #include "camera/cameraOrbit.h"
 #include "graphics/mesh.h"
+#include "graphics/mesh_animated.h"
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 #include "input.h"
-#include "screen.h"
-#include "graphics/skybox.h"
 #include "resourceCache.h"
 
 #define TINYGLTF_IMPLEMENTATION
@@ -28,63 +19,82 @@
 #include "font.h"
 #include "graphics/model.h"
 #include "tiny_gltf.h"
-
-const int SCREEN_W = 800;
-const int SCREEN_H = 600;
-
-const float SCREEN_FOV = 70.f;
-
-const unsigned int TARGET_FPS = 75;
-const double TARGET_FRAMETIME = 1.0 / TARGET_FPS;
+#include "display.h"
 
 int main() {
-    std::pair<int, int> viewPort(SCREEN_W, SCREEN_H);
-    Screen screen(viewPort, viewPort, "Viewer");
-
-    WindowState windowState;
-    windowState.camera = std::make_unique<CameraOrbit>(SCREEN_FOV, viewPort);
-    glfwSetWindowUserPointer(screen.window, (void *) &windowState);
-    Input::registerCallbacks(screen.window);
+    Display::init();
+    Input::init(Display::window);
 
     Shader postShader("shaders/copy.vert", "shaders/copy.frag");
     postShader.use();
 
     // Main shader program
-    Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
-    shader.use();
-    shader.setUniform("tex", 0);
+    Shader shaderAnim("shaders/vertex-skinned.vert", "shaders/fragment.frag");
+    shaderAnim.use();
+    shaderAnim.setUniform("tex", 0);
+
+    Shader shaderStatic("shaders/vertex.vert", "shaders/fragment.frag");
+    shaderStatic.use();
+    shaderStatic.setUniform("tex", 0);
+
+    CameraOrbit camera(85.f, Display::viewPort);
 
     // Scene
     DirectionalLight dLight = DirectionalLight();
-    shader.setDirectionalLight(dLight);
+    shaderStatic.use();
+    shaderStatic.setDirectionalLight(dLight);
+    shaderAnim.use();
+    shaderAnim.setDirectionalLight(dLight);
 
     ResourceCache<Texture> textureCache;
+    ResourceCache<MeshAnimated> meshAnimCache;
     ResourceCache<Mesh> meshCache;
-    Model m4a1(meshCache.loadResource("m4a1"), textureCache.loadResource("m4a1"));
 
-    // Timing
-    double timeNow, timeLast = 0.;
+    Model one(meshAnimCache.loadResource("stg44"), textureCache.loadResource("stg44"));
+    Model two(meshCache.loadResource("stg44"), textureCache.loadResource("stg44"));
+    two.translate(1.f, 0.f, 0.f);
 
-    while (!glfwWindowShouldClose(screen.window)) {
-        // Calculate frame time, cap framerate to target
-        timeLast = timeNow;
-        timeNow = glfwGetTime();
-        while ((timeNow - timeLast) < TARGET_FRAMETIME)
-            timeNow = glfwGetTime();
-        windowState.timeDelta = timeNow - timeLast;
+    while (!Display::shouldClose) {
+        Display::update();
 
-        // Clear FB
+        if (Input::getKey(GLFW_KEY_ESCAPE))
+            glfwSetWindowShouldClose(Display::window, true);
+
+        camera.update();
+
         glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render scene
-        shader.use();
-        shader.setUniform("dLight.direction", windowState.camera->getView() * dLight.direction);
+        shaderStatic.use();
+        shaderStatic.setUniform("dLight.direction", camera.getView() * dLight.direction);
+        shaderAnim.use();
+        shaderAnim.setUniform("dLight.direction", camera.getView() * dLight.direction);
 
-        m4a1.draw(shader, windowState.camera->projection, windowState.camera->getView());
+        two.rotate(
+            (360.f * 1.f) * ((float) Display::timeDelta / 10.f),
+            0.f, 1.f, 0.f,
+            false
+        );
 
-        screen.flip(postShader, 0);
+        if (two.mesh->meshType == MeshType::ANIMATED) {
+            two.draw(shaderAnim, camera.projection, camera.getView());
+        } else {
+            two.draw(shaderStatic, camera.projection, camera.getView());
+        }
+
+        if (one.mesh->meshType == MeshType::ANIMATED) {
+            one.draw(shaderAnim, camera.projection, camera.getView());
+        } else {
+            one.draw(shaderStatic, camera.projection, camera.getView());
+        }
+
+
+        Display::flip(postShader, 0);
+        Input::update();
     }
+
+    Display::destroy();
 
     return 0;
 }

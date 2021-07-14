@@ -28,3 +28,7 @@ void Camera::setFov(float fov) {
     this->projection = glm::perspective(
         glm::radians(this->fov), (float) this->viewPort.first / this->viewPort.second, 0.1f, 100.0f);
 }
+
+void Camera::update() {
+    // Stub
+}

@@ -1,6 +1,6 @@
 #include "model.h"
 
-Model::Model(const std::shared_ptr<Mesh> mesh, const std::shared_ptr<Texture> texture):
+Model::Model(const std::shared_ptr<MeshIf> mesh, const std::shared_ptr<Texture> texture):
 modelMat(glm::mat4(1.f)), mesh(mesh), texture(texture) {
 }
 
@@ -20,15 +20,12 @@ void Model::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->texture->handle);
-#ifdef NDEBUG
-    if (!this->cullFaces)
-        glDisable(GL_CULL_FACE);
-#endif
-    this->mesh->draw();
-#ifdef NDEBUG
-    if (!this->cullFaces)
-        glEnable(GL_CULL_FACE);
-#endif
+
+    if (this->mesh->meshType == MeshType::ANIMATED) {
+        dynamic_cast<MeshAnimated*>(this->mesh.get())->draw(shader);
+    } else {
+        dynamic_cast<Mesh*>(this->mesh.get())->draw(shader);
+    }
 }
 
 void Model::translate(float x, float y, float z) {

@@ -5,12 +5,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "camera.h"
+#include "../input.h"
 
 class CameraFree : public Camera {
 public:
     CameraFree(const float fov, const std::pair<int, int> &viewPort);
-    void handleDirection(int d, float timeDelta) override;
-    void handleMouse(int x, int y, float timeDelta) override;
+
+    void update() override;
 };
 
 #endif // GL_CAMERAFREE_H

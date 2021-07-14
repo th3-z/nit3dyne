@@ -1,12 +1,9 @@
-#include <chrono>
 #include <iostream>
 #include <thread>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <soloud/include/soloud.h>
 #include <soloud/include/soloud_wav.h>
 #include <entt/entt.hpp>
@@ -18,7 +15,6 @@
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 #include "input.h"
-#include "screen.h"
 #include "graphics/skybox.h"
 #include "resourceCache.h"
 
@@ -29,29 +25,10 @@
 #include "graphics/model.h"
 #include "tiny_gltf.h"
 
-#ifndef NDEBUG
-const int SCREEN_W = 1600;
-const int SCREEN_H = 1000;
-#else
-const unsigned int SCREEN_W = 1920;
-const unsigned int SCREEN_H = 1200;
-#endif
-const float SCREEN_FOV = 90.f;
-const int SCREEN_W_VIRTUAL = 864;
-const int SCREEN_H_VIRTUAL = 486;
-
-const unsigned int TARGET_FPS = 75;
-const double TARGET_FRAMETIME = 1.0 / TARGET_FPS;
 
 int main() {
-    std::pair<int, int> viewPort(SCREEN_W, SCREEN_H);
-    std::pair<int, int> viewPortVirtual(SCREEN_W_VIRTUAL, SCREEN_H_VIRTUAL);
-    Screen screen(viewPort, viewPortVirtual, "Pain");
-
-    WindowState windowState;
-    windowState.camera = std::make_unique<CameraFps>(SCREEN_FOV, viewPortVirtual);
-    glfwSetWindowUserPointer(screen.window, (void *) &windowState);
-    Input::registerCallbacks(screen.window);
+    Display::init();
+    Input::init(Display::window);
 
     // TODO: Move into screen.cpp
     Shader postShader("shaders/post.vert", "shaders/post.frag");
@@ -69,19 +46,32 @@ int main() {
     Font font("The quick brown fox jumps over the lazy dog.");
 
     // Main shader program
-    Shader shader("shaders/vertex.vert", "shaders/fragment.frag");
-    shader.use();
-    shader.setUniform("tex", 0);
+    Shader shaderAnim("shaders/vertex-skinned.vert", "shaders/fragment.frag");
+    shaderAnim.use();
+    shaderAnim.setUniform("tex", 0);
+
+    Shader shaderStatic("shaders/vertex.vert", "shaders/fragment.frag");
+    shaderStatic.use();
+    shaderStatic.setUniform("tex", 0);
+
+    CameraFree camera(85.f, Display::viewPort);
 
     // Scene
     DirectionalLight dLight = DirectionalLight();
-    shader.setDirectionalLight(dLight);
+    shaderStatic.use();
+    shaderStatic.setDirectionalLight(dLight);
+    shaderAnim.use();
+    shaderAnim.setDirectionalLight(dLight);
 
     ResourceCache<Texture> textureCache;
+    ResourceCache<MeshAnimated> meshAnimCache;
     ResourceCache<Mesh> meshCache;
 
     SpotLight sLight = SpotLight();
-    shader.setSpotLight(sLight);
+    shaderStatic.use();
+    shaderStatic.setSpotLight(sLight);
+    shaderAnim.use();
+    shaderAnim.setSpotLight(sLight);
 
     Skybox skybox("cubemap");
 
@@ -102,6 +92,9 @@ int main() {
     Model sphere(meshCache.loadResource("sphere"), textureCache.loadResource("red"));
     sphere.translate(0.f, 5.f, 0.f);
     sphere.scale(1.f, 1.f, 1.f);
+
+    Model stg(meshAnimCache.loadResource("stg44"), textureCache.loadResource("stg44"));
+    stg.translate(2.f, 2.f, 0.f);
 
     Model viewModel(meshCache.loadResource("m4a1"), textureCache.loadResource("m4a1"));
     viewModel.translate(0.45f, -0.25f, -0.65f);
@@ -126,60 +119,54 @@ int main() {
     SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);
     soloud.set3dSourceParameters(sampleHandle, 5.f, 2.f, 0.f, 0.05f, 0.f, 0.f);
 
-    // Timing
-    double timeNow, timeLast = 0.;
-    unsigned long frames = 0;
+    while (!Display::shouldClose) {
+        Display::update();
 
-    while (!glfwWindowShouldClose(screen.window)) {
-        // Calculate frame time, cap framerate to target
-        timeLast = timeNow;
-        timeNow = glfwGetTime();
-        while ((timeNow - timeLast) < TARGET_FRAMETIME)
-            timeNow = glfwGetTime();
-        windowState.timeDelta = timeNow - timeLast;
+        if (Input::getKey(GLFW_KEY_ESCAPE))
+            glfwSetWindowShouldClose(Display::window, true);
 
-        if (frames % (TARGET_FPS * 5) == 0)
-            std::cout << "Previous frame time: " << windowState.timeDelta * 1e3 << "ms\t("
-                      << 1 / windowState.timeDelta << "fps)" << std::endl;
-
-        // Handle continuous response keys
-        Input::processContinuousInput(screen.window);
+        camera.update();
 
         // Clear FB
         glClearColor(0.f, 0.f, 0.f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Render scene
-        shader.use();
-        shader.setUniform("dLight.direction", windowState.camera->getView() * dLight.direction);
+        shaderStatic.use();
+        shaderStatic.setUniform("dLight.direction", camera.getView() * dLight.direction);
 
-        plane.draw(shader, windowState.camera->projection, windowState.camera->getView());
-        sphere.draw(shader, windowState.camera->projection, windowState.camera->getView());
+        plane.draw(shaderStatic, camera.projection, camera.getView());
+        sphere.draw(shaderStatic, camera.projection, camera.getView());
 
         for (auto &prop : props) {
-            prop->rotate((360.f * 1.) * (windowState.timeDelta / 10.), 0.f, 1.f, 0.f, false);
-            prop->draw(shader, windowState.camera->projection, windowState.camera->getView());
+            prop->rotate((360.f * 1.) * (Display::timeDelta / 10.), 0.f, 1.f, 0.f, false);
+            prop->draw(shaderStatic, camera.projection, camera.getView());
         }
 
         // FIXME: Lighting calculations still need the real camera view mat
-        viewModel.draw(shader, glm::mat4(1.f), windowState.camera->projection);
+        viewModel.draw(shaderStatic, glm::mat4(1.f), camera.projection);
 
         // Update audio
         soloud.set3dListenerPosition(
-            windowState.camera->position.x, windowState.camera->position.y, windowState.camera->position.z);
+            camera.position.x, camera.position.y, camera.position.z);
         soloud.update3dAudio();
 
         // Render skybox
         skybox.draw(shaderSkybox,
-                    glm::mat4(glm::mat3(windowState.camera->getView())),
-                    windowState.camera->projection);
+                    glm::mat4(glm::mat3(camera.getView())),
+                    camera.projection);
 
         // Render UI
         font.draw();
 
-        screen.flip(postShader, textureDither.handle);
-        frames++;
+        // Animated mesh
+        stg.draw(shaderAnim, camera.projection, camera.getView());
+
+        Display::flip(postShader, textureDither.handle);
+        Input::update();
     }
+
+    Display::destroy();
 
     return 0;
 }

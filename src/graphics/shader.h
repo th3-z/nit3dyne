@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "lighting.h"
 #include "material.h"
@@ -33,6 +34,7 @@ public:
     void setUniform(const std::string &name, const glm::mat4 &mat) const;
     void setUniform(const std::string &name, const glm::vec3 &vec) const;
     void setUniform(const std::string &name, const glm::vec4 &vec) const;
+    void setUniform(const std::string &name, const std::vector<glm::mat4> &mats) const;
 };
 
 #endif // GL_SHADER_H
