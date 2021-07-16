@@ -53,7 +53,7 @@ void Display::initGlfw() {
     window = glfwCreateWindow(viewPort.first, viewPort.second, title.c_str(), NULL, NULL);
     glfwMakeContextCurrent(window);
 
-    // glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 }

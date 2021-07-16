@@ -20,6 +20,7 @@
 #include "graphics/model.h"
 #include "tiny_gltf.h"
 #include "display.h"
+#include "graphics/lines.h"
 
 int main() {
     Display::init();
@@ -37,6 +38,24 @@ int main() {
     shaderStatic.use();
     shaderStatic.setUniform("tex", 0);
 
+    Shader shaderLine("shaders/line.vert", "shaders/line.frag");
+
+    std::vector<Line> axisData;
+    axisData.push_back(Line{
+        {0.f, 0.f, 0.f}, {1.f, 0.f, 0.f},
+        {50.f, 0.f, 0.f}, {0.f, 0.f, 0.f}
+    });
+    axisData.push_back(Line{
+            {0.f, 0.f, 0.f}, {0.f, 1.f, 0.f},
+            {0.f, 50.f, 0.f}, {0.f, 0.f, 0.f}
+    });
+    axisData.push_back(Line{
+            {0.f, 0.f, 0.f}, {0.f, 0.f, 1.f},
+            {0.f, 0.f, 50.f}, {0.f, 0.f, 0.f}
+    });
+
+    Lines axis(axisData);
+
     CameraOrbit camera(85.f, Display::viewPort);
 
     // Scene
@@ -53,6 +72,8 @@ int main() {
     Model one(meshAnimCache.loadResource("stg44"), textureCache.loadResource("stg44"));
     Model two(meshCache.loadResource("stg44"), textureCache.loadResource("stg44"));
     two.translate(1.f, 0.f, 0.f);
+
+    //glLineWidth(100.f);
 
     while (!Display::shouldClose) {
         Display::update();
@@ -88,6 +109,8 @@ int main() {
         } else {
             one.draw(shaderStatic, camera.projection, camera.getView());
         }
+
+        axis.draw(shaderLine, camera.projection, camera.getView());
 
 
         Display::flip(postShader, 0);
