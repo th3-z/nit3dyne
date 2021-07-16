@@ -21,6 +21,7 @@
 #include "tiny_gltf.h"
 #include "display.h"
 #include "graphics/lines.h"
+#include "graphics/skybox.h"
 
 int main() {
     Display::init();
@@ -38,7 +39,14 @@ int main() {
     shaderStatic.use();
     shaderStatic.setUniform("tex", 0);
 
+    // Skybox shader
+    Shader shaderSkybox("shaders/skybox.vert", "shaders/skybox.frag");
+    shaderSkybox.use();
+    shaderSkybox.setUniform("skybox", 0);
+
     Shader shaderLine("shaders/line.vert", "shaders/line.frag");
+
+    CameraOrbit camera(85.f, Display::viewPort);
 
     std::vector<Line> axisData;
     axisData.push_back(Line{
@@ -53,12 +61,10 @@ int main() {
             {0.f, 0.f, 0.f}, {0.f, 0.f, 1.f},
             {0.f, 0.f, 50.f}, {0.f, 0.f, 0.f}
     });
-
     Lines axis(axisData);
 
-    CameraOrbit camera(85.f, Display::viewPort);
+    Skybox skybox("cubemap");
 
-    // Scene
     DirectionalLight dLight = DirectionalLight();
     shaderStatic.use();
     shaderStatic.setDirectionalLight(dLight);
@@ -92,11 +98,20 @@ int main() {
         shaderAnim.use();
         shaderAnim.setUniform("dLight.direction", camera.getView() * dLight.direction);
 
+        one.rotate(
+                (360.f * 1.f) * ((float) Display::timeDelta / 10.f),
+                0.f, 1.f, 0.f,
+                false
+        );
         two.rotate(
             (360.f * 1.f) * ((float) Display::timeDelta / 10.f),
             0.f, 1.f, 0.f,
             false
         );
+
+        skybox.draw(shaderSkybox,
+                    glm::mat4(glm::mat3(camera.getView())),
+                    camera.projection);
 
         if (two.mesh->meshType == MeshType::ANIMATED) {
             two.draw(shaderAnim, camera.projection, camera.getView());

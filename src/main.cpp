@@ -24,6 +24,7 @@
 #include "font.h"
 #include "graphics/model.h"
 #include "tiny_gltf.h"
+#include "graphics/lines.h"
 
 
 int main() {
@@ -43,16 +44,22 @@ int main() {
     shaderSkybox.setUniform("skybox", 0);
 
     // Test font renderer
-    Font font("The quick brown fox jumps over the lazy dog.");
+    Font font("This text should not be upside down anymore!");
 
     // Main shader program
     Shader shaderAnim("shaders/vertex-skinned.vert", "shaders/fragment.frag");
     shaderAnim.use();
     shaderAnim.setUniform("tex", 0);
 
+    Shader shaderUnlit("shaders/vertex.vert", "shaders/fragment-unlit.frag");
+    shaderAnim.use();
+    shaderAnim.setUniform("tex", 0);
+
     Shader shaderStatic("shaders/vertex.vert", "shaders/fragment.frag");
     shaderStatic.use();
     shaderStatic.setUniform("tex", 0);
+
+    Shader shaderLine("shaders/line.vert", "shaders/line.frag");
 
     CameraFree camera(85.f, Display::viewPort);
 
@@ -73,7 +80,22 @@ int main() {
     shaderAnim.use();
     shaderAnim.setSpotLight(sLight);
 
-    Skybox skybox("cubemap");
+    Skybox skybox("test");
+
+    std::vector<Line> axisData;
+    axisData.push_back(Line{
+            {0.f, 0.f, 0.f}, {1.f, 0.f, 0.f},
+            {500.f, 0.f, 0.f}, {0.f, 0.f, 0.f}
+    });
+    axisData.push_back(Line{
+            {0.f, 0.f, 0.f}, {0.f, 1.f, 0.f},
+            {0.f, 500.f, 0.f}, {0.f, 0.f, 0.f}
+    });
+    axisData.push_back(Line{
+            {0.f, 0.f, 0.f}, {0.f, 0.f, 1.f},
+            {0.f, 0.f, 500.f}, {0.f, 0.f, 0.f}
+    });
+    Lines axis(axisData);
 
     std::array<std::string, 8> propNames = {
         "desk", "chair", "axe", "speaker", "switch", "stg44", "m4a1", "cube"};
@@ -117,7 +139,7 @@ int main() {
     sample.set3dMinMaxDistance(1, 30);
     sample.set3dAttenuation(SoLoud::AudioSource::EXPONENTIAL_DISTANCE, 0.5);
     SoLoud::handle sampleHandle = soloud.play3d(sample, 0.f, 0.f, 0.f);
-    soloud.set3dSourceParameters(sampleHandle, 5.f, 2.f, 0.f, 0.05f, 0.f, 0.f);
+    soloud.set3dSourceParameters(sampleHandle, 0.f, 0.f, 0.f, 0.0f, 0.f, 0.f);
 
     while (!Display::shouldClose) {
         Display::update();
@@ -144,17 +166,22 @@ int main() {
         }
 
         // FIXME: Lighting calculations still need the real camera view mat
-        viewModel.draw(shaderStatic, glm::mat4(1.f), camera.projection);
+        viewModel.draw(shaderUnlit, glm::mat4(1.f), camera.projection);
 
         // Update audio
-        soloud.set3dListenerPosition(
-            camera.position.x, camera.position.y, camera.position.z);
+        glm::vec4 sourcePosView =  (camera.getView() * glm::mat4(1.f)) * glm::vec4(0.f,0.f,0.f,1.f);
+        float w = sourcePosView.w;
+        soloud.set3dSourceParameters(sampleHandle, sourcePosView.x/w, sourcePosView.y/w, sourcePosView.z/w, 0.f, 0.f, 0.f);
+
+        soloud.set3dListenerPosition(0,0,0);
         soloud.update3dAudio();
 
         // Render skybox
         skybox.draw(shaderSkybox,
                     glm::mat4(glm::mat3(camera.getView())),
                     camera.projection);
+
+        axis.draw(shaderLine, camera.projection, camera.getView());
 
         // Render UI
         font.draw();

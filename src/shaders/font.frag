@@ -9,4 +9,6 @@ uniform sampler2D tex;
 void main()
 {
     fragColor = texture(tex, texCoord);
+    fragColor.b /= 100;
+    fragColor.r /= 100;
 }

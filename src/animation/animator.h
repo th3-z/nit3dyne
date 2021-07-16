@@ -19,7 +19,7 @@ private:
     Animation *animation = nullptr;
 
     float animationTime = 0.f;
-    float speed = 1.f;
+    float speed = 0.1f;
     bool isPaused = true;
 };
 

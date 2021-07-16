@@ -124,22 +124,22 @@ Font::Font(const char *str) {
         vertices.push_back(strWidth + 0.f); // TL
         vertices.push_back(charHeight);
         uvs.push_back(uvTL.first);
-        uvs.push_back(uvTL.second);
+        uvs.push_back(uvBR.second);
 
         vertices.push_back(strWidth + 0.f); // BL
         vertices.push_back(0.f);
         uvs.push_back(uvTL.first);
-        uvs.push_back(uvBR.second);
+        uvs.push_back(uvTL.second);
 
         vertices.push_back(strWidth + charWidth); // TR
         vertices.push_back(charHeight);
         uvs.push_back(uvBR.first);
-        uvs.push_back(uvTL.second);
+        uvs.push_back(uvBR.second);
 
         vertices.push_back(strWidth + charWidth); // BR
         vertices.push_back(0.f);
         uvs.push_back(uvBR.first);
-        uvs.push_back(uvBR.second);
+        uvs.push_back(uvTL.second);
 
         indices.push_back(0 + i * 4);
         indices.push_back(1 + i * 4);

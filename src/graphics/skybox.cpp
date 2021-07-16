@@ -51,9 +51,9 @@ Skybox::Skybox(const std::string &resourceName) {
         data = stbi_load(faceFilePaths[i].c_str(), &w, &h, &nChannels, 0);
 
         if (data) {
-            assert(nChannels == 3);
+            //assert(nChannels == 3);
             glTexImage2D(
-                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+                GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         } else {
 #ifndef NDEBUG
             std::cout << "Failed to load cubemap: " << faceFilePaths[i] << std::endl;

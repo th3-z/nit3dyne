@@ -1,7 +1,6 @@
 #include "lines.h"
 
 
-
 Lines::Lines(std::vector<Line> &lines) {
     this->bind(lines);
 }
@@ -46,7 +45,7 @@ void Lines::bind(std::vector<Line> &lines) {
     );
 
     glBindVertexArray(0);
-    //glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &VBO);
 }
 
 void Lines::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view) {

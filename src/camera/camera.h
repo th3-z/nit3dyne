@@ -29,8 +29,8 @@ protected:
     float yaw = -90.f;
     float pitch = -0.f;
 
-    const float speed = 5.f; // units per second
-    const float sensitivity = 5.f;
+    const float speed = 15.f; // units per second
+    const float sensitivity = 50.f;
 };
 
 #endif // GL_CAMERA_H

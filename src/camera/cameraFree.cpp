@@ -7,6 +7,10 @@ void CameraFree::update() {
     this->yaw += Input::mousePosDelta.first * (this->sensitivity * Display::timeDelta);
     this->pitch -= Input::mousePosDelta.second * (this->sensitivity * Display::timeDelta);
 
+    if (Input::scrollDelta.second != 0.) {
+        this->setFov(this->fov - Input::scrollDelta.second * 5);
+    }
+
     if (this->pitch > 89.0f)
         this->pitch = 89.0;
     if (this->pitch < -89.0f)

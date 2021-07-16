@@ -8,7 +8,7 @@ MeshAnimated::MeshAnimated(const std::string &resourceName) : MeshIf(resourceNam
     }
 
     this->animator = Animator(&this->skin);
-    this->animator.setAnimation(this->animations.back());
+    this->animator.setAnimation(this->animations.front());
 }
 
 void MeshAnimated::bindModel() {
