@@ -29,7 +29,7 @@ protected:
     float yaw = -90.f;
     float pitch = -0.f;
 
-    const float speed = 15.f; // units per second
+    float speed = 15.f; // units per second
     const float sensitivity = 50.f;
 };
 

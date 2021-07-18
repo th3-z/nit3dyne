@@ -2,7 +2,7 @@
 
 Camera::Camera(const float fov, const std::pair<int, int> &viewPort): fov(fov), viewPort(viewPort) {
     this->projection =
-        glm::perspective(glm::radians(fov), (float) viewPort.first / viewPort.second, 0.1f, 100.0f);
+        glm::perspective(glm::radians(fov), (float) viewPort.first / viewPort.second, 0.1f, 10000.0f);
 }
 
 Camera::~Camera() = default;
@@ -26,7 +26,7 @@ void Camera::setFov(float fov) {
     this->fov = fov;
 
     this->projection = glm::perspective(
-        glm::radians(this->fov), (float) this->viewPort.first / this->viewPort.second, 0.1f, 100.0f);
+        glm::radians(this->fov), (float) this->viewPort.first / this->viewPort.second, 0.1f, 10000.0f);
 }
 
 void Camera::update() {

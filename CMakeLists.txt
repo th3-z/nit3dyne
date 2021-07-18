@@ -44,7 +44,7 @@ add_executable(gl
         src/animation/sampler.cpp src/animation/sampler.h
         src/animation/skin.cpp src/animation/skin.h
         src/utils/gltf_utils.cpp src/utils/gltf_utils.h
-        src/graphics/mesh_animated.cpp src/graphics/mesh_animated.h src/animation/animator.cpp src/animation/animator.h src/display.cpp src/display.h src/graphics/lines.cpp src/graphics/lines.h)
+        src/graphics/mesh_animated.cpp src/graphics/mesh_animated.h src/animation/animator.cpp src/animation/animator.h src/display.cpp src/display.h src/graphics/lines.cpp src/graphics/lines.h src/graphics/terrain.cpp src/graphics/terrain.h)
 add_executable(viewer
     src/viewer.cpp
     src/graphics/shader.cpp src/graphics/shader.h
@@ -65,7 +65,12 @@ add_executable(viewer
         src/animation/animation.cpp src/animation/animation.h
         src/animation/sampler.cpp src/animation/sampler.h
         src/animation/skin.cpp src/animation/skin.h
-        src/utils/gltf_utils.cpp src/utils/gltf_utils.h src/graphics/mesh_animated.cpp src/graphics/mesh_animated.h src/animation/animator.cpp src/animation/animator.h src/display.cpp src/display.h src/graphics/lines.cpp src/graphics/lines.h)
+        src/utils/gltf_utils.cpp src/utils/gltf_utils.h
+        src/graphics/mesh_animated.cpp src/graphics/mesh_animated.h
+        src/animation/animator.cpp src/animation/animator.h
+        src/display.cpp src/display.h
+        src/graphics/lines.cpp src/graphics/lines.h
+        src/graphics/terrain.cpp src/graphics/terrain.h)
 
 target_link_libraries(gl glfw glm glad soloud EnTT ${CMAKE_DL_LIBS})
 target_link_libraries(viewer glfw glm glad soloud EnTT ${CMAKE_DL_LIBS})

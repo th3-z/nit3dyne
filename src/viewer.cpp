@@ -1,27 +1,31 @@
 #include <iostream>
-#include <thread>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "camera/cameraOrbit.h"
+//#include "camera/cameraOrbit.h"
+#include "camera/cameraFree.h"
 #include "graphics/mesh.h"
 #include "graphics/mesh_animated.h"
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 #include "input.h"
 #include "resourceCache.h"
+#include "display.h"
+#include "graphics/lines.h"
+#include "graphics/skybox.h"
+#include "font.h"
+#include "graphics/model.h"
+#include "graphics/terrain.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "font.h"
-#include "graphics/model.h"
+
 #include "tiny_gltf.h"
-#include "display.h"
-#include "graphics/lines.h"
-#include "graphics/skybox.h"
+
+
 
 int main() {
     Display::init();
@@ -39,6 +43,10 @@ int main() {
     shaderStatic.use();
     shaderStatic.setUniform("tex", 0);
 
+    Shader shaderTerrain("shaders/terrain.vert", "shaders/terrain.frag");
+    shaderTerrain.use();
+    shaderTerrain.setUniform("tex", 0);
+
     // Skybox shader
     Shader shaderSkybox("shaders/skybox.vert", "shaders/skybox.frag");
     shaderSkybox.use();
@@ -46,7 +54,7 @@ int main() {
 
     Shader shaderLine("shaders/line.vert", "shaders/line.frag");
 
-    CameraOrbit camera(85.f, Display::viewPort);
+    CameraFree camera(85.f, Display::viewPort);
 
     std::vector<Line> axisData;
     axisData.push_back(Line{
@@ -63,13 +71,15 @@ int main() {
     });
     Lines axis(axisData);
 
-    Skybox skybox("cubemap");
+    Skybox skybox("test");
 
     DirectionalLight dLight = DirectionalLight();
     shaderStatic.use();
     shaderStatic.setDirectionalLight(dLight);
     shaderAnim.use();
     shaderAnim.setDirectionalLight(dLight);
+    shaderTerrain.use();
+    shaderTerrain.setDirectionalLight(dLight);
 
     ResourceCache<Texture> textureCache;
     ResourceCache<MeshAnimated> meshAnimCache;
@@ -79,7 +89,7 @@ int main() {
     Model two(meshCache.loadResource("stg44"), textureCache.loadResource("stg44"));
     two.translate(1.f, 0.f, 0.f);
 
-    //glLineWidth(100.f);
+    Terrain test = Terrain("ny40");
 
     while (!Display::shouldClose) {
         Display::update();
@@ -97,6 +107,8 @@ int main() {
         shaderStatic.setUniform("dLight.direction", camera.getView() * dLight.direction);
         shaderAnim.use();
         shaderAnim.setUniform("dLight.direction", camera.getView() * dLight.direction);
+        shaderTerrain.use();
+        shaderTerrain.setUniform("dLight.direction", camera.getView() * dLight.direction);
 
         one.rotate(
                 (360.f * 1.f) * ((float) Display::timeDelta / 10.f),
@@ -126,6 +138,8 @@ int main() {
         }
 
         axis.draw(shaderLine, camera.projection, camera.getView());
+
+        test.draw(shaderTerrain, camera.projection, camera.getView());
 
 
         Display::flip(postShader, 0);

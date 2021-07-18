@@ -30,6 +30,11 @@ void CameraFree::update() {
     if (Input::getKey(GLFW_KEY_LEFT_SHIFT))
         direction |= Direction::DOWN;
 
+    if (Input::getKey(GLFW_KEY_LEFT_CONTROL))
+        this->speed = 1500.f;
+    else
+        this->speed = 15.f;
+
     if (direction & Direction::FORWARD)
         this->position += this->speed * (float) Display::timeDelta * this->front;
     if (direction & Direction::LEFT)

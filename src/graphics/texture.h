@@ -8,6 +8,7 @@
 #endif
 
 #include "stb_image.h"
+#include "material.h"
 
 class Texture {
 public:

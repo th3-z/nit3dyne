@@ -14,6 +14,7 @@
 #include "graphics/mesh.h"
 #include "graphics/shader.h"
 #include "graphics/texture.h"
+#include "graphics/terrain.h"
 #include "input.h"
 #include "graphics/skybox.h"
 #include "resourceCache.h"
@@ -55,6 +56,10 @@ int main() {
     shaderAnim.use();
     shaderAnim.setUniform("tex", 0);
 
+    Shader shaderTerrain("shaders/terrain.vert", "shaders/terrain.frag");
+    shaderTerrain.use();
+    shaderTerrain.setUniform("tex", 0);
+
     Shader shaderStatic("shaders/vertex.vert", "shaders/fragment.frag");
     shaderStatic.use();
     shaderStatic.setUniform("tex", 0);
@@ -81,6 +86,7 @@ int main() {
     shaderAnim.setSpotLight(sLight);
 
     Skybox skybox("test");
+    Terrain test = Terrain("ny40");
 
     std::vector<Line> axisData;
     axisData.push_back(Line{
@@ -132,9 +138,9 @@ int main() {
     // Initialize SoLoud, miniaudio backend
     soloud.init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION,
                 SoLoud::Soloud::BACKENDS::MINIAUDIO);
-    soloud.setGlobalVolume(.5f);
+    soloud.setGlobalVolume(.9f);
 
-    sample.load("res/sound/dunkelheit.ogg");
+    sample.load("res/sound/avril14.ogg");
     sample.setLooping(true);
     sample.set3dMinMaxDistance(1, 30);
     sample.set3dAttenuation(SoLoud::AudioSource::EXPONENTIAL_DISTANCE, 0.5);
@@ -157,6 +163,7 @@ int main() {
         shaderStatic.use();
         shaderStatic.setUniform("dLight.direction", camera.getView() * dLight.direction);
 
+        test.draw(shaderStatic, camera.projection, camera.getView());
         plane.draw(shaderStatic, camera.projection, camera.getView());
         sphere.draw(shaderStatic, camera.projection, camera.getView());
 
