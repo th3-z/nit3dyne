@@ -1,27 +1,41 @@
 #include "shader.h"
 
-Shader::Shader(const char *vPath, const char *fPath) {
+Shader::Shader(const char *vPath, const char *fPath): Shader(vPath, fPath, nullptr) {}
+
+Shader::Shader(const char *vPath, const char *fPath, const char *gPath) {
     std::string vSrc;
     std::string fSrc;
+    std::string gSrc;
     std::ifstream vFile;
     std::ifstream fFile;
+    std::ifstream gFile;
 
+    // FIXME: duplicates not needed
     vFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    gFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try {
+        std::stringstream vStream, fStream, gStream;
+
         vFile.open(vPath);
         fFile.open(fPath);
-        std::stringstream vStream, fStream;
 
         vStream << vFile.rdbuf();
         fStream << fFile.rdbuf();
 
         vSrc = vStream.str();
         fSrc = fStream.str();
+
+        // TODO: refactor if statements that check if there is shader type
+        if (gPath != nullptr) {
+            gFile.open(gPath);
+            gStream << gFile.rdbuf();
+            gSrc = gStream.str();
+        }
     } catch (std::ifstream::failure &e) { std::cout << "Shader read error" << std::endl; }
 
-    unsigned int vId, fId;
+    unsigned int vId, fId, gId;
     int success;
     char infoLog[512];
 
@@ -41,13 +55,27 @@ Shader::Shader(const char *vPath, const char *fPath) {
     glCompileShader(fId);
     glGetShaderiv(fId, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(vId, 512, NULL, infoLog);
+        glGetShaderInfoLog(fId, 512, NULL, infoLog);
         std::cout << "Error: Failed to compile fragment shader\n" << infoLog << std::endl;
+    }
+
+    if (gPath != nullptr){
+        gId = glCreateShader(GL_GEOMETRY_SHADER);
+        const char *gSrcC = gSrc.c_str();
+        glShaderSource(gId, 1, &gSrcC, NULL);
+        glCompileShader(gId);
+        glGetShaderiv(gId, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(gId, 512, NULL, infoLog);
+            std::cout << "Error: Failed to compile geometry shader\n" << infoLog << std::endl;
+        }
     }
 
     this->handle = glCreateProgram();
     glAttachShader(this->handle, vId);
     glAttachShader(this->handle, fId);
+    if (gPath != nullptr)
+        glAttachShader(this->handle, gId);
     glLinkProgram(this->handle);
 
     glGetProgramiv(this->handle, GL_LINK_STATUS, &success);
@@ -56,10 +84,16 @@ Shader::Shader(const char *vPath, const char *fPath) {
         std::cout << "Error: Failed to link shader program\n" << infoLog << std::endl;
         std::cout << "VS: " << vPath << std::endl;
         std::cout << "FS: " << fPath << std::endl;
+        if (gPath != nullptr) {
+            std::cout << "GS: " << gPath << std::endl;
+        }
     }
 
     glDeleteShader(vId);
     glDeleteShader(fId);
+    if (gPath != nullptr) {
+        glDeleteShader(gId);
+    }
 }
 
 void Shader::use() const {

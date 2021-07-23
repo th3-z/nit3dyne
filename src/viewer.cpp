@@ -1,4 +1,6 @@
 #include <iostream>
+#include <random>
+#include <iomanip>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,7 +17,6 @@
 #include "display.h"
 #include "graphics/lines.h"
 #include "graphics/skybox.h"
-#include "font.h"
 #include "graphics/model.h"
 #include "graphics/terrain.h"
 
@@ -31,8 +32,11 @@ int main() {
     Display::init();
     Input::init(Display::window);
 
-    Shader postShader("shaders/copy.vert", "shaders/copy.frag");
+    Shader postShader("shaders/post.vert", "shaders/post.frag");
     postShader.use();
+    postShader.setUniform("tex", 0);
+    postShader.setUniform("texDither", 1);
+    //Texture textureDither("dith");
 
     // Main shader program
     Shader shaderAnim("shaders/vertex-skinned.vert", "shaders/fragment.frag");
@@ -46,6 +50,8 @@ int main() {
     Shader shaderTerrain("shaders/terrain.vert", "shaders/terrain.frag");
     shaderTerrain.use();
     shaderTerrain.setUniform("tex", 0);
+
+    Shader shaderNormals("shaders/normals.vert", "shaders/normals.frag", "shaders/normals.geo");
 
     // Skybox shader
     Shader shaderSkybox("shaders/skybox.vert", "shaders/skybox.frag");
@@ -74,6 +80,8 @@ int main() {
     Skybox skybox("test");
 
     DirectionalLight dLight = DirectionalLight();
+    dLight.diffuse = glm::vec3(0.8, 0.8, 0.8);
+    dLight.ambient = glm::vec3(0.1, 0.1, 0.1);
     shaderStatic.use();
     shaderStatic.setDirectionalLight(dLight);
     shaderAnim.use();
@@ -85,11 +93,13 @@ int main() {
     ResourceCache<MeshAnimated> meshAnimCache;
     ResourceCache<Mesh> meshCache;
 
-    Model one(meshAnimCache.loadResource("stg44"), textureCache.loadResource("stg44"));
-    Model two(meshCache.loadResource("stg44"), textureCache.loadResource("stg44"));
-    two.translate(1.f, 0.f, 0.f);
-
+    Model one(meshAnimCache.loadResource("hand"), textureCache.loadResource("error"));
+    Model two(meshAnimCache.loadResource("stg44"), textureCache.loadResource("stg44"));
+    two.translate(0.f, 0.f, 5.f);
+//    two.scale(.25f, .25f, .25f);
+//    one.scale(.04556f, .04556f, .04556f);
     Terrain test = Terrain("ny40");
+    std::shared_ptr<Texture> testT = textureCache.loadResource("ny40");
 
     while (!Display::shouldClose) {
         Display::update();
@@ -110,26 +120,15 @@ int main() {
         shaderTerrain.use();
         shaderTerrain.setUniform("dLight.direction", camera.getView() * dLight.direction);
 
-        one.rotate(
+        two.rotate(
                 (360.f * 1.f) * ((float) Display::timeDelta / 10.f),
                 0.f, 1.f, 0.f,
                 false
-        );
-        two.rotate(
-            (360.f * 1.f) * ((float) Display::timeDelta / 10.f),
-            0.f, 1.f, 0.f,
-            false
         );
 
         skybox.draw(shaderSkybox,
                     glm::mat4(glm::mat3(camera.getView())),
                     camera.projection);
-
-        if (two.mesh->meshType == MeshType::ANIMATED) {
-            two.draw(shaderAnim, camera.projection, camera.getView());
-        } else {
-            two.draw(shaderStatic, camera.projection, camera.getView());
-        }
 
         if (one.mesh->meshType == MeshType::ANIMATED) {
             one.draw(shaderAnim, camera.projection, camera.getView());
@@ -139,10 +138,21 @@ int main() {
 
         axis.draw(shaderLine, camera.projection, camera.getView());
 
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, testT->handle);
         test.draw(shaderTerrain, camera.projection, camera.getView());
+        two.draw(shaderAnim, camera.projection, camera.getView());
 
+        if (Input::getKey(GLFW_KEY_TAB)) {
+            shaderNormals.use();
+            shaderNormals.setUniform("model", test.model);
+            shaderNormals.setUniform("view", camera.getView());
+            shaderNormals.setUniform("projection", camera.projection);
+            test.draw(shaderNormals, camera.projection, camera.getView());
+        }
 
-        Display::flip(postShader, 0);
+        Display::flip(postShader);
         Input::update();
     }
 

@@ -16,6 +16,7 @@ struct TerrainVertex {
     glm::vec3 vertex;
     glm::vec3 normal; // TODO: precompute normals as normalmap
     unsigned int texture;
+    glm::vec2 uv;
 };
 
 /*
@@ -54,6 +55,8 @@ public:
 
     // draw all chunks
     void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);
+
+    glm::mat4 model = glm::mat4(1.f);
 
     std::vector<TerrainVertex> *readHeights(std::string heightsFn, std::string normalsFn);
 };

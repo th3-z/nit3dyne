@@ -60,6 +60,8 @@ int main() {
     shaderTerrain.use();
     shaderTerrain.setUniform("tex", 0);
 
+    Shader shaderNormals("shaders/normals.vert", "shaders/normals.frag", "shaders/normals.geo");
+
     Shader shaderStatic("shaders/vertex.vert", "shaders/fragment.frag");
     shaderStatic.use();
     shaderStatic.setUniform("tex", 0);

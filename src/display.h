@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "graphics/shader.h"
+#include "graphics/texture.h"
+#include "utils/rand.h"
 
 class Display {
 public:
@@ -23,22 +25,25 @@ public:
     static void destroy();
 
     static void update();
-    static void flip(Shader &postShader, int ditherHandle);
+    static void flip(Shader &postShader);
 
 private:
     inline static double timeLastFrame;
     inline static double timeThisFrame;
 
     inline static Shader *copyShader;
+    inline static Texture *dither;
 
     inline static unsigned int fbo[2];
     inline static unsigned int rbo[2];
     inline static unsigned int fboTexHandle[2];
     inline static unsigned int fboQuadVao;
 
+
     static void initGlfw();
     static void initGl();
     static void initBuffers();
+    static void initResources();
 };
 
 #endif //GL_DISPLAY_H

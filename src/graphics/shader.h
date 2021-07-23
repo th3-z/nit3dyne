@@ -20,6 +20,7 @@ public:
     unsigned int handle;
 
     Shader(const char *vPath, const char *fPath);
+    Shader(const char *vPath, const char *fPath, const char *gPath);
     ~Shader();
     void use() const;
 

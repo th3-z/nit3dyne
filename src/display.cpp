@@ -13,7 +13,7 @@ float QUAD_VERTICES[] = {
 
 void Display::init() {
     viewPort = std::pair<int, int>(1920, 1200);
-    viewPortVirtual = std::pair<int, int>(864, 486);
+    viewPortVirtual = std::pair<int, int>(776, 485);
     title = "GlToy";
     shouldClose = false;
 
@@ -26,6 +26,7 @@ void Display::init() {
     initGlfw();
     initGl();
     initBuffers();
+    initResources();
 }
 
 void Display::destroy() {
@@ -36,6 +37,7 @@ void Display::destroy() {
     glDeleteVertexArrays(1, &fboQuadVao);
 
     delete copyShader;
+    delete dither;
 
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -114,10 +116,6 @@ void Display::initBuffers() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *) (2 * sizeof(float)));
 
-    copyShader = new Shader("shaders/copy.vert", "shaders/copy.frag");
-    copyShader->use();
-    copyShader->setUniform("tex", 0);
-
     glBindVertexArray(0);
 }
 
@@ -133,13 +131,14 @@ void Display::update() {
     shouldClose = (bool) glfwWindowShouldClose(window);
 }
 
-void Display::flip(Shader &postShader, int ditherHandle) {
+void Display::flip(Shader &postShader) {
     // Bind intermediate fb for applying post effects
     glDisable(GL_DEPTH_TEST);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo[1]);
     glClear(GL_COLOR_BUFFER_BIT);
 
     postShader.use();
+    postShader.setUniform("grainSeed", randFloat(0.f, 1.f));
     glBindVertexArray(fboQuadVao); // VAO is shared for both copies
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fboTexHandle[0]); // bind intermediate tex
@@ -155,7 +154,7 @@ void Display::flip(Shader &postShader, int ditherHandle) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fboTexHandle[1]);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, ditherHandle);
+    glBindTexture(GL_TEXTURE_2D, dither->handle);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glfwSwapBuffers(window);
 
@@ -163,6 +162,14 @@ void Display::flip(Shader &postShader, int ditherHandle) {
     glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
     glViewport(0, 0, viewPortVirtual.first, viewPortVirtual.second);
     glEnable(GL_DEPTH_TEST);
+}
+
+void Display::initResources() {
+    dither = new Texture("dith");
+
+    copyShader = new Shader("shaders/copy.vert", "shaders/copy.frag");
+    copyShader->use();
+    copyShader->setUniform("tex", 0);
 }
 
 
