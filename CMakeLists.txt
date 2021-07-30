@@ -1,86 +1,37 @@
-cmake_minimum_required(VERSION 3.10)
-project(gl)
+cmake_minimum_required(VERSION 3.12.4)
+project(nit3dyne)
 
-set(CMAKE_CXX_STANDARD 14)
+add_subdirectory(external)
 
-# Header-only libs
-include_directories(lib)
-
-# External targets
-set(GLFW_BUILD_TESTS OFF CACHE BOOL  "GLFW lib only")
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL  "GLFW lib only")
-set(GLFW_BUILD_DOCS OFF CACHE BOOL  "GLFW lib only")
-set(GLFW_INSTALL OFF CACHE BOOL  "GLFW lib only")
-add_subdirectory(lib/glfw)
-add_subdirectory(lib/glm)
-add_subdirectory(lib/glad)
-set(SOLOUD_STATIC ON)
-set(SOLOUD_BACKEND_MINIAUDIO ON)
-set(SOLOUD_BACKEND_SDL2 OFF)
-set(SOLOUD_BACKEND_NULL OFF)
-set(SOLOUD_BACKEND_SOLOUD_BACKEND_WINMM OFF)
-set(SOLOUD_BACKEND_SOLOUD_BACKEND_OPENSLES ON)
-set(SOLOUD_BACKEND_SOLOUD_BACKEND_COREAUDIO OFF)
-add_subdirectory(lib/soloud)
-add_subdirectory(lib/entt)
-
-add_executable(gl
-    src/main.cpp
-    src/graphics/shader.cpp src/graphics/shader.h
-    src/graphics/texture.cpp src/graphics/texture.h
-    src/graphics/mesh.cpp src/graphics/mesh.h
-    src/camera/cameraFps.cpp src/camera/cameraFps.h
-    src/camera/cameraFree.cpp src/camera/cameraFree.h
-    src/camera/camera.cpp src/camera/camera.h
-    src/input.cpp src/input.h
-    src/font.cpp src/font.h
-    src/graphics/model.cpp src/graphics/model.h
-    src/graphics/material.cpp src/graphics/material.h
-    src/graphics/lighting.cpp src/graphics/lighting.h
-    src/graphics/skybox.cpp src/graphics/skybox.h
-    src/resourceCache.h
-        src/animation/joint.cpp src/animation/joint.h
-        src/animation/animation.cpp src/animation/animation.h
-        src/animation/sampler.cpp src/animation/sampler.h
-        src/animation/skin.cpp src/animation/skin.h
-        src/utils/gltf_utils.cpp src/utils/gltf_utils.h
-        src/graphics/mesh_animated.cpp src/graphics/mesh_animated.h src/animation/animator.cpp src/animation/animator.h src/display.cpp src/display.h src/graphics/lines.cpp src/graphics/lines.h src/graphics/terrain.cpp src/graphics/terrain.h src/utils/rand.h)
-add_executable(viewer
-    src/viewer.cpp
-    src/graphics/shader.cpp src/graphics/shader.h
-    src/graphics/texture.cpp src/graphics/texture.h
-    src/graphics/mesh.cpp src/graphics/mesh.h
-    src/camera/cameraFps.cpp src/camera/cameraFps.h
-    src/camera/cameraFree.cpp src/camera/cameraFree.h
-    src/camera/cameraOrbit.cpp src/camera/cameraOrbit.h
-    src/camera/camera.cpp src/camera/camera.h
-    src/input.cpp src/input.h
-    src/font.cpp src/font.h
-    src/graphics/model.cpp src/graphics/model.h
-    src/graphics/material.cpp src/graphics/material.h
-    src/graphics/lighting.cpp src/graphics/lighting.h
-    src/graphics/skybox.cpp src/graphics/skybox.h
-    src/resourceCache.h
-        src/animation/joint.cpp src/animation/joint.h
-        src/animation/animation.cpp src/animation/animation.h
-        src/animation/sampler.cpp src/animation/sampler.h
-        src/animation/skin.cpp src/animation/skin.h
-        src/utils/gltf_utils.cpp src/utils/gltf_utils.h
-        src/graphics/mesh_animated.cpp src/graphics/mesh_animated.h
-        src/animation/animator.cpp src/animation/animator.h
-        src/display.cpp src/display.h
-        src/graphics/lines.cpp src/graphics/lines.h
-        src/graphics/terrain.cpp src/graphics/terrain.h src/utils/rand.h)
-
-target_link_libraries(gl glfw glm glad soloud EnTT ${CMAKE_DL_LIBS})
-target_link_libraries(viewer glfw glm glad soloud EnTT ${CMAKE_DL_LIBS})
-
-# Link resources
-add_custom_command(
-    TARGET gl POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-        ${CMAKE_SOURCE_DIR}/src/shaders ${CMAKE_CURRENT_BINARY_DIR}/shaders
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-        ${CMAKE_SOURCE_DIR}/src/res ${CMAKE_CURRENT_BINARY_DIR}/res
-    COMMENT "Linking resources"
+set(SOURCES
+    nit3dyne/graphics/shader.cpp nit3dyne/graphics/shader.h
+    nit3dyne/graphics/texture.cpp nit3dyne/graphics/texture.h
+    nit3dyne/graphics/mesh.cpp nit3dyne/graphics/mesh.h
+    nit3dyne/camera/cameraFps.cpp nit3dyne/camera/cameraFps.h
+    nit3dyne/camera/cameraFree.cpp nit3dyne/camera/cameraFree.h
+    nit3dyne/camera/camera.cpp nit3dyne/camera/camera.h
+    nit3dyne/input.cpp nit3dyne/input.h
+    nit3dyne/font.cpp nit3dyne/font.h
+    nit3dyne/graphics/model.cpp nit3dyne/graphics/model.h
+    nit3dyne/graphics/material.cpp nit3dyne/graphics/material.h
+    nit3dyne/graphics/lighting.h
+    nit3dyne/graphics/skybox.cpp nit3dyne/graphics/skybox.h
+    nit3dyne/resourceCache.h
+    nit3dyne/animation/joint.cpp nit3dyne/animation/joint.h
+    nit3dyne/animation/animation.cpp nit3dyne/animation/animation.h
+    nit3dyne/animation/sampler.h
+    nit3dyne/animation/skin.cpp nit3dyne/animation/skin.h
+    nit3dyne/utils/gltf_utils.cpp nit3dyne/utils/gltf_utils.h
+    nit3dyne/graphics/mesh_animated.cpp nit3dyne/graphics/mesh_animated.h
+    nit3dyne/animation/animator.cpp nit3dyne/animation/animator.h
+    nit3dyne/display.cpp nit3dyne/display.h
+    nit3dyne/graphics/lines.cpp nit3dyne/graphics/lines.h
+    nit3dyne/graphics/terrain.cpp nit3dyne/graphics/terrain.h
+    nit3dyne/utils/rand.h
 )
+
+add_library(nit3dyne STATIC ${SOURCES})
+target_compile_options(nit3dyne PRIVATE "-Wall")
+target_include_directories(nit3dyne PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(nit3dyne PUBLIC glfw glm glad soloud EnTT json tiny_gltf stb ${CMAKE_DL_LIBS})
+

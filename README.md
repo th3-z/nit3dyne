@@ -1,11 +1,21 @@
-# GL
+# NIT3DYNE
 
-Toy OpenGL project.
+A low fidelity 3D engine, OpenGL 3.2.
 
-## Building (Linux)
+## Features
 
-- Install requirements (Ubuntu 20.10) `sudo apt install xorg-dev build-essential cmake`
-- Run cmake `mkdir build && cd build`
-- Run cmake `cmake ..`
-- Run make `make`
-- Launch `./gl`
+- Animation and skinning
+- Spot and directional lights
+- Cubemaps
+- Heightmap terrain
+- Virtual resolution
+- Post FX
+- Per-vertex shading
+- Materials
+- Affine texture mapping
+
+## License
+
+MIT.
+
+See `external/ATTRIBUTION` for third party licenses.
