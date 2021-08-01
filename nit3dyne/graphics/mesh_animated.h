@@ -29,6 +29,6 @@ private:
     Animator animator;
 };
 
-#endif // GL_MESH_ANIMATED_H
-
 }
+
+#endif // GL_MESH_ANIMATED_H

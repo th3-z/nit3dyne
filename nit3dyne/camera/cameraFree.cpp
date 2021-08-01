@@ -1,5 +1,4 @@
 #include "cameraFree.h"
-#include "../display.h"
 
 namespace n3d {
 

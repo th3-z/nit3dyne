@@ -1,5 +1,5 @@
-#ifndef GL_CAMERAFREE_H
-#define GL_CAMERAFREE_H
+#ifndef GL_CAMERAORBIT_H
+#define GL_CAMERAORBIT_H
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,10 +12,8 @@ namespace n3d {
 
 class CameraOrbit : public Camera {
 public:
-    CameraOrbit(
-    const float fov,
-    const std::pair<int, int>
-    &viewPort);
+    CameraOrbit(float fov, const std::pair<int, int> &viewPort);
+    ~CameraOrbit() override = default;
 
     glm::mat4 getView() override;
     void update() override;
@@ -27,4 +25,4 @@ private:
 
 }
 
-#endif // GL_CAMERAFREE_H
+#endif // GL_CAMERAORBIT_H

@@ -13,9 +13,7 @@ public:
     virtual ~Camera();
 
     virtual glm::mat4 getView();
-
     virtual void update();
-
     void setFov(float fov);
 
     std::pair<int, int> viewPort;
