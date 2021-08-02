@@ -172,4 +172,10 @@ void Shader::setSpotLight(const SpotLight &sLight) const {
     this->setUniform("sLight.cutOff", sLight.cutOff);
 }
 
+void Shader::setUniform(const std::string &name, const glm::vec2 &vec) const {
+    glUniform2fv(glGetUniformLocation(this->handle, name.c_str()),
+                 1, // Send one
+                 glm::value_ptr(vec));
+}
+
 }
