@@ -2,14 +2,14 @@
 
 namespace n3d {
 
-// 1x1 quad + texture coords
+// 1x1 quad
 float vertices[] = {
-    -.5f, .5f,  0.0f, 1.0f,
-    -.5f, -.5f, 0.0f, 0.0f,
-    .5f, -.5f,  1.0f, 0.0f,
-    -.5f, .5f,  0.0f, 1.0f,
-    .5f, -.5f,  1.0f, 0.0f,
-    .5f, .5f,   1.0f, 1.0f
+    -.5f, .5f,
+    -.5f, -.5f,
+    .5f, -.5f,
+    -.5f, .5f,
+    .5f, -.5f,
+    .5f, .5f,
 };
 
 Billboard::Billboard(std::pair<float, float> &&size, const std::shared_ptr<Texture> texture): texture(texture) {
@@ -58,17 +58,8 @@ void Billboard::bind() {
             0, 2,
             GL_FLOAT,
             GL_FALSE,
-            sizeof(float) * 4,
+            sizeof(float) * 2,
             (void *) 0
-    );
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(
-            1, 2,
-            GL_FLOAT,
-            GL_FALSE,
-            sizeof(float) * 4,
-            (void *) (2 * sizeof(float))
     );
 
     glBindVertexArray(0);

@@ -21,6 +21,7 @@ public:
 
     glm::vec2 size;
     glm::vec3 position;
+    bool viewScale = true;
 
 private:
     void bind();
