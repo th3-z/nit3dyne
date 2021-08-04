@@ -5,7 +5,7 @@ namespace n3d {
 std::string ext = ".glb";
 std::string path = "res/mesh/";
 
-MeshIf::MeshIf(const std::string &resourceName, MeshType meshType) :
+Mesh::Mesh(const std::string &resourceName, MeshType meshType) :
         meshType(meshType) {
     tinygltf::TinyGLTF loader;
     std::string err, warn;
@@ -19,11 +19,11 @@ MeshIf::MeshIf(const std::string &resourceName, MeshType meshType) :
         std::cout << "Failed to load mesh: " << resourceName << std::endl;
 }
 
-MeshIf::~MeshIf() {
+Mesh::~Mesh() {
     glDeleteVertexArrays(1, &this->VAO);
 }
 
-void MeshIf::draw(Shader &shader) {
+void Mesh::draw(Shader &shader) {
     glBindVertexArray(this->VAO);
 
     tinygltf::Mesh mesh = this->gltf.meshes.front();
@@ -36,19 +36,16 @@ void MeshIf::draw(Shader &shader) {
             indexAccessor.componentType,
             (char *) nullptr + (indexAccessor.byteOffset)
     );
-
     glBindVertexArray(0);
 }
 
-void MeshIf::bindMesh(tinygltf::Mesh &mesh, std::map<int, unsigned int> &VBOs) {
+void Mesh::bindMesh(tinygltf::Mesh &mesh, std::map<int, unsigned int> &VBOs) {
     const tinygltf::Buffer &buffer = this->gltf.buffers.front();
     const tinygltf::Primitive primitive = mesh.primitives.front();
 
     for (size_t i = 0; i < this->gltf.bufferViews.size(); ++i) {
         const tinygltf::BufferView &bufferView = this->gltf.bufferViews[i];
-        if (bufferView.target == 0) {
-            continue;
-        }
+        if (bufferView.target == 0) continue;
 
         unsigned int VBO;
         glGenBuffers(1, &VBO);
@@ -56,10 +53,10 @@ void MeshIf::bindMesh(tinygltf::Mesh &mesh, std::map<int, unsigned int> &VBOs) {
         glBindBuffer(bufferView.target, VBO);
 
         glBufferData(
-                bufferView.target,
-                bufferView.byteLength,
-                &buffer.data.at(0) + bufferView.byteOffset,
-                GL_STATIC_DRAW
+            bufferView.target,
+            bufferView.byteLength,
+            &buffer.data.at(0) + bufferView.byteOffset,
+            GL_STATIC_DRAW
         );
     }
 
@@ -73,71 +70,68 @@ void MeshIf::bindMesh(tinygltf::Mesh &mesh, std::map<int, unsigned int> &VBOs) {
                 this->gltf.bufferViews[accessor.bufferView]
         );
 
-        int vaa = -1;
-        if (attrib.first.compare("POSITION") == 0)
-            vaa = 0;
-        if (attrib.first.compare("NORMAL") == 0)
-            vaa = 1;
-        if (attrib.first.compare("TEXCOORD_0") == 0)
-            vaa = 2;
-        if (attrib.first.compare("JOINTS_0") == 0)
-            vaa = 3;
-        if (attrib.first.compare("WEIGHTS_0") == 0)
-            vaa = 4;
+        int vaa = this->getVaa(attrib.first);
+        if (vaa == -1) continue;
 
         glEnableVertexAttribArray(vaa);
-
-        if (vaa != 3) {
-            glVertexAttribPointer(
-                    vaa, size,
-                    accessor.componentType,
-                    accessor.normalized ? GL_TRUE : GL_FALSE,
-                    byteStride,
-                    (char *) NULL + (accessor.byteOffset)
-            );
-        } else {
+        if (this->vaaIsInt(attrib.first))
             glVertexAttribIPointer(
-                    vaa, size,
-                    accessor.componentType,
-                    byteStride, (char *) NULL + (accessor.byteOffset)
+                vaa, size,
+                accessor.componentType,
+                byteStride, (char *) NULL + (accessor.byteOffset)
             );
-        }
+        else
+            glVertexAttribPointer(
+                vaa, size,
+                accessor.componentType,
+                accessor.normalized ? GL_TRUE : GL_FALSE,
+                byteStride,
+                (char *) NULL + (accessor.byteOffset)
+            );
     }
 }
 
+int Mesh::getVaa(const std::string &attrib) {
+    int vaa = -1;
 
-Mesh::Mesh(const std::string &resourceName) : MeshIf(resourceName, MeshType::STATIC) {
-    this->bindModel();
-}
-
-void Mesh::bindModel() {
-    glGenVertexArrays(1, &this->VAO);
-    glBindVertexArray(this->VAO);
-
-    std::map<int, unsigned int> VBOs;
-    glm::mat4 globalTransform(1.f);
-
-    this->bindModelNodes(
-            -1,
-            this->gltf.scenes[this->gltf.defaultScene].nodes.front(),
-            VBOs, globalTransform
-    );
-
-    // Cleanup
-    glBindVertexArray(0);
-    for (size_t i = 0; i < VBOs.size(); ++i) {
-        glDeleteBuffers(1, &VBOs[i]);
+    switch (this->meshType) {
+        case COLORED:
+            if (attrib.compare("POSITION") == 0)
+                vaa = 0;
+            if (attrib.compare("NORMAL") == 0)
+                vaa = 1;
+            if (attrib.compare("COLOR_0") == 0)
+                vaa = 2;
+            break;
+        case ANIMATED:
+            if (attrib.compare("POSITION") == 0)
+                vaa = 0;
+            if (attrib.compare("NORMAL") == 0)
+                vaa = 1;
+            if (attrib.compare("TEXCOORD_0") == 0)
+                vaa = 2;
+            if (attrib.compare("JOINTS_0") == 0)
+                vaa = 3;
+            if (attrib.compare("WEIGHTS_0") == 0)
+                vaa = 4;
+            break;
+        case STATIC:
+            if (attrib.compare("POSITION") == 0)
+                vaa = 0;
+            if (attrib.compare("NORMAL") == 0)
+                vaa = 1;
+            if (attrib.compare("TEXCOORD_0") == 0)
+                vaa = 2;
+            break;
     }
+
+    return vaa;
 }
 
-void Mesh::bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, glm::mat4 &globalTransform) {
-    tinygltf::Node node = this->gltf.nodes[nodeId];
-
-    if (node.mesh >= 0)
-        this->bindMesh(this->gltf.meshes[node.mesh], VBOs);
-
-    for (int i : node.children)
-        bindModelNodes(nodeId, i, VBOs, globalTransform);
+bool Mesh::vaaIsInt(const std::string &attrib) {
+    if (attrib.compare("JOINTS_0") == 0)
+        return true;
+    return false;
 }
 
 }

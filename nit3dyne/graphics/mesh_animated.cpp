@@ -2,7 +2,7 @@
 
 namespace n3d {
 
-MeshAnimated::MeshAnimated(const std::string &resourceName) : MeshIf(resourceName, MeshType::ANIMATED) {
+MeshAnimated::MeshAnimated(const std::string &resourceName) : Mesh(resourceName, MeshType::ANIMATED) {
     this->bindModel();
 
     for (auto &animation : this->gltf.animations) {
@@ -33,8 +33,7 @@ void MeshAnimated::bindModel() {
     }
 }
 
-void
-MeshAnimated::bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, glm::mat4 &globalTransform) {
+void MeshAnimated::bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, glm::mat4 &globalTransform) {
     tinygltf::Node node = this->gltf.nodes[nodeId];
 
     glm::quat rotation(1.f, 0.f, 0.f, 0.f);
@@ -100,7 +99,7 @@ void MeshAnimated::draw(Shader &shader) {
 
     shader.setUniform("jointTransforms", jointMatrices);
 
-    MeshIf::draw(shader);
+    Mesh::draw(shader);
 }
 
 }

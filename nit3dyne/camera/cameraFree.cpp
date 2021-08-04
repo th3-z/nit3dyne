@@ -2,7 +2,9 @@
 
 namespace n3d {
 
-CameraFree::CameraFree(const float fov, const std::pair<int, int> &viewPort) : Camera(fov, viewPort) {};
+CameraFree::CameraFree(const float fov, const std::pair<int, int> &viewPort) : Camera(fov, viewPort) {
+    this->sensitivity = 5.f;
+};
 
 void CameraFree::update() {
     this->yaw += Input::mousePosDelta.first * (this->sensitivity * Display::timeDelta);

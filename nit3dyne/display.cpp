@@ -60,8 +60,7 @@ void Display::initGlfw() {
 
     window = glfwCreateWindow(viewPort.first, viewPort.second, title.c_str(), NULL, NULL);
     glfwMakeContextCurrent(window);
-
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 }
@@ -69,7 +68,7 @@ void Display::initGlfw() {
 void Display::initGl() {
     glViewport(0, 0, viewPort.first, viewPort.second);
 
-    //glEnable(GL_CULL_FACE);
+//    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

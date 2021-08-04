@@ -5,6 +5,7 @@ namespace n3d {
 CameraFps::CameraFps(const float fov, const std::pair<int, int> &viewPort)
         : Camera(fov, viewPort) {
     this->position = glm::vec3(0.f, this->playerHeight, 10.f);
+    this->sensitivity = 5.f;
 }
 
 void CameraFps::update() {
@@ -37,8 +38,8 @@ void CameraFps::update() {
         this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
     }
 
-    this->yaw += Input::mousePosDelta.first * (this->sensitivity * Display::timeDelta);
-    this->pitch -= Input::mousePosDelta.second * (this->sensitivity * Display::timeDelta);
+    this->yaw += this->sensitivity * Display::timeDelta * Input::mousePosDelta.first;
+    this->pitch -= this->sensitivity * Display::timeDelta * Input::mousePosDelta.second;
 
     if (this->pitch > 89.0f)
         this->pitch = 89.0;

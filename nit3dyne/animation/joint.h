@@ -21,7 +21,7 @@ public:
     glm::mat4 bindTransform;  // Bind pose
     glm::mat4 globalJointTransform;  // Active pose
 
-    // Add dirty check
+    // TODO: Add dirty check
     glm::quat rotation;
     glm::vec3 scale;
     glm::vec3 translation;

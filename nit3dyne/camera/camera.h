@@ -30,7 +30,7 @@ protected:
     float pitch = -0.f;
 
     float speed = 15.f; // units per second
-    const float sensitivity = 50.f;
+    float sensitivity = .08f;
 };
 
 }

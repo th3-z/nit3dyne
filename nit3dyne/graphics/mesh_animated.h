@@ -7,7 +7,7 @@
 
 namespace n3d {
 
-class MeshAnimated : public MeshIf {
+class MeshAnimated : public Mesh {
 public:
     explicit MeshAnimated(const std::string &resourceName);
 

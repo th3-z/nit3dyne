@@ -33,7 +33,7 @@ set(SOURCES
     nit3dyne/input.cpp nit3dyne/input.h
     nit3dyne/font.cpp nit3dyne/font.h
     nit3dyne/resourceCache.h
-        nit3dyne/graphics/billboard.cpp nit3dyne/graphics/billboard.h)
+        nit3dyne/graphics/billboard.cpp nit3dyne/graphics/billboard.h nit3dyne/graphics/mesh_static.cpp nit3dyne/graphics/mesh_static.h nit3dyne/graphics/mesh_colored.cpp nit3dyne/graphics/mesh_colored.h)
 
 add_library(nit3dyne STATIC ${SOURCES})
 target_compile_options(nit3dyne PRIVATE "-Wall")

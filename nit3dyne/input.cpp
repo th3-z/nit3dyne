@@ -3,14 +3,14 @@
 namespace n3d {
 
 void Input::callbackMouse(GLFWwindow *window, double mouseX, double mouseY) {
-    mousePos.first = mouseX;
-    mousePos.second = mouseY;
-
-    mousePosDelta.first = mouseX - mouseLastX;
-    mousePosDelta.second = mouseY - mouseLastY;
-
-    mouseLastX = mouseX;
-    mouseLastY = mouseY;
+//    mousePos.first = mouseX;
+//    mousePos.second = mouseY;
+//
+//    mousePosDelta.first = mouseX - mouseLastX;
+//    mousePosDelta.second = mouseY - mouseLastY;
+//
+//    mouseLastX = mouseX;
+//    mouseLastY = mouseY;
 }
 
 void Input::callbackScroll(GLFWwindow *window, double scrollX, double scrollY) {
@@ -63,6 +63,13 @@ void Input::update() {
 
     scrollDelta.first = 0;
     scrollDelta.second = 0;
+
+    int winW, winH;
+    glfwGetWindowSize(window, &winW, &winH);
+    glfwGetCursorPos(window, &mousePosDelta.first, &mousePosDelta.second);
+    mousePosDelta.first -= winW/2.;
+    mousePosDelta.second -= winH/2.;
+    glfwSetCursorPos(window, winW/2., winH/2.);
 
     glfwPollEvents();
 }

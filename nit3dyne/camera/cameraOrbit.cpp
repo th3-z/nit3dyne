@@ -13,8 +13,8 @@ glm::mat4 CameraOrbit::getView() {
 }
 
 void CameraOrbit::update() {
-    this->yaw += Input::mousePosDelta.first * (this->sensitivity * Display::timeDelta);
-    this->pitch -= Input::mousePosDelta.second * (this->sensitivity * Display::timeDelta);
+    this->yaw += this->sensitivity * Display::timeDelta * Input::mousePosDelta.first;
+    this->pitch -= this->sensitivity * Display::timeDelta * Input::mousePosDelta.second;
 
     if (this->pitch > 89.0f)
         this->pitch = 89.0;

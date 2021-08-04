@@ -2,9 +2,6 @@
 #define GL_MESH_H
 
 #include <glad/glad.h>
-#ifndef NDEBUG
-#include <iostream>
-#endif
 #include <map>
 #include <string>
 #include <glm/glm.hpp>
@@ -24,36 +21,28 @@ namespace n3d {
 
 enum MeshType {
     STATIC,
-    ANIMATED
+    ANIMATED,
+    COLORED
 };
 
-class MeshIf {
+class Mesh {
 public:
-    explicit MeshIf(const std::string &resourceName, MeshType meshType);
-
-    virtual ~MeshIf();
+    explicit Mesh(const std::string &resourceName, MeshType meshType);
+    virtual ~Mesh();
 
     virtual void draw(Shader &shader);
 
     MeshType meshType;
+
 protected:
     void bindMesh(tinygltf::Mesh &mesh, std::map<int, unsigned int> &VBOs);
 
     unsigned int VAO;
     tinygltf::Model gltf;
-};
-
-
-class Mesh : public MeshIf {
-public:
-    explicit Mesh(const std::string &resourceName);
-
-    ~Mesh() override = default;
 
 private:
-    void bindModel();
-
-    void bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, glm::mat4 &globalTransform);
+    int getVaa(const std::string &attrib);
+    bool vaaIsInt(const std::string &attrib);
 };
 
 }
