@@ -13,6 +13,7 @@
 
 #include "lighting.h"
 #include "material.h"
+#include "shader_preprocess.h"
 
 namespace n3d {
 

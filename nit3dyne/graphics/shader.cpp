@@ -26,14 +26,14 @@ Shader::Shader(const char *vPath, const char *fPath, const char *gPath) {
         vStream << vFile.rdbuf();
         fStream << fFile.rdbuf();
 
-        vSrc = vStream.str();
-        fSrc = fStream.str();
+        vSrc = preprocessShader(vStream.str());
+        fSrc = preprocessShader(fStream.str());
 
         // TODO: refactor if statements that check if there is shader type
         if (gPath != nullptr) {
             gFile.open(gPath);
             gStream << gFile.rdbuf();
-            gSrc = gStream.str();
+            gSrc = preprocessShader(gStream.str());
         }
     } catch (std::ifstream::failure &e) { std::cout << "Shader read error" << std::endl; }
 

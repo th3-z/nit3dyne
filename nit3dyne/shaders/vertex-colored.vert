@@ -38,6 +38,7 @@ uniform Material material;
 uniform DLight dLight;
 uniform SLight sLight;
 
+#include "include/constant.glsl"
 
 void main() {
    // Vertex snapping
