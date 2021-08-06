@@ -1,7 +1,7 @@
 #ifndef GL_SKIN_H
 #define GL_SKIN_H
 
-#include "joint.h"
+#include "nit3dyne/animation/joint.h"
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>

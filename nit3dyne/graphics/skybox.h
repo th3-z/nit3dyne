@@ -9,10 +9,10 @@
 #include <iostream>
 #endif
 
-#include "stb_image.h"
+#include <stb_image.h>
 #include <glad/glad.h>
 
-#include "shader.h"
+#include "nit3dyne/graphics/shader.h"
 
 namespace n3d {
 

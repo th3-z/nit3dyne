@@ -1,7 +1,7 @@
 #ifndef NIT3DYNE_EX_MESH_STATIC_H
 #define NIT3DYNE_EX_MESH_STATIC_H
 
-#include "mesh.h"
+#include "nit3dyne/graphics/mesh.h"
 
 namespace n3d{
 

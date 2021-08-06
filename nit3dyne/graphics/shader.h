@@ -11,9 +11,9 @@
 #include <string>
 #include <vector>
 
-#include "lighting.h"
-#include "material.h"
-#include "shader_preprocess.h"
+#include "nit3dyne/graphics/lighting.h"
+#include "nit3dyne/graphics/material.h"
+#include "nit3dyne/graphics/shader_preprocess.h"
 
 namespace n3d {
 

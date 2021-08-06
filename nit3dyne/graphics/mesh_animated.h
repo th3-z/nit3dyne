@@ -1,8 +1,8 @@
 #ifndef GL_MESH_ANIMATED_H
 #define GL_MESH_ANIMATED_H
 
-#include "mesh.h"
-#include "../animation/animator.h"
+#include "nit3dyne/graphics/mesh.h"
+#include "nit3dyne/animation/animator.h"
 #include <iostream>
 
 namespace n3d {

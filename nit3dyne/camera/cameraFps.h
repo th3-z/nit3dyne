@@ -4,9 +4,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "camera.h"
-#include "../input.h"
-#include "../display.h"
+#include "nit3dyne/camera/camera.h"
+#include "nit3dyne/core/input.h"
+#include "nit3dyne/core/display.h"
 
 namespace n3d {
 

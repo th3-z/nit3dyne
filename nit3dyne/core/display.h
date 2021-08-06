@@ -4,9 +4,9 @@
 #include <string>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "graphics/shader.h"
-#include "graphics/texture.h"
-#include "utils/rand.h"
+#include "nit3dyne/graphics/shader.h"
+#include "nit3dyne/graphics/texture.h"
+#include "nit3dyne/utils/rand.h"
 
 namespace n3d {
 

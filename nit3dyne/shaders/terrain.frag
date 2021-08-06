@@ -8,8 +8,6 @@ uniform sampler2D tex;
 
 out vec4 fragColor;
 
-
 void main() {
-    //fragColor = vec4(color, 1.0);
     fragColor = texture(tex, affineUv.st / affineUv.p) * vec4(lightColor, 1.0);
 }

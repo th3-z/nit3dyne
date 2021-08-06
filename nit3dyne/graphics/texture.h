@@ -3,13 +3,12 @@
 
 #include <glad/glad.h>
 #include <string>
-#include "stb_image.h"
 #ifndef NDEBUG
 #include <iostream>
 #endif
 
-#include "stb_image.h"
-#include "material.h"
+#include <stb_image.h>
+#include "nit3dyne/graphics/material.h"
 
 namespace n3d {
 

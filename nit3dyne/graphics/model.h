@@ -3,12 +3,12 @@
 
 #include <memory>
 
-#include "mesh.h"
-#include "mesh_static.h"
-#include "mesh_animated.h"
-#include "mesh_colored.h"
-#include "shader.h"
-#include "texture.h"
+#include "nit3dyne/graphics/mesh.h"
+#include "nit3dyne/graphics/mesh_static.h"
+#include "nit3dyne/graphics/mesh_animated.h"
+#include "nit3dyne/graphics/mesh_colored.h"
+#include "nit3dyne/graphics/shader.h"
+#include "nit3dyne/graphics/texture.h"
 #include <glm/glm.hpp>
 
 namespace n3d {

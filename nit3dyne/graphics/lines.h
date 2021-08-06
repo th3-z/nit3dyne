@@ -2,7 +2,7 @@
 #define GL_LINES_H
 
 #include <glm/glm.hpp>
-#include "shader.h"
+#include "nit3dyne/graphics/shader.h"
 
 namespace n3d {
 

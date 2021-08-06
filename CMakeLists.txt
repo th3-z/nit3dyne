@@ -29,10 +29,10 @@ set(SOURCES
     nit3dyne/utils/gltf_utils.cpp nit3dyne/utils/gltf_utils.h
     nit3dyne/utils/rand.h
 
-    nit3dyne/display.cpp nit3dyne/display.h
-    nit3dyne/input.cpp nit3dyne/input.h
-    nit3dyne/font.cpp nit3dyne/font.h
-    nit3dyne/resourceCache.h
+        nit3dyne/core/display.cpp nit3dyne/core/display.h
+        nit3dyne/core/input.cpp nit3dyne/core/input.h
+        nit3dyne/core/font.cpp nit3dyne/core/font.h
+        nit3dyne/core/resourceCache.h
         nit3dyne/graphics/billboard.cpp nit3dyne/graphics/billboard.h nit3dyne/graphics/mesh_static.cpp nit3dyne/graphics/mesh_static.h nit3dyne/graphics/mesh_colored.cpp nit3dyne/graphics/mesh_colored.h nit3dyne/graphics/shader_preprocess.cpp nit3dyne/graphics/shader_preprocess.h)
 
 add_library(nit3dyne STATIC ${SOURCES})

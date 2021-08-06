@@ -9,12 +9,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "../animation/animation.h"
-#include "../animation/joint.h"
-#include "../utils/gltf_utils.h"
-#include "../animation/skin.h"
-#include "shader.h"
-#include "tiny_gltf.h"
+#include "nit3dyne/animation/animation.h"
+#include "nit3dyne/animation/joint.h"
+#include "nit3dyne/utils/gltf_utils.h"
+#include "nit3dyne/animation/skin.h"
+#include "nit3dyne/graphics/shader.h"
+#include <tiny_gltf.h>
 #include <cmath>
 
 namespace n3d {

@@ -1,7 +1,7 @@
 #ifndef GL_GLTF_UTILS_H
 #define GL_GLTF_UTILS_H
 
-#include "tiny_gltf.h"
+#include <tiny_gltf.h>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

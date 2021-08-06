@@ -4,7 +4,7 @@
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "tiny_gltf.h" // Includes stb libs
+#include <tiny_gltf.h> // Includes stb libs
 
 namespace n3d {
 

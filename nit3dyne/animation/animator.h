@@ -2,9 +2,9 @@
 #define GL_ANIMATOR_H
 
 
-#include "skin.h"
-#include "animation.h"
-#include "../display.h"
+#include "nit3dyne/animation/skin.h"
+#include "nit3dyne/animation/animation.h"
+#include "nit3dyne/core/display.h"
 
 namespace n3d {
 

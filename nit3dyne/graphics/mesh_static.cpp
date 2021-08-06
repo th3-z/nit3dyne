@@ -12,7 +12,6 @@ void MeshStatic::bindModel() {
 
     std::map<int, unsigned int> VBOs;
 
-    std::cout << "binding" << std::endl;
     this->bindMesh(this->gltf.meshes.front(), VBOs);
 
     // Cleanup

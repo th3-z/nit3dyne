@@ -4,9 +4,9 @@
 #include <memory>
 #include <glad/glad.h>
 
-#include "glm/glm.hpp"
-#include "shader.h"
-#include "texture.h"
+#include <glm/glm.hpp>
+#include "nit3dyne/graphics/shader.h"
+#include "nit3dyne/graphics/texture.h"
 
 
 namespace n3d {

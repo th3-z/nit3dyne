@@ -1,8 +1,8 @@
 #ifndef GL_FONT_H
 #define GL_FONT_H
 
-#include "graphics/shader.h"
-#include "graphics/texture.h"
+#include "nit3dyne/graphics/shader.h"
+#include "nit3dyne/graphics/texture.h"
 #include <iostream>
 #include <vector>
 

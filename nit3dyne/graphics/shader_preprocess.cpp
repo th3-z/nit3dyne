@@ -52,7 +52,6 @@ std::string preprocessShader(const std::string &src) {
         }
     }
 
-    std::cout << out << std::endl;
     return out;
 }
 

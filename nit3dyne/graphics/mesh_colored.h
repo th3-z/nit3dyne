@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <string>
 
-#include "mesh.h"
+#include "nit3dyne/graphics/mesh.h"
 
 namespace n3d {
 

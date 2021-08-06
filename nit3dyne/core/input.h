@@ -1,9 +1,9 @@
 #ifndef GL_INPUT_H
 #define GL_INPUT_H
 
-#include "camera/camera.h"
-#include "camera/cameraFps.h"
-#include "camera/cameraFree.h"
+#include "nit3dyne/camera/camera.h"
+#include "nit3dyne/camera/cameraFps.h"
+#include "nit3dyne/camera/cameraFree.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <memory>

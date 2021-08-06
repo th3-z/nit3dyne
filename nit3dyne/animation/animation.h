@@ -4,10 +4,10 @@
 #include <vector>
 #include <memory>
 
-#include "../utils/gltf_utils.h"
-#include "sampler.h"
-#include "skin.h"
-#include "tiny_gltf.h"
+#include "nit3dyne/utils/gltf_utils.h"
+#include "nit3dyne/animation/sampler.h"
+#include "nit3dyne/animation/skin.h"
+#include <tiny_gltf.h>
 
 namespace n3d {
 

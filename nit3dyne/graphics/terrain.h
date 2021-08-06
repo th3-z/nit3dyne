@@ -8,8 +8,8 @@
 #include <cmath>
 #include <iostream>
 
-#include "stb_image.h"
-#include "shader.h"
+#include <stb_image.h>
+#include "nit3dyne/graphics/shader.h"
 
 namespace n3d {
 
