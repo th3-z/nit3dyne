@@ -22,7 +22,7 @@ public:
 
     ~Skybox();
 
-    void draw(Shader &shader, glm::mat4 &&view, glm::mat4 &proj);
+    void draw(Shader &shader, mat4 &&view, mat4 &proj);
 
 private:
     unsigned int handle;

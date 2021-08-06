@@ -1,16 +1,16 @@
 #ifndef GL_LINES_H
 #define GL_LINES_H
 
-#include <glm/glm.hpp>
+#include "nit3dyne/core/math.h"
 #include "nit3dyne/graphics/shader.h"
 
 namespace n3d {
 
 struct Line {
-    glm::vec3 vertexStart;
-    glm::vec3 colorStart;
-    glm::vec3 vertexEnd;
-    glm::vec3 colorEnd;
+    vec3 vertexStart;
+    vec3 colorStart;
+    vec3 vertexEnd;
+    vec3 colorEnd;
 };
 
 
@@ -20,7 +20,7 @@ public:
 
     ~Lines();
 
-    void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);
+    void draw(Shader &shader, const mat4 &perspective, const mat4 &view);
 
 private:
     void bind(std::vector<Line> &lines);
@@ -28,7 +28,7 @@ private:
     unsigned int VAO;
     unsigned int count;
 
-    glm::mat4 modelMat = glm::mat4(1.f);
+    mat4 modelMat = mat4(1.f);
 };
 
 }

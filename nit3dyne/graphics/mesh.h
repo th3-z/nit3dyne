@@ -4,11 +4,8 @@
 #include <glad/glad.h>
 #include <map>
 #include <string>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/quaternion.hpp>
 
+#include "nit3dyne/core/math.h"
 #include "nit3dyne/animation/animation.h"
 #include "nit3dyne/animation/joint.h"
 #include "nit3dyne/utils/gltf_utils.h"

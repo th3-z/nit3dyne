@@ -114,37 +114,37 @@ void Shader::setUniform(const std::string &name, const int value) const {
     glUniform1i(glGetUniformLocation(this->handle, name.c_str()), value);
 }
 
-void Shader::setUniform(const std::string &name, const glm::mat3 &mat) const {
+void Shader::setUniform(const std::string &name, const mat3 &mat) const {
     glUniformMatrix3fv(glGetUniformLocation(this->handle, name.c_str()),
                        1,        // Send one
                        GL_FALSE, // Don't transpose (swap rows/cols)
-                       glm::value_ptr(mat));
+                       value_ptr(mat));
 }
 
-void Shader::setUniform(const std::string &name, const glm::mat4 &mat) const {
+void Shader::setUniform(const std::string &name, const mat4 &mat) const {
     glUniformMatrix4fv(glGetUniformLocation(this->handle, name.c_str()),
                        1,        // Send one
                        GL_FALSE, // Don't transpose (swap rows/cols)
-                       glm::value_ptr(mat));
+                       value_ptr(mat));
 }
 
-void Shader::setUniform(const std::string &name, const glm::vec3 &vec) const {
+void Shader::setUniform(const std::string &name, const vec3 &vec) const {
     glUniform3fv(glGetUniformLocation(this->handle, name.c_str()),
                  1, // Send one
-                 glm::value_ptr(vec));
+                 value_ptr(vec));
 }
 
-void Shader::setUniform(const std::string &name, const glm::vec4 &vec) const {
+void Shader::setUniform(const std::string &name, const vec4 &vec) const {
     glUniform4fv(glGetUniformLocation(this->handle, name.c_str()),
                  1, // Send one
-                 glm::value_ptr(vec));
+                 value_ptr(vec));
 }
 
-void Shader::setUniform(const std::string &name, const std::vector<glm::mat4> &mats) const {
+void Shader::setUniform(const std::string &name, const std::vector<mat4> &mats) const {
     glUniformMatrix4fv(glGetUniformLocation(this->handle, name.c_str()),
                        mats.size(), // Send all
                        GL_FALSE,
-                       glm::value_ptr(mats.front()));
+                       value_ptr(mats.front()));
 }
 
 Shader::~Shader() {
@@ -172,10 +172,10 @@ void Shader::setSpotLight(const SpotLight &sLight) const {
     this->setUniform("sLight.cutOff", sLight.cutOff);
 }
 
-void Shader::setUniform(const std::string &name, const glm::vec2 &vec) const {
+void Shader::setUniform(const std::string &name, const vec2 &vec) const {
     glUniform2fv(glGetUniformLocation(this->handle, name.c_str()),
                  1, // Send one
-                 glm::value_ptr(vec));
+                 value_ptr(vec));
 }
 
 }

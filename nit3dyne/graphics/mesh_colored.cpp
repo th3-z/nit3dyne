@@ -13,7 +13,7 @@ void MeshColored::bindModel() {
     glBindVertexArray(this->VAO);
 
     std::map<int, unsigned int> VBOs;
-    glm::mat4 globalTransform(1.f);
+    mat4 globalTransform(1.f);
 
     this->bindModelNodes(
             -1,
@@ -28,7 +28,7 @@ void MeshColored::bindModel() {
     }
 }
 
-void MeshColored::bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, glm::mat4 &globalTransform) {
+void MeshColored::bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, mat4 &globalTransform) {
     tinygltf::Node node = this->gltf.nodes[nodeId];
 
     if (node.mesh >= 0)

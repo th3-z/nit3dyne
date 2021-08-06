@@ -4,7 +4,7 @@
 #include <memory>
 #include <glad/glad.h>
 
-#include <glm/glm.hpp>
+#include "nit3dyne/core/math.h"
 #include "nit3dyne/graphics/shader.h"
 #include "nit3dyne/graphics/texture.h"
 
@@ -19,8 +19,8 @@ public:
 
     void draw(Shader &shader);
 
-    glm::vec2 size;
-    glm::vec3 position;
+    vec2 size;
+    vec3 position;
     bool viewScale = true;
 
 private:
@@ -30,7 +30,7 @@ private:
     std::shared_ptr<Texture> texture;
 
 
-    glm::mat4 modelMat;
+    mat4 modelMat;
 };
 
 }

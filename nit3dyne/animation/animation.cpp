@@ -37,15 +37,15 @@ Animation::Animation(tinygltf::Model &gltf, tinygltf::Animation &animation, Skin
         readBuffer<float>(inputAccessor, gltf, times);
 
         if (samplerPath(this->channels, i) == Path::ROTATION) {
-            std::vector<glm::vec4> data;
-            readBuffer<glm::vec4>(outputAccessor, gltf, data);
-            this->samplers.push_back(std::make_unique<Sampler<glm::vec4>>(
+            std::vector<vec4> data;
+            readBuffer<vec4>(outputAccessor, gltf, data);
+            this->samplers.push_back(std::make_unique<Sampler<vec4>>(
                     times, data, interpolation)
             );
         } else {
-            std::vector<glm::vec3> data;
-            readBuffer<glm::vec3>(outputAccessor, gltf, data);
-            this->samplers.push_back(std::make_unique<Sampler<glm::vec3>>(
+            std::vector<vec3> data;
+            readBuffer<vec3>(outputAccessor, gltf, data);
+            this->samplers.push_back(std::make_unique<Sampler<vec3>>(
                     times, data, interpolation)
             );
         }

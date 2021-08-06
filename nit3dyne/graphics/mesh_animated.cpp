@@ -18,7 +18,7 @@ void MeshAnimated::bindModel() {
     glBindVertexArray(this->VAO);
 
     std::map<int, unsigned int> VBOs;
-    glm::mat4 globalTransform(1.f);
+    mat4 globalTransform(1.f);
 
     this->bindModelNodes(
             -1,
@@ -33,23 +33,23 @@ void MeshAnimated::bindModel() {
     }
 }
 
-void MeshAnimated::bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, glm::mat4 &globalTransform) {
+void MeshAnimated::bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, mat4 &globalTransform) {
     tinygltf::Node node = this->gltf.nodes[nodeId];
 
-    glm::quat rotation(1.f, 0.f, 0.f, 0.f);
+    quat rotation(1.f, 0.f, 0.f, 0.f);
     if (!node.rotation.empty())
-        rotation = glm::quat(node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]);
+        rotation = quat(node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]);
 
-    glm::vec3 scale(1.f, 1.f, 1.f);
+    vec3 scale(1.f, 1.f, 1.f);
     if (!node.scale.empty())
-        scale = glm::vec3(node.scale[0], node.scale[1], node.scale[2]);
+        scale = vec3(node.scale[0], node.scale[1], node.scale[2]);
 
-    glm::vec3 translation(0.f, 0.f, 0.f);
+    vec3 translation(0.f, 0.f, 0.f);
     if (!node.translation.empty())
-        translation = glm::vec3(node.translation[0], node.translation[1], node.translation[2]);
+        translation = vec3(node.translation[0], node.translation[1], node.translation[2]);
 
-    glm::mat4 nodeTransform = glm::scale(
-            glm::translate(globalTransform, translation) * glm::toMat4(rotation),
+    mat4 nodeTransform = n3d::scale(
+            translate(globalTransform, translation) * toMat4(rotation),
             scale
     );
 
@@ -76,11 +76,11 @@ void MeshAnimated::bindModelNodes(int parentId, int nodeId, std::map<int, unsign
         bindModelNodes(nodeId, i, VBOs, nodeTransform);
 }
 
-void MeshAnimated::bindSkin(tinygltf::Skin &skin, glm::mat4 &globalTransform) {
+void MeshAnimated::bindSkin(tinygltf::Skin &skin, mat4 &globalTransform) {
     tinygltf::Accessor &ibmAccessor = this->gltf.accessors[skin.inverseBindMatrices];
     tinygltf::BufferView &ibmView = this->gltf.bufferViews[ibmAccessor.bufferView];
-    std::vector<glm::mat4> inverseBindMats;
-    readBuffer<glm::mat4>(ibmAccessor, this->gltf, inverseBindMats);
+    std::vector<mat4> inverseBindMats;
+    readBuffer<mat4>(ibmAccessor, this->gltf, inverseBindMats);
 
     for (size_t i = 0; i < skin.joints.size(); ++i) {
         this->skin.joints.emplace_back(std::pair<int, Joint>(skin.joints[i], Joint(i, inverseBindMats[i])));
@@ -92,7 +92,7 @@ void MeshAnimated::bindSkin(tinygltf::Skin &skin, glm::mat4 &globalTransform) {
 void MeshAnimated::draw(Shader &shader) {
     this->animator.update();
 
-    std::vector<glm::mat4> jointMatrices;
+    std::vector<mat4> jointMatrices;
     for (auto &pJoint : this->skin.joints) {
         jointMatrices.push_back(pJoint.second.getJointMatrix(this->skin.globalTransform));
     }

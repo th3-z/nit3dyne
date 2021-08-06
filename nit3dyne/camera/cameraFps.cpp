@@ -4,7 +4,7 @@ namespace n3d {
 
 CameraFps::CameraFps(const float fov, const std::pair<int, int> &viewPort)
         : Camera(fov, viewPort) {
-    this->position = glm::vec3(0.f, this->playerHeight, 10.f);
+    this->position = vec3(0.f, this->playerHeight, 10.f);
     this->sensitivity = 5.f;
 }
 
@@ -28,14 +28,14 @@ void CameraFps::update() {
         this->position.z += this->speed * (float) Display::timeDelta * this->front.z;
     }
     if (direction & Direction::LEFT) {
-        this->position -= glm::normalize(glm::cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
+        this->position -= normalize(cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
     }
     if (direction & Direction::BACKWARD) {
         this->position.x -= this->speed * (float) Display::timeDelta * this->front.x;
         this->position.z -= this->speed * (float) Display::timeDelta * this->front.z;
     }
     if (direction & Direction::RIGHT) {
-        this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
+        this->position += normalize(cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
     }
 
     this->yaw += this->sensitivity * Display::timeDelta * Input::mousePosDelta.first;

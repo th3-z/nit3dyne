@@ -13,8 +13,8 @@ float vertices[] = {
 };
 
 Billboard::Billboard(std::pair<float, float> &&size, const std::shared_ptr<Texture> texture): texture(texture) {
-    this->size = glm::vec2(size.first, size.second);
-    this->position = glm::vec3(0.f, 0.f, 0.f);
+    this->size = vec2(size.first, size.second);
+    this->position = vec3(0.f, 0.f, 0.f);
     this->bind();
 }
 

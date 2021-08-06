@@ -20,9 +20,9 @@ public:
 private:
     void bindModel();
 
-    void bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, glm::mat4 &globalTransform);
+    void bindModelNodes(int parentId, int nodeId, std::map<int, unsigned int> &VBOs, mat4 &globalTransform);
 
-    void bindSkin(tinygltf::Skin &skin, glm::mat4 &globalTransform);
+    void bindSkin(tinygltf::Skin &skin, mat4 &globalTransform);
 
     Skin skin;
     std::vector<Animation> animations;

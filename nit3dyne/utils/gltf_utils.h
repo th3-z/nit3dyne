@@ -3,18 +3,18 @@
 
 #include <tiny_gltf.h>
 #include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+
+#include "nit3dyne/core/math.h"
 
 namespace n3d {
 
 void emplaceData(float *src, std::vector<float> &dst);
 
-void emplaceData(float *src, std::vector<glm::vec3> &dst);
+void emplaceData(float *src, std::vector<vec3> &dst);
 
-void emplaceData(float *src, std::vector<glm::vec4> &dst);
+void emplaceData(float *src, std::vector<vec4> &dst);
 
-void emplaceData(float *src, std::vector<glm::mat4> &dst);
+void emplaceData(float *src, std::vector<mat4> &dst);
 
 template<typename T>
 void readBuffer(tinygltf::Accessor &accessor, tinygltf::Model &model, std::vector<T> &data) {

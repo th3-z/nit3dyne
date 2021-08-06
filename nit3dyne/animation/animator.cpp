@@ -20,14 +20,14 @@ void Animator::update() {
 
     for (Channel &c : this->animation->channels) {
         if (c.path == Path::ROTATION) {
-            auto sampler = dynamic_cast<Sampler<glm::vec4> *>(this->animation->samplers[c.sampler].get());
-            glm::vec4 xyzw = sampler->sample(this->animationTime);
-            this->skin->jointById(c.joint)->rotation = normalize(glm::quat(xyzw[3], xyzw[0], xyzw[1], xyzw[2]));
+            auto sampler = dynamic_cast<Sampler<vec4> *>(this->animation->samplers[c.sampler].get());
+            vec4 xyzw = sampler->sample(this->animationTime);
+            this->skin->jointById(c.joint)->rotation = normalize(quat(xyzw[3], xyzw[0], xyzw[1], xyzw[2]));
         } else if (c.path == Path::SCALE) {
-            auto sampler = dynamic_cast<Sampler<glm::vec3> *>(this->animation->samplers[c.sampler].get());
+            auto sampler = dynamic_cast<Sampler<vec3> *>(this->animation->samplers[c.sampler].get());
             this->skin->jointById(c.joint)->scale = sampler->sample(this->animationTime);
         } else if (c.path == Path::TRANSLATION) {
-            auto sampler = dynamic_cast<Sampler<glm::vec3> *>(this->animation->samplers[c.sampler].get());
+            auto sampler = dynamic_cast<Sampler<vec3> *>(this->animation->samplers[c.sampler].get());
             this->skin->jointById(c.joint)->translation = sampler->sample(this->animationTime);
         }
     }

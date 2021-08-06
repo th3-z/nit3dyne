@@ -49,9 +49,9 @@ void Lines::bind(std::vector<Line> &lines) {
     glDeleteBuffers(1, &VBO);
 }
 
-void Lines::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view) {
+void Lines::draw(Shader &shader, const mat4 &perspective, const mat4 &view) {
     shader.use();
-    glm::mat4 mvp = perspective * view * this->modelMat;
+    mat4 mvp = perspective * view * this->modelMat;
     shader.setUniform("mvp", mvp);
 
     glBindVertexArray(this->VAO);

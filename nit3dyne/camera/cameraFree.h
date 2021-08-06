@@ -1,8 +1,7 @@
 #ifndef GL_CAMERAFREE_H
 #define GL_CAMERAFREE_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "nit3dyne/core/math.h"
 
 #include "nit3dyne/camera/camera.h"
 #include "nit3dyne/core/input.h"

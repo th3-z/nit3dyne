@@ -2,16 +2,15 @@
 #define GL_SKIN_H
 
 #include "nit3dyne/animation/joint.h"
+#include "nit3dyne/core/math.h"
 #include <algorithm>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
 #include <vector>
 
 namespace n3d {
 
 class Skin {
 public:
-    glm::mat4 globalTransform;
+    mat4 globalTransform;
     std::vector<std::pair<int, Joint>> joints;
     Joint *rootJoint = nullptr;
 
@@ -24,7 +23,7 @@ public:
     bool isJoint(int nodeId);
 
 private:
-    void updateGlobalJointMatrices(Joint *joint, glm::mat4 &parentTransform);
+    void updateGlobalJointMatrices(Joint *joint, mat4 &parentTransform);
 };
 
 }

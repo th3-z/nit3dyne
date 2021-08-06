@@ -3,18 +3,18 @@
 namespace n3d {
 
 Model::Model(const std::shared_ptr<Mesh> mesh, const std::shared_ptr<Texture> texture) :
-        modelMat(glm::mat4(1.f)), mesh(mesh), texture(texture) {
+        modelMat(mat4(1.f)), mesh(mesh), texture(texture) {
 }
 
 Model::~Model() = default;
 
-void Model::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view) {
+void Model::draw(Shader &shader, const mat4 &perspective, const mat4 &view) {
     shader.use();
     shader.attachMaterial(*this->material);
 
-    glm::mat4 mvp = perspective * view * this->modelMat;
-    glm::mat4 modelView = view * this->modelMat;
-    glm::mat3 normalMat = glm::inverse(glm::transpose(glm::mat3(modelView)));
+    mat4 mvp = perspective * view * this->modelMat;
+    mat4 modelView = view * this->modelMat;
+    mat3 normalMat = inverse(transpose(mat3(modelView)));
 
     shader.setUniform("mvp", mvp);
     shader.setUniform("modelView", modelView);
@@ -35,17 +35,17 @@ void Model::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &
 }
 
 void Model::translate(float x, float y, float z) {
-    this->modelMat = glm::translate(this->modelMat, glm::vec3(x, y, z));
+    this->modelMat = n3d::translate(this->modelMat, vec3(x, y, z));
 }
 
 void Model::scale(float x, float y, float z) {
-    this->modelMat = glm::scale(this->modelMat, glm::vec3(x, y, z));
+    this->modelMat = n3d::scale(this->modelMat, vec3(x, y, z));
 }
 
 void Model::rotate(float deg, float x, float y, float z, bool normalize) {
-    this->modelMat = glm::rotate(this->modelMat,
-                                 glm::radians(deg),
-                                 normalize ? glm::normalize(glm::vec3(x, y, z)) : glm::vec3(x, y, z));
+    this->modelMat = n3d::rotate(this->modelMat,
+                                 radians(deg),
+                                 normalize ? n3d::normalize(vec3(x, y, z)) : vec3(x, y, z));
 }
 
 void Model::setMaterial(const Material &material) {

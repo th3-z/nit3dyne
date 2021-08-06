@@ -1,9 +1,7 @@
 #ifndef GL_CAMERAFPS_H
 #define GL_CAMERAFPS_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
+#include "nit3dyne/core/math.h"
 #include "nit3dyne/camera/camera.h"
 #include "nit3dyne/core/input.h"
 #include "nit3dyne/core/display.h"

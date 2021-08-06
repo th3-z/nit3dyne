@@ -4,11 +4,11 @@ namespace n3d {
 
 CameraOrbit::CameraOrbit(const float fov, const std::pair<int, int> &viewPort) : Camera(fov, viewPort) {};
 
-glm::mat4 CameraOrbit::getView() {
-    glm::mat4 view = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, -this->distance));
-    view = glm::rotate(view, -this->pitch, glm::vec3(1.f, 0.f, 0.f));
-    view = glm::rotate(view, -this->yaw, glm::vec3(0.f, 1.f, 0.f));
-    view = glm::translate(view, this->target);
+mat4 CameraOrbit::getView() {
+    mat4 view = translate(mat4(1.f), vec3(0.f, 0.f, -this->distance));
+    view = rotate(view, -this->pitch, vec3(1.f, 0.f, 0.f));
+    view = rotate(view, -this->yaw, vec3(0.f, 1.f, 0.f));
+    view = translate(view, this->target);
     return view;
 }
 

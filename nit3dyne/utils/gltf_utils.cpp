@@ -8,21 +8,21 @@ void emplaceData(float *src, std::vector<float> &dst) {
     );
 }
 
-void emplaceData(float *src, std::vector<glm::vec3> &dst) {
+void emplaceData(float *src, std::vector<vec3> &dst) {
     dst.emplace_back(
-            glm::make_vec3(src)
+            make_vec3(src)
     );
 }
 
-void emplaceData(float *src, std::vector<glm::vec4> &dst) {
+void emplaceData(float *src, std::vector<vec4> &dst) {
     dst.emplace_back(
-            glm::make_vec4(src)
+            make_vec4(src)
     );
 }
 
-void emplaceData(float *src, std::vector<glm::mat4> &dst) {
+void emplaceData(float *src, std::vector<mat4> &dst) {
     dst.emplace_back(
-            glm::make_mat4(src)
+            make_mat4(src)
     );
 }
 

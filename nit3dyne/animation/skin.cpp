@@ -26,9 +26,9 @@ void Skin::updateGlobalJointMatrices() {
     this->updateGlobalJointMatrices(this->rootJoint, this->globalTransform);
 }
 
-void Skin::updateGlobalJointMatrices(Joint *joint, glm::mat4 &parentTransform) {
-    joint->globalJointTransform = glm::scale(
-            glm::translate(parentTransform, joint->translation) * glm::toMat4(joint->rotation),
+void Skin::updateGlobalJointMatrices(Joint *joint, mat4 &parentTransform) {
+    joint->globalJointTransform = scale(
+            translate(parentTransform, joint->translation) * toMat4(joint->rotation),
             joint->scale
     );
 

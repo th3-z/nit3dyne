@@ -1,24 +1,24 @@
 #ifndef GL_TERRAIN_H
 #define GL_TERRAIN_H
 
-#include <glm/vec3.hpp>
-#include <glm/geometric.hpp>
+
 #include <vector>
 #include <string>
 #include <cmath>
 #include <iostream>
-
 #include <stb_image.h>
+
+#include "nit3dyne/core/math.h"
 #include "nit3dyne/graphics/shader.h"
 
 namespace n3d {
 
 // 28 bytes
 struct TerrainVertex {
-    glm::vec3 vertex;
-    glm::vec3 normal; // TODO: precompute normals as normalmap
+    vec3 vertex;
+    vec3 normal; // TODO: precompute normals as normalmap
     unsigned int texture;
-    glm::vec2 uv;
+    vec2 uv;
 };
 
 /*
@@ -57,9 +57,9 @@ public:
     // FIXME: draw dist exceeds the far clip pane, halve the size of chunks
 
     // draw all chunks
-    void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);
+    void draw(Shader &shader, const mat4 &perspective, const mat4 &view);
 
-    glm::mat4 model = glm::mat4(1.f);
+    mat4 model = mat4(1.f);
 
     std::vector<TerrainVertex> *readHeights(std::string heightsFn, std::string normalsFn);
 };

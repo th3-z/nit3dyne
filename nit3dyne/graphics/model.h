@@ -9,7 +9,7 @@
 #include "nit3dyne/graphics/mesh_colored.h"
 #include "nit3dyne/graphics/shader.h"
 #include "nit3dyne/graphics/texture.h"
-#include <glm/glm.hpp>
+#include "nit3dyne/core/math.h"
 
 namespace n3d {
 
@@ -20,7 +20,7 @@ public:
 
     ~Model();
 
-    void draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view);
+    void draw(Shader &shader, const mat4 &perspective, const mat4 &view);
 
     void setMaterial(const Material &material);
 
@@ -30,7 +30,7 @@ public:
 
     void rotate(float deg, float x, float y, float z, bool normalize = true);
 
-    glm::mat4 modelMat;
+    mat4 modelMat;
 
     std::shared_ptr<Mesh> mesh;
     std::shared_ptr<Texture> texture;

@@ -2,8 +2,7 @@
 #define GL_SHADER_H
 
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+
 
 #include <fstream>
 #include <iostream>
@@ -11,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "nit3dyne/core/math.h"
 #include "nit3dyne/graphics/lighting.h"
 #include "nit3dyne/graphics/material.h"
 #include "nit3dyne/graphics/shader_preprocess.h"
@@ -42,17 +42,17 @@ public:
 
     void setUniform(const std::string &name, const float value) const;
 
-    void setUniform(const std::string &name, const glm::mat3 &mat) const;
+    void setUniform(const std::string &name, const mat3 &mat) const;
 
-    void setUniform(const std::string &name, const glm::mat4 &mat) const;
+    void setUniform(const std::string &name, const mat4 &mat) const;
 
-    void setUniform(const std::string &name, const glm::vec2 &vec) const;
+    void setUniform(const std::string &name, const vec2 &vec) const;
 
-    void setUniform(const std::string &name, const glm::vec3 &vec) const;
+    void setUniform(const std::string &name, const vec3 &vec) const;
 
-    void setUniform(const std::string &name, const glm::vec4 &vec) const;
+    void setUniform(const std::string &name, const vec4 &vec) const;
 
-    void setUniform(const std::string &name, const std::vector<glm::mat4> &mats) const;
+    void setUniform(const std::string &name, const std::vector<mat4> &mats) const;
 };
 
 }

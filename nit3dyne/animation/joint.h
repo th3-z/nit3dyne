@@ -2,29 +2,28 @@
 #define JOINT_H
 
 #include <vector>
-#include <glm/glm.hpp>
-#include <glm/detail/type_quat.hpp>
+#include "nit3dyne/core/math.h"
 
 namespace n3d {
 
 class Joint {
 public:
-    Joint(int id, glm::mat4 &inverseBindTransform);
+    Joint(int id, mat4 &inverseBindTransform);
 
     void addChild(Joint *joint);
 
-    glm::mat4 getJointMatrix(glm::mat4 &globalTransform) const;
+    mat4 getJointMatrix(mat4 &globalTransform) const;
 
     int id;
 
-    glm::mat4 inverseBindTransform;
-    glm::mat4 bindTransform;  // Bind pose
-    glm::mat4 globalJointTransform;  // Active pose
+    mat4 inverseBindTransform;
+    mat4 bindTransform;  // Bind pose
+    mat4 globalJointTransform;  // Active pose
 
     // TODO: Add dirty check
-    glm::quat rotation;
-    glm::vec3 scale;
-    glm::vec3 translation;
+    quat rotation;
+    vec3 scale;
+    vec3 translation;
 
     std::vector<Joint *> children;
 };

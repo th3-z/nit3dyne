@@ -41,11 +41,11 @@ void CameraFree::update() {
     if (direction & Direction::FORWARD)
         this->position += this->speed * (float) Display::timeDelta * this->front;
     if (direction & Direction::LEFT)
-        this->position -= glm::normalize(glm::cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
+        this->position -= normalize(cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
     if (direction & Direction::BACKWARD)
         this->position -= this->speed * (float) Display::timeDelta * this->front;
     if (direction & Direction::RIGHT)
-        this->position += glm::normalize(glm::cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
+        this->position += normalize(cross(this->front, this->up)) * this->speed * (float) Display::timeDelta;
     if (direction & Direction::UP)
         this->position += this->speed * (float) Display::timeDelta * this->up;
     if (direction & Direction::DOWN)

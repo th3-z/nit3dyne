@@ -72,7 +72,7 @@ Skybox::Skybox(const std::string &resourceName) {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void Skybox::draw(Shader &shader, glm::mat4 &&view, glm::mat4 &proj) {
+void Skybox::draw(Shader &shader, mat4 &&view, mat4 &proj) {
     glDepthFunc(GL_LEQUAL);
     shader.use();
 

@@ -1,14 +1,14 @@
 #ifndef GL_MATERIAL_H
 #define GL_MATERIAL_H
 
-#include <glm/vec3.hpp>
+#include "nit3dyne/core/math.h"
 
 namespace n3d {
 
 struct Material {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
     float shininess;
 };
 

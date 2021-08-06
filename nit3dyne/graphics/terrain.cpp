@@ -6,20 +6,20 @@ Terrain::Terrain(std::string resourceName) {
     auto heights = this->readHeights("res/heightmap/" + resourceName + ".png",
                                      "res/heightmap/" + resourceName + ".normal.png");
 
-    this->model = glm::translate(this->model, glm::vec3(-(100 * 50.f), -365.f, -(100 * 50.f)));
+    this->model = translate(this->model, vec3(-(100 * 50.f), -365.f, -(100 * 50.f)));
 }
 
 void Terrain::updateChunks(int x, int y) {
 
 }
 
-void Terrain::draw(Shader &shader, const glm::mat4 &perspective, const glm::mat4 &view) {
+void Terrain::draw(Shader &shader, const mat4 &perspective, const mat4 &view) {
     shader.use();
     shader.attachMaterial(Materials::basic);
 
-    glm::mat4 mvp = perspective * view * this->model;
-    glm::mat4 modelView = view * this->model;
-    glm::mat3 normalMat = glm::inverse(glm::transpose(glm::mat3(modelView)));
+    mat4 mvp = perspective * view * this->model;
+    mat4 modelView = view * this->model;
+    mat3 normalMat = inverse(transpose(mat3(modelView)));
 
     shader.setUniform("mvp", mvp);
     shader.setUniform("modelView", modelView);
@@ -66,7 +66,7 @@ std::vector<TerrainVertex> *Terrain::readHeights(std::string heightsFn, std::str
         //if (i+1 > w)
         u = ((float) heightsData[i * 3 - w * 3] * (range / 255.f)) + offset;
 
-        glm::vec3 normal = glm::normalize(glm::vec3(u - dw, 100.f, l - r));
+        vec3 normal = normalize(vec3(u - dw, 100.f, l - r));
         //std::cout <<i <<":"<< l <<","<<r<<","<<u<<","<<dw<<std::endl;
 
         out->emplace_back(
@@ -74,7 +74,7 @@ std::vector<TerrainVertex> *Terrain::readHeights(std::string heightsFn, std::str
                         .vertex = {vX, vY, vZ},
                         .normal = normal, // std::move?
                         .texture = 1,
-                        .uv = glm::vec2(
+                        .uv = vec2(
                                 (float) (i % w) * (1.f / (w - 1)),
                                 1.f - floor(i / (float) w) * (1.f / (w - 1))
                         )

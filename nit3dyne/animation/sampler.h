@@ -2,7 +2,7 @@
 #define SAMPLER_H
 
 #include <vector>
-#include <glm/glm.hpp>
+#include "nit3dyne/core/math.h"
 
 namespace n3d {
 

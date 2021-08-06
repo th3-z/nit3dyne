@@ -1,8 +1,7 @@
 #ifndef GL_CAMERA_H
 #define GL_CAMERA_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "nit3dyne/core/math.h"
 
 namespace n3d {
 
@@ -12,19 +11,19 @@ public:
 
     virtual ~Camera();
 
-    virtual glm::mat4 getView();
+    virtual mat4 getView();
     virtual void update();
     void setFov(float fov);
 
     std::pair<int, int> viewPort;
-    glm::mat4 projection;
-    glm::vec3 position = glm::vec3(0.f, 0.f, 0.f);
+    mat4 projection;
+    vec3 position = vec3(0.f, 0.f, 0.f);
     float fov;
 
 protected:
-    glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);
-    glm::vec3 right;
+    vec3 front = vec3(0.0f, 0.0f, -1.0f);
+    vec3 up = vec3(0.f, 1.f, 0.f);
+    vec3 right;
 
     float yaw = -90.f;
     float pitch = -0.f;
